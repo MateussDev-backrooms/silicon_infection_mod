@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "silicon_mod:silicon"
+    }
+  },
+  "result": {
+    "item": "silicon_mod:silicate_block"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "item.silicon_mod.silicon": "Silicon",
+
+  "block.silicon_mod.silicate_block": "Silicate block",
+  "block.silicon_mod.silicate_tendril_block": "Silicate tendril block",
+
+  "creativetab.silicon_tab": "Chemosynthesis"
+}
