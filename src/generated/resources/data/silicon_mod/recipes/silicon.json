@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "silicon_mod:silicate_block"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "silicon_mod:silicon"
+  }
+}

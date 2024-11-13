@@ -1,0 +1,4 @@
+// 1.20.1	2024-11-13T22:19:19.3400799	Loot Tables
+7bd2f7d63101ab2de2e6c4d6b1f709037bff47b0 data/silicon_mod/loot_tables/blocks/silicate_block.json
+8e087dc4eb174d7eb9dee444b97bcee3a7b30b8f data/silicon_mod/loot_tables/blocks/silicate_explosive_block.json
+0e20f6075f3eb9a96b016f280ac65270b2d53dc5 data/silicon_mod/loot_tables/blocks/silicate_tendril_block.json

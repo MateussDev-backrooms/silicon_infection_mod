@@ -22,6 +22,8 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModItems.SILICON.get());
                         pOutput.accept(ModBlocks.SILICATE_BLOCK.get());
                         pOutput.accept(ModBlocks.SILICATE_TENDRIL_BLOCK.get());
+                        pOutput.accept(ModBlocks.SILICATE_EXPLOSIVE_BLOCK.get());
+                        pOutput.accept(ModItems.SILICON_DETECTOR.get());
                     })
                     .build());
 
