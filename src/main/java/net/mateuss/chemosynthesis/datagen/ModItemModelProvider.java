@@ -19,6 +19,11 @@ public class ModItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         simpleItem(ModItems.SILICON);
         simpleItem(ModItems.SILICON_DETECTOR);
+
+        withExistingParent(ModItems.SPAWN_SILICON_ROLLER.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.SPAWN_SILICON_TRIPOD.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.SPAWN_TETH_ZOMBIE.getId().getPath(), mcLoc("item/template_spawn_egg"));
+
     }
 
     private ItemModelBuilder simpleItem(RegistryObject<Item> item) {

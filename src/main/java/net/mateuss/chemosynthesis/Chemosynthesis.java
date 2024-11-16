@@ -2,9 +2,14 @@ package net.mateuss.chemosynthesis;
 
 import com.mojang.logging.LogUtils;
 import net.mateuss.chemosynthesis.block.ModBlocks;
+import net.mateuss.chemosynthesis.entity.ModEntities;
+import net.mateuss.chemosynthesis.entity.client.RendererSiliconRoller;
+import net.mateuss.chemosynthesis.entity.client.RendererSiliconTripod;
+import net.mateuss.chemosynthesis.entity.client.RendererTethZombie;
 import net.mateuss.chemosynthesis.item.ModCreativeModeTabs;
 import net.mateuss.chemosynthesis.item.ModItems;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
@@ -47,6 +52,7 @@ public class Chemosynthesis
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
+        ModEntities.register(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
@@ -77,8 +83,7 @@ public class Chemosynthesis
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
-        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS)
-            event.accept(ModItems.SILICON);
+
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -97,7 +102,9 @@ public class Chemosynthesis
         public static void onClientSetup(FMLClientSetupEvent event)
         {
             // Some client setup code
-
+            EntityRenderers.register(ModEntities.SILICON_ROLLER.get(), RendererSiliconRoller::new);
+            EntityRenderers.register(ModEntities.SILICON_TRIPOD.get(), RendererSiliconTripod::new);
+            EntityRenderers.register(ModEntities.TETH_ZOMBIE.get(), RendererTethZombie::new);
         }
     }
 }

@@ -1,8 +1,10 @@
 package net.mateuss.chemosynthesis.item;
 
 import net.mateuss.chemosynthesis.Chemosynthesis;
+import net.mateuss.chemosynthesis.entity.ModEntities;
 import net.mateuss.chemosynthesis.item.advanced.SiliconStageDetector;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -16,6 +18,15 @@ public class ModItems {
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> SILICON_DETECTOR = ITEMS.register("silicon_detector",
             () -> new SiliconStageDetector(new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_SILICON_ROLLER = ITEMS.register("spawn_silicon_roller",
+            () -> new ForgeSpawnEggItem(ModEntities.SILICON_ROLLER, 0x7b3c32, 0x553531,
+                new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_SILICON_TRIPOD = ITEMS.register("spawn_silicon_tripod",
+            () -> new ForgeSpawnEggItem(ModEntities.SILICON_TRIPOD, 0x7b3c32, 0x7b4657,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_TETH_ZOMBIE = ITEMS.register("spawn_teth_zombie",
+            () -> new ForgeSpawnEggItem(ModEntities.TETH_ZOMBIE, 0x00cccc, 0x8b4d39,
+                    new Item.Properties()));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
