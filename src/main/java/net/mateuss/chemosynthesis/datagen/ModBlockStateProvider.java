@@ -5,6 +5,7 @@ import net.mateuss.chemosynthesis.block.ModBlocks;
 import net.mateuss.chemosynthesis.block.advanced.SiliconVeinBlock;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -22,6 +23,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(ModBlocks.SILICATE_TENDRIL_BLOCK);
 
         simpleBlockWithItem(ModBlocks.SILICON_VEIN_BLOCK.get(), cubeAll(ModBlocks.SILICON_VEIN_BLOCK.get()));
+
+        blockWithItem(ModBlocks.SILICON_VEIN_BUILDER_BLOCK);
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject) {

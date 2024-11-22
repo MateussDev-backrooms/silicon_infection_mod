@@ -26,6 +26,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
         this.dropSelf(ModBlocks.SILICATE_EXPLOSIVE_BLOCK.get());
         this.dropSelf(ModBlocks.SILICON_VEIN_BLOCK.get());
+        this.dropSelf(ModBlocks.SILICON_VEIN_BUILDER_BLOCK.get());
     }
 
     protected Iterable<Block> getKnownBlocks() {

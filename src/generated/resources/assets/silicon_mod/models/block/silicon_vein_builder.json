@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "silicon_mod:block/silicon_vein_builder"
+  }
+}

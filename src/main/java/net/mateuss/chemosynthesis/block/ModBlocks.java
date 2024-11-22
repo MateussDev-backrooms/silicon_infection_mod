@@ -3,6 +3,7 @@ package net.mateuss.chemosynthesis.block;
 import net.mateuss.chemosynthesis.Chemosynthesis;
 import net.mateuss.chemosynthesis.block.advanced.ExplosiveBlobBlock;
 import net.mateuss.chemosynthesis.block.advanced.SiliconVeinBlock;
+import net.mateuss.chemosynthesis.block.advanced.SiliconVeinBuilder;
 import net.mateuss.chemosynthesis.item.ModItems;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.BlockItem;
@@ -34,6 +35,11 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> SILICON_VEIN_BLOCK = registerBlock("silicon_vein",
             () -> new SiliconVeinBlock(BlockBehaviour.Properties
+                    .copy(Blocks.DRIPSTONE_BLOCK)
+                    .noOcclusion()));
+
+    public static final RegistryObject<Block> SILICON_VEIN_BUILDER_BLOCK = registerBlock("silicon_vein_builder",
+            () -> new SiliconVeinBuilder(BlockBehaviour.Properties
                     .copy(Blocks.DRIPSTONE_BLOCK)
                     .noOcclusion()));
 
