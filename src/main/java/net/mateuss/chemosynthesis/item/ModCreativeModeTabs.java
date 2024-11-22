@@ -23,10 +23,14 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.SILICATE_BLOCK.get());
                         pOutput.accept(ModBlocks.SILICATE_TENDRIL_BLOCK.get());
                         pOutput.accept(ModBlocks.SILICATE_EXPLOSIVE_BLOCK.get());
+                        pOutput.accept(ModBlocks.SILICON_VEIN_BLOCK.get());
                         pOutput.accept(ModItems.SILICON_DETECTOR.get());
                         pOutput.accept(ModItems.SPAWN_SILICON_ROLLER.get());
                         pOutput.accept(ModItems.SPAWN_SILICON_TRIPOD.get());
                         pOutput.accept(ModItems.SPAWN_TETH_ZOMBIE.get());
+                        pOutput.accept(ModItems.SPAWN_TETH_SHEEP.get());
+                        pOutput.accept(ModItems.SPAWN_TETH_COW.get());
+                        pOutput.accept(ModItems.SPAWN_HOMUNCULUS_HEART.get());
 
                     })
                     .build());

@@ -11,4 +11,10 @@ public class ModModelLayers {
             new ResourceLocation(Chemosynthesis.MODID, "silicon_tripod_layer"), "main");
     public static final ModelLayerLocation TETH_ZOMBIE_LAYER = new ModelLayerLocation(
             new ResourceLocation(Chemosynthesis.MODID, "teth_zombie_layer"), "main");
+    public static final ModelLayerLocation TETH_COW_LAYER = new ModelLayerLocation(
+            new ResourceLocation(Chemosynthesis.MODID, "teth_cow_layer"), "main");
+    public static final ModelLayerLocation TETH_SHEEP_LAYER = new ModelLayerLocation(
+            new ResourceLocation(Chemosynthesis.MODID, "teth_sheep_layer"), "main");
+    public static final ModelLayerLocation HOMUNCULUS_LAYER = new ModelLayerLocation(
+            new ResourceLocation(Chemosynthesis.MODID, "homunculus_layer"), "main");
 }

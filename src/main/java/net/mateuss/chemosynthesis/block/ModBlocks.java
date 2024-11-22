@@ -2,6 +2,7 @@ package net.mateuss.chemosynthesis.block;
 
 import net.mateuss.chemosynthesis.Chemosynthesis;
 import net.mateuss.chemosynthesis.block.advanced.ExplosiveBlobBlock;
+import net.mateuss.chemosynthesis.block.advanced.SiliconVeinBlock;
 import net.mateuss.chemosynthesis.item.ModItems;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.BlockItem;
@@ -30,6 +31,11 @@ public class ModBlocks {
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.DRIPSTONE_BLOCK)));
     public static final RegistryObject<Block> SILICATE_EXPLOSIVE_BLOCK = registerBlock("silicate_explosive_block",
             () -> new ExplosiveBlobBlock(BlockBehaviour.Properties.copy(Blocks.DRIPSTONE_BLOCK)));
+
+    public static final RegistryObject<Block> SILICON_VEIN_BLOCK = registerBlock("silicon_vein",
+            () -> new SiliconVeinBlock(BlockBehaviour.Properties
+                    .copy(Blocks.DRIPSTONE_BLOCK)
+                    .noOcclusion()));
 
 
     private static <T extends Block>RegistryObject<T> registerBlock(String name, Supplier<T> block) {

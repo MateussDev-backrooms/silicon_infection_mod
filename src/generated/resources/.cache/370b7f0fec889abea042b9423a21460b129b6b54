@@ -1,3 +1,3 @@
-// 1.20.1	2024-11-13T22:19:19.3410801	Tags for minecraft:block mod id silicon_mod
-517c3aefb57023111d1f70be0f334e4d680f1fe8 data/minecraft/tags/blocks/mineable/pickaxe.json
-517c3aefb57023111d1f70be0f334e4d680f1fe8 data/minecraft/tags/blocks/needs_stone_tool.json
+// 1.20.1	2024-11-21T17:34:20.4815159	Tags for minecraft:block mod id silicon_mod
+43570b440502dc55ae415e7973ce0d22038a0e82 data/minecraft/tags/blocks/mineable/pickaxe.json
+43570b440502dc55ae415e7973ce0d22038a0e82 data/minecraft/tags/blocks/needs_stone_tool.json

@@ -3,9 +3,7 @@ package net.mateuss.chemosynthesis;
 import com.mojang.logging.LogUtils;
 import net.mateuss.chemosynthesis.block.ModBlocks;
 import net.mateuss.chemosynthesis.entity.ModEntities;
-import net.mateuss.chemosynthesis.entity.client.RendererSiliconRoller;
-import net.mateuss.chemosynthesis.entity.client.RendererSiliconTripod;
-import net.mateuss.chemosynthesis.entity.client.RendererTethZombie;
+import net.mateuss.chemosynthesis.entity.client.*;
 import net.mateuss.chemosynthesis.item.ModCreativeModeTabs;
 import net.mateuss.chemosynthesis.item.ModItems;
 import net.minecraft.client.Minecraft;
@@ -105,6 +103,9 @@ public class Chemosynthesis
             EntityRenderers.register(ModEntities.SILICON_ROLLER.get(), RendererSiliconRoller::new);
             EntityRenderers.register(ModEntities.SILICON_TRIPOD.get(), RendererSiliconTripod::new);
             EntityRenderers.register(ModEntities.TETH_ZOMBIE.get(), RendererTethZombie::new);
+            EntityRenderers.register(ModEntities.TETH_COW.get(), RendererTethCow::new);
+            EntityRenderers.register(ModEntities.TETH_SHEEP.get(), RendererTethSheep::new);
+            EntityRenderers.register(ModEntities.HOMUNCULUS_HEART.get(), RendererHomunculus::new);
         }
     }
 }

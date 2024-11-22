@@ -1,6 +1,9 @@
-// 1.20.1	2024-11-16T19:21:28.9681881	Item Models: silicon_mod
+// 1.20.1	2024-11-21T17:34:20.4825163	Item Models: silicon_mod
 b811f8f64e82fa01831ab1a895ad81e7ed0abbb0 assets/silicon_mod/models/item/silicon.json
 e508887a568359c86ebd25ec46099de94a4211f4 assets/silicon_mod/models/item/silicon_detector.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_homunculus_heart.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_silicon_roller.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_silicon_tripod.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_teth_cow.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_teth_sheep.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_teth_zombie.json

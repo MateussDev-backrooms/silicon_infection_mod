@@ -27,6 +27,16 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_TETH_ZOMBIE = ITEMS.register("spawn_teth_zombie",
             () -> new ForgeSpawnEggItem(ModEntities.TETH_ZOMBIE, 0x00cccc, 0x8b4d39,
                     new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_TETH_COW = ITEMS.register("spawn_teth_cow",
+            () -> new ForgeSpawnEggItem(ModEntities.TETH_COW, 0x4b3616, 0x8b4d39,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_TETH_SHEEP = ITEMS.register("spawn_teth_sheep",
+            () -> new ForgeSpawnEggItem(ModEntities.TETH_SHEEP, 0xf4ebdd, 0x8b4d39,
+                    new Item.Properties()));
+
+    public static final RegistryObject<Item> SPAWN_HOMUNCULUS_HEART = ITEMS.register("spawn_homunculus_heart",
+            () -> new ForgeSpawnEggItem(ModEntities.HOMUNCULUS_HEART, 0x8b4d39, 0x8b2132,
+                    new Item.Properties()));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

@@ -15,15 +15,21 @@ public class TetherMobAction {
         if(pEntity.getType() == EntityType.ZOMBIE || pEntity.getType() == EntityType.HUSK || pEntity.getType() == EntityType.DROWNED) {
             tethered_result = ModEntities.TETH_ZOMBIE.get().create(pLevel);
         }
+        if(pEntity.getType() == EntityType.COW) {
+            tethered_result = ModEntities.TETH_COW.get().create(pLevel);
+        }
+        if(pEntity.getType() == EntityType.SHEEP) {
+            tethered_result = ModEntities.TETH_SHEEP.get().create(pLevel);
+        }
 
         //spawn the chosen entity
         if(tethered_result!=null) {
             tethered_result.moveTo(pEntity.getX(), pEntity.getY(), pEntity.getZ());
             pLevel.sendParticles(
                     ParticleTypes.EXPLOSION,
-                    pSelf.getX() + 0.5,
-                    pSelf.getY() + 0.5,
-                    pSelf.getZ() + 0.5,
+                    pEntity.getX() + 0.5,
+                    pEntity.getY() + 0.5,
+                    pEntity.getZ() + 0.5,
                     1,          // Number of particles per spawn call
                     0,    // X offset for randomness
                     0,    // Y offset
@@ -43,6 +49,10 @@ public class TetherMobAction {
                 pSelf.discard();
             }
         }
+    }
+
+    public void turnIntoHomunculus(ServerLevel pLevel, LivingEntity pSelf) {
+        pSelf.discard();
     }
 
 

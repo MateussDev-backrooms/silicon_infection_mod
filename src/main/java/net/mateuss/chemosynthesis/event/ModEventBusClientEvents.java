@@ -1,10 +1,7 @@
 package net.mateuss.chemosynthesis.event;
 
 import net.mateuss.chemosynthesis.Chemosynthesis;
-import net.mateuss.chemosynthesis.entity.client.ModModelLayers;
-import net.mateuss.chemosynthesis.entity.client.ModelSiliconRoller;
-import net.mateuss.chemosynthesis.entity.client.ModelSiliconTripod;
-import net.mateuss.chemosynthesis.entity.client.ModelTethZombie;
+import net.mateuss.chemosynthesis.entity.client.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,5 +14,8 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.SILICON_ROLLER_LAYER, ModelSiliconRoller::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.SILICON_TRIPOD_LAYER, ModelSiliconTripod::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.TETH_ZOMBIE_LAYER, ModelTethZombie::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.TETH_COW_LAYER, ModelTethCow::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.TETH_SHEEP_LAYER, ModelTethSheep::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.HOMUNCULUS_LAYER, ModelHomunculus::createBodyLayer);
     }
 }

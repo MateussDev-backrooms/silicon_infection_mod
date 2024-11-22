@@ -2,9 +2,11 @@ package net.mateuss.chemosynthesis.datagen;
 
 import net.mateuss.chemosynthesis.Chemosynthesis;
 import net.mateuss.chemosynthesis.block.ModBlocks;
+import net.mateuss.chemosynthesis.block.advanced.SiliconVeinBlock;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -18,6 +20,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(ModBlocks.SILICATE_BLOCK);
         blockWithItem(ModBlocks.SILICATE_EXPLOSIVE_BLOCK);
         blockWithItem(ModBlocks.SILICATE_TENDRIL_BLOCK);
+
+        simpleBlockWithItem(ModBlocks.SILICON_VEIN_BLOCK.get(), cubeAll(ModBlocks.SILICON_VEIN_BLOCK.get()));
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject) {

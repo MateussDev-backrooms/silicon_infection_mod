@@ -25,6 +25,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
                 block -> createOreDrop(ModBlocks.SILICATE_BLOCK.get(), ModItems.SILICON.get()));
 
         this.dropSelf(ModBlocks.SILICATE_EXPLOSIVE_BLOCK.get());
+        this.dropSelf(ModBlocks.SILICON_VEIN_BLOCK.get());
     }
 
     protected Iterable<Block> getKnownBlocks() {

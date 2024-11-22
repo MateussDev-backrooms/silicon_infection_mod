@@ -22,11 +22,13 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 .add(ModBlocks.SILICATE_BLOCK.get())
                 .add(ModBlocks.SILICATE_EXPLOSIVE_BLOCK.get())
                 .add(ModBlocks.SILICATE_TENDRIL_BLOCK.get())
+                .add(ModBlocks.SILICON_VEIN_BLOCK.get())
         ;
         this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(ModBlocks.SILICATE_BLOCK.get())
                 .add(ModBlocks.SILICATE_EXPLOSIVE_BLOCK.get())
                 .add(ModBlocks.SILICATE_TENDRIL_BLOCK.get())
+                .add(ModBlocks.SILICON_VEIN_BLOCK.get())
         ;
     }
 }

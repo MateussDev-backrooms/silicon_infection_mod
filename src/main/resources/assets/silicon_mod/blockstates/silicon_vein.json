@@ -1,0 +1,98 @@
+
+  {
+    "multipart": [
+      {
+        "when": {"siliconmod_filled": 0},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_000000"
+        }
+      },
+      {
+        "when": {"siliconmod_filled": 1},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_000000_half"
+        }
+      },
+      {
+        "when": {"siliconmod_filled": 2},
+        "apply": {
+          "model": "silicon_mod:block/silicon_vein_normal"
+        }
+      },
+
+
+
+      {
+        "when": {"north": true, "siliconmod_filled": 0},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_100000"
+        }
+      },
+      {
+        "when": {"south": true, "siliconmod_filled": 0},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_010000"
+        }
+      },
+      {
+        "when": {"east": true, "siliconmod_filled": 0},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_001000"
+        }
+      },
+      {
+        "when": {"west": true, "siliconmod_filled": 0},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_000100"
+        }
+      },
+      {
+        "when": {"up": true, "siliconmod_filled": 0},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_000010"
+        }
+      },
+      {
+        "when": {"down": true, "siliconmod_filled": 0},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_000001"
+        }
+      },
+      {
+        "when": {"north": true, "siliconmod_filled": 1},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_100000_half"
+        }
+      },
+      {
+        "when": {"south": true, "siliconmod_filled": 1},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_010000_half"
+        }
+      },
+      {
+        "when": {"east": true, "siliconmod_filled": 1},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_001000_half"
+        }
+      },
+      {
+        "when": {"west": true, "siliconmod_filled": 1},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_000100_half"
+        }
+      },
+      {
+        "when": {"up": true, "siliconmod_filled": 1},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_000010_half"
+        }
+      },
+      {
+        "when": {"down": true, "siliconmod_filled": 1},
+        "apply": {
+          "model": "silicon_mod:block/vein_block_000001_half"
+        }
+      }
+    ]
+  }

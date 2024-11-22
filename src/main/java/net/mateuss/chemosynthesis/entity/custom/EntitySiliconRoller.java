@@ -96,7 +96,7 @@ public class EntitySiliconRoller extends Monster {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 8D)
+                .add(Attributes.MAX_HEALTH, 12D)
                 .add(Attributes.MOVEMENT_SPEED, 0.33D)
                 .add(Attributes.FOLLOW_RANGE, 25D)
                 .add(Attributes.ARMOR_TOUGHNESS, 3D)
