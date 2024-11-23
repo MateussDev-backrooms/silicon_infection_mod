@@ -45,6 +45,8 @@ public class EntityHomunculus extends Monster {
     private int protection_radius = 3;
     private int spread_radius = 1;
 
+    public int heartbeat_speed = 40;
+
     private TetherMobAction tetherMobAction = new TetherMobAction();
 
     @Override
@@ -56,6 +58,8 @@ public class EntityHomunculus extends Monster {
         }
     }
 
+
+
     @Override
     public void baseTick() {
         super.baseTick();
@@ -63,7 +67,7 @@ public class EntityHomunculus extends Monster {
         if(!this.level().isClientSide) {
             ServerLevel lvl = (ServerLevel) this.level();
             this.t++;
-            if(t%20==0) {
+            if(t%this.heartbeat_speed==0) {
                 lvl.playSound(null, this.blockPosition(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.HOSTILE);
                 injectBlood();
             }
@@ -108,7 +112,7 @@ public class EntityHomunculus extends Monster {
 
     @Override
     protected void registerGoals() {
-
+        this.setPersistenceRequired();
     }
 
     public static AttributeSupplier.Builder createAttributes() {

@@ -2,6 +2,7 @@ package net.mateuss.chemosynthesis.block;
 
 import net.mateuss.chemosynthesis.Chemosynthesis;
 import net.mateuss.chemosynthesis.block.advanced.ExplosiveBlobBlock;
+import net.mateuss.chemosynthesis.block.advanced.SiliconTripodHatcher;
 import net.mateuss.chemosynthesis.block.advanced.SiliconVeinBlock;
 import net.mateuss.chemosynthesis.block.advanced.SiliconVeinBuilder;
 import net.mateuss.chemosynthesis.item.ModItems;
@@ -40,6 +41,10 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> SILICON_VEIN_BUILDER_BLOCK = registerBlock("silicon_vein_builder",
             () -> new SiliconVeinBuilder(BlockBehaviour.Properties
+                    .copy(Blocks.DRIPSTONE_BLOCK)
+                    .noOcclusion()));
+    public static final RegistryObject<Block> SILICON_TRIPOD_HATCHER = registerBlock("silicon_tripod_hatcher",
+            () -> new SiliconTripodHatcher(BlockBehaviour.Properties
                     .copy(Blocks.DRIPSTONE_BLOCK)
                     .noOcclusion()));
 

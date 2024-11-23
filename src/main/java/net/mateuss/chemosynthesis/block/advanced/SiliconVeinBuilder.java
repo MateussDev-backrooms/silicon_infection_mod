@@ -9,84 +9,186 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import org.apache.logging.log4j.core.jmx.Server;
 
 public class SiliconVeinBuilder extends Block implements IBloodFillable{
     public static final IntegerProperty DIRECTION = IntegerProperty.create("build_direction", 0, 5);
+    public static final IntegerProperty RESOURCES = IntegerProperty.create("build_resources", 0, 10);
 
 
     public SiliconVeinBuilder(Properties pProperties) {
         super(pProperties);
         this.registerDefaultState(this.getStateDefinition().any()
-                .setValue(DIRECTION, 0));
+                .setValue(DIRECTION, 0)
+                .setValue(RESOURCES, 10)
+        )
+        ;
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(DIRECTION);
+        pBuilder.add(DIRECTION, RESOURCES);
     }
 
-    private int chooseDirection(ServerLevel level, BlockPos pos) {
+    private int randomDirection(boolean[] arr, Level level) {
+        for(int it=0; it<arr.length*2; it++) {
+            int _chosen = level.random.nextIntBetweenInclusive(0, arr.length-1);
+            if(!arr[_chosen]) {
+                return _chosen;
+            }
+        }
+        return -1;
+    }
+
+    private boolean canExpandTo(Level level, BlockPos pos) {
+        BlockState _state = level.getBlockState(pos);
+
+        return _state.isAir() || !_state.isSolid() || _state.getDestroySpeed(level, pos) <= 1.4f;
+    }
+
+    private boolean surroundedByBlocks(Level level, BlockPos pos) {
+        return !canExpandTo(level, pos.relative(Direction.NORTH))
+                && !canExpandTo(level, pos.relative(Direction.SOUTH))
+                && !canExpandTo(level, pos.relative(Direction.WEST))
+                && !canExpandTo(level, pos.relative(Direction.EAST))
+                && !canExpandTo(level, pos.relative(Direction.UP))
+                && !canExpandTo(level, pos.relative(Direction.DOWN));
+
+    }
+    private boolean surroundedByVeins(Level level, BlockPos pos) {
+        return !(level.getBlockState(pos.relative(Direction.NORTH, 2)).getBlock() instanceof SiliconVeinBlock)
+                && !(level.getBlockState(pos.relative(Direction.SOUTH, 2)).getBlock() instanceof SiliconVeinBlock)
+                && !(level.getBlockState(pos.relative(Direction.WEST, 2)).getBlock() instanceof SiliconVeinBlock)
+                && !(level.getBlockState(pos.relative(Direction.EAST, 2)).getBlock() instanceof SiliconVeinBlock);
+    }
+
+    private boolean connectedToVeinsDirectly(Level level, BlockPos pos) {
+        return level.getBlockState(pos.relative(Direction.NORTH, 1)).getBlock() instanceof SiliconVeinBlock
+                || level.getBlockState(pos.relative(Direction.SOUTH, 1)).getBlock() instanceof SiliconVeinBlock
+                || level.getBlockState(pos.relative(Direction.WEST, 1)).getBlock() instanceof SiliconVeinBlock
+                || level.getBlockState(pos.relative(Direction.EAST, 1)).getBlock() instanceof SiliconVeinBlock
+                || level.getBlockState(pos.relative(Direction.DOWN, 1)).getBlock() instanceof SiliconVeinBlock
+                || level.getBlockState(pos.relative(Direction.UP, 1)).getBlock() instanceof SiliconVeinBlock
+                ;
+    }
+    private Direction oppositeDirectionOf(Direction dir) {
+        if(dir == Direction.NORTH) return Direction.SOUTH;
+        if(dir == Direction.SOUTH) return Direction.NORTH;
+        if(dir == Direction.EAST) return Direction.WEST;
+        if(dir == Direction.WEST) return Direction.EAST;
+        if(dir == Direction.UP) return Direction.DOWN;
+        if(dir == Direction.DOWN) return Direction.UP;
+        return Direction.NORTH;
+    }
+    private boolean connectedVeinsDirectlySmart(Level level, BlockPos pos, Direction last_moved_dir) {
         for(Direction dir : Direction.values()) {
-            if(level.isEmptyBlock(pos.relative(dir))) {
-                if(dir == Direction.NORTH) {
-                    return 0;
-                }
-                else if(dir == Direction.EAST) {
-                    return 1;
-                }
-                else if(dir == Direction.SOUTH) {
-                    return 2;
-                }
-                else if(dir == Direction.WEST) {
-                    return 3;
-                }
-                else if(dir == Direction.UP) {
-                    return 4;
-                }
-                else if(dir == Direction.DOWN) {
-                    return 5;
+            if(dir != oppositeDirectionOf(last_moved_dir)) {
+                if(level.getBlockState(pos.relative(dir)).getBlock() instanceof SiliconVeinBlock) {
+                    return true;
                 }
             }
         }
-        return 0;
+        return false;
+    }
+
+    private void collapseVeinBuilder(Level level, BlockPos pos) {
+        level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
     }
 
     @Override
     public void onBloodFlow(Level level, BlockPos pos, BlockState state, int bloodLevel) {
         if(!level.isClientSide()) {
-            boolean _success = false;
-            BlockPos _pos = pos;
-            switch (level.getBlockState(pos).getValue(DIRECTION)) {
-                case 0:
-                   _pos = pos.relative(Direction.NORTH);
-                   _success = true;
-                   break;
-                case 1:
-                    _pos = pos.relative(Direction.EAST);
-                    _success = true;
-                    break;
-                case 2:
-                    _pos = pos.relative(Direction.SOUTH);
-                    _success = true;
-                    break;
-                case 3:
-                    _pos = pos.relative(Direction.WEST);
-                    _success = true;
-                    break;
-                case 4:
-                    _pos = pos.relative(Direction.UP);
-                    _success = true;
-                    break;
-                case 5:
-                    _pos = pos.relative(Direction.DOWN);
-                    _success = true;
-                    break;
-            }
+            if(state.getValue(RESOURCES) > 0) {
+                Direction[] priority_dirs = {
+                        Direction.NORTH,
+                        Direction.EAST,
+                        Direction.SOUTH,
+                        Direction.WEST,
+                        Direction.UP,
+                        Direction.DOWN
+                };
+                Direction moveInDirection = priority_dirs[state.getValue(DIRECTION)];
+                boolean _collapsed = false;
 
-            if(_success) {
-                level.setBlock(_pos, state.setValue(DIRECTION, chooseDirection((ServerLevel) level, pos)), 3);
-                level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                //first check if it can go down due to gravity
+                //make sure there are no vein blocks to the sides of this one
+                if(level.isEmptyBlock(pos.below())
+                    && !connectedToVeinsDirectly(level, pos.below())) {
+
+                    level.setBlock(pos.below(), state, 3);
+                    level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                    return;
+                }
+
+                //then check if it is surrounded by blocks or by veins on a 2 distance
+                if(surroundedByBlocks(level, pos) || surroundedByBlocks(level, pos)) {
+                    collapseVeinBuilder(level, pos);
+                    return;
+                }
+
+                //check if the block has any blood vessel connected to it other than the one that provided it with blood
+                if(connectedVeinsDirectlySmart(level, pos, priority_dirs[state.getValue(DIRECTION)])) {
+                    //instead of collapsing it would disappear as turning into a vein might cause a loop
+                    level.destroyBlock(pos, false);
+                }
+
+                //check if the block is surrounded, but it can go up
+                if(
+                    !level.isEmptyBlock(pos.relative(Direction.NORTH))
+                        && !level.isEmptyBlock(pos.relative(Direction.SOUTH))
+                        && !level.isEmptyBlock(pos.relative(Direction.WEST))
+                        && !level.isEmptyBlock(pos.relative(Direction.EAST))
+                        && !level.isEmptyBlock(pos.relative(Direction.DOWN))
+                        && level.isEmptyBlock(pos.relative(Direction.UP))
+                ) {
+                    level.setBlock(pos.above(), state, 3);
+                    level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                    return;
+                }
+
+                //select random direction and check if it can move there until it moves
+                boolean[] checkedDirs = {
+                        false,
+                        false,
+                        false,
+                        false
+                };
+
+                //check for every other direction on the horizontal plane
+                for(int i=0; i<4; i++) {
+                    int chosenDir = randomDirection(checkedDirs, level);
+
+                    //instead of randomly choosing a direction it will ALWAYS move anywhere it can
+                    if(chosenDir != -1) {
+
+                        //check if we can move 2 blocks in the chosen direction
+                        //make sure the destination doesn't connect to any other veins at any point
+                        if(level.isEmptyBlock(pos.relative(priority_dirs[chosenDir]))
+                                && level.isEmptyBlock(pos.relative(priority_dirs[chosenDir], 2))
+                                && !connectedVeinsDirectlySmart(level, pos.relative(priority_dirs[chosenDir]), priority_dirs[chosenDir])
+                                && !connectedToVeinsDirectly(level, pos.relative(priority_dirs[chosenDir], 2))
+                        ) {
+
+                            //we move in this direction
+                            moveInDirection = priority_dirs[chosenDir];
+                            level.setBlock(pos.relative(moveInDirection, 2), state.setValue(RESOURCES, state.getValue(RESOURCES)-1), 3);
+                            level.setBlock(pos.relative(moveInDirection, 1), ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                            level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                            //don't return so we can check out other directions we can move in
+                        } else {
+                            //we cannot move in this direction so we check it out
+                            checkedDirs[chosenDir] = true;
+                        }
+                    } else {
+                        //we break off the loop if we get -1
+                        break;
+                    }
+                }
+                //if we are here it means we cannot move anywhere
+                //collapse if it cannot move
+                collapseVeinBuilder(level, pos);
+            } else {
+                //collapse due to running out of resources
+                collapseVeinBuilder(level, pos);
             }
         }
     }

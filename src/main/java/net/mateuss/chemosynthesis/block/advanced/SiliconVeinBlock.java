@@ -24,7 +24,7 @@ public class SiliconVeinBlock extends Block implements IBloodFillable {
 
     //base
     public static final IntegerProperty FILLED = IntegerProperty.create("siliconmod_filled", 0, 2);
-    private int stagger_time = 2;
+    private int stagger_time = 1;
 
     //connection multipart thing
     public static final BooleanProperty NORTH = BooleanProperty.create("north");
@@ -75,7 +75,7 @@ public class SiliconVeinBlock extends Block implements IBloodFillable {
         if(pState.getValue(FILLED) == 2) {
             spreadBlood(pLevel, pPos);
             pLevel.setBlock(pPos, pState.setValue(FILLED, 1), 3);
-            bloodflowParticles(pLevel, pPos);
+
         }
         else if(pState.getValue(FILLED) == 1) {
             pLevel.setBlock(pPos, pState.setValue(FILLED, 0), 3);
@@ -104,24 +104,7 @@ public class SiliconVeinBlock extends Block implements IBloodFillable {
         }
     }
 
-    private void bloodflowParticles(ServerLevel world, BlockPos pos) {
-        for (int i = 0; i < 20; i++) {
-            double offsetX = (world.random.nextDouble() - 0.5) * 0.5;
-            double offsetY = world.random.nextDouble() * 0.5;
-            double offsetZ = (world.random.nextDouble() - 0.5) * 0.5;
-            world.sendParticles(
-                    ParticleTypes.CRIT,
-                    pos.getX() + 0.5,
-                    pos.getY() + 0.5,
-                    pos.getZ() + 0.5,
-                    1,          // Number of particles per spawn call
-                    offsetX,    // X offset for randomness
-                    offsetY,    // Y offset
-                    offsetZ,    // Z offset
-                    0.03         // Speed of the particle
-            );
-        }
-    }
+
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
@@ -146,7 +129,7 @@ public class SiliconVeinBlock extends Block implements IBloodFillable {
         if(!level.isClientSide()) {
             level.setBlock(pos, state.setValue(FILLED, bloodLevel), 3);
             level.scheduleTick(pos, this, stagger_time);
-            bloodflowParticles((ServerLevel) level, pos);
+
         }
     }
 
@@ -158,9 +141,9 @@ public class SiliconVeinBlock extends Block implements IBloodFillable {
 
     //TEMP
 
-//    @Override
-//    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-//        this.onBloodFlow(pLevel, pPos, pState, 2);
-//        return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
-//    }
+    @Override
+    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        this.onBloodFlow(pLevel, pPos, pState, 2);
+        return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
+    }
 }

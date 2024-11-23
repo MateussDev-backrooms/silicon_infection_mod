@@ -25,6 +25,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(ModBlocks.SILICON_VEIN_BLOCK.get(), cubeAll(ModBlocks.SILICON_VEIN_BLOCK.get()));
 
         blockWithItem(ModBlocks.SILICON_VEIN_BUILDER_BLOCK);
+        blockWithItem(ModBlocks.SILICON_TRIPOD_HATCHER);
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject) {

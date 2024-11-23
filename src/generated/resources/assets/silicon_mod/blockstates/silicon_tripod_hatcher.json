@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "silicon_mod:block/silicon_tripod_hatcher"
+    }
+  }
+}
