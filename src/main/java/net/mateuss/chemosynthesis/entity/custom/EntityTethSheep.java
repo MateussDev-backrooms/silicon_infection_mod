@@ -133,17 +133,7 @@ public class EntityTethSheep extends Monster {
 
     @Override
     public void remove(RemovalReason pReason) {
-        if(!this.level().isClientSide && this.isDeadOrDying()) {
-            int k = 1 + this.random.nextInt(1);
-
-            for(int i=0; i<k; i++) {
-                EntitySiliconTripod tripod = ModEntities.SILICON_TRIPOD.get().create(this.level());
-                if(tripod != null) {
-                    tripod.moveTo(this.getX()+this.random.nextDouble(), this.getY(), this.getZ()+this.random.nextDouble());
-                    this.level().addFreshEntity(tripod);
-                }
-            }
-        }
+        tetherMobAction.spawnTripods((ServerLevel) this.level(), this, 1, 2);
         super.remove(pReason);
     }
 

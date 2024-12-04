@@ -5,6 +5,7 @@ package net.mateuss.chemosynthesis.entity.client;// Made with Blockbench 4.11.2
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.mateuss.chemosynthesis.entity.animations.AnimTetheredCow;
 import net.mateuss.chemosynthesis.entity.animations.ModAnimDefinitions;
 import net.mateuss.chemosynthesis.entity.custom.EntityTethCow;
 import net.minecraft.client.model.HierarchicalModel;
@@ -164,8 +165,8 @@ public class ModelTethCow<T extends Entity> extends HierarchicalModel<T> {
     public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
 
-        this.animateWalk(ModAnimDefinitions.TETH_COW_RUN, limbSwing, limbSwingAmount, 2f, 2.5f);
-        this.animate(((EntityTethCow) entity).AS_isIdle, ModAnimDefinitions.TETH_COW_IDLE, ageInTicks, 1f);
+        this.animateWalk(AnimTetheredCow.TETH_COW_RUN, limbSwing, limbSwingAmount, 2f, 2.5f);
+        this.animate(((EntityTethCow) entity).AS_isIdle, AnimTetheredCow.TETH_COW_IDLE, ageInTicks, 1f);
     }
 
     @Override

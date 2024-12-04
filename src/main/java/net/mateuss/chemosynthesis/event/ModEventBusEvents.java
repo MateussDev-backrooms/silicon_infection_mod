@@ -15,10 +15,13 @@ public class ModEventBusEvents {
     @SubscribeEvent
     public static void registerAttribute(EntityAttributeCreationEvent event) {
         event.put(ModEntities.SILICON_ROLLER.get(), EntitySiliconRoller.createAttributes().build());
+        event.put(ModEntities.SILIPEDE.get(), EntitySilipede.createAttributes().build());
         event.put(ModEntities.SILICON_TRIPOD.get(), EntitySiliconTripod.createAttributes().build());
         event.put(ModEntities.TETH_ZOMBIE.get(), EntityTethZombie.createAttributes().build());
         event.put(ModEntities.TETH_COW.get(), EntityTethCow.createAttributes().build());
         event.put(ModEntities.TETH_SHEEP.get(), EntityTethSheep.createAttributes().build());
+        event.put(ModEntities.TETH_PIG.get(), EntityTethPig.createAttributes().build());
         event.put(ModEntities.HOMUNCULUS_HEART.get(), EntityHomunculus.createAttributes().build());
+        event.put(ModEntities.BRACHATIC_STAGE.get(), EntityBrachaticStage.createAttributes().build());
     }
 }

@@ -102,10 +102,13 @@ public class Chemosynthesis
             // Some client setup code
             EntityRenderers.register(ModEntities.SILICON_ROLLER.get(), RendererSiliconRoller::new);
             EntityRenderers.register(ModEntities.SILICON_TRIPOD.get(), RendererSiliconTripod::new);
+            EntityRenderers.register(ModEntities.SILIPEDE.get(), RendererSilipede::new);
             EntityRenderers.register(ModEntities.TETH_ZOMBIE.get(), RendererTethZombie::new);
             EntityRenderers.register(ModEntities.TETH_COW.get(), RendererTethCow::new);
             EntityRenderers.register(ModEntities.TETH_SHEEP.get(), RendererTethSheep::new);
+            EntityRenderers.register(ModEntities.TETH_PIG.get(), RendererTethPig::new);
             EntityRenderers.register(ModEntities.HOMUNCULUS_HEART.get(), RendererHomunculus::new);
+            EntityRenderers.register(ModEntities.BRACHATIC_STAGE.get(), RendererBrachaticStage::new);
         }
     }
 }

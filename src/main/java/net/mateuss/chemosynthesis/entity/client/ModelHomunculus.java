@@ -5,6 +5,7 @@ package net.mateuss.chemosynthesis.entity.client;// Made with Blockbench 4.11.2
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.mateuss.chemosynthesis.entity.animations.AnimHomunculus;
 import net.mateuss.chemosynthesis.entity.animations.ModAnimDefinitions;
 import net.mateuss.chemosynthesis.entity.custom.EntityHomunculus;
 import net.mateuss.chemosynthesis.entity.custom.EntityTethSheep;
@@ -77,7 +78,7 @@ public class ModelHomunculus<T extends Entity> extends HierarchicalModel<T> {
         this.root().getAllParts().forEach(ModelPart::resetPose);
 
 //        this.animateWalk(ModAnimDefinitions.TETH_SHEEP_RUN, limbSwing, limbSwingAmount, 2f, 2.5f);
-        this.animate(((EntityHomunculus) entity).AS_isIdle, ModAnimDefinitions.HOMUNCULUS_HEARTBEAT, ageInTicks, 1f);
+        this.animate(((EntityHomunculus) entity).AS_isIdle, AnimHomunculus.HOMUNCULUS_HEARTBEAT, ageInTicks, 1f);
     }
 
     @Override

@@ -58,14 +58,20 @@ public class SiliconVeinBlock extends Block implements IBloodFillable {
     public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pNeighborBlock, BlockPos pNeighborPos, boolean pMovedByPiston) {
         super.neighborChanged(pState, pLevel, pPos, pNeighborBlock, pNeighborPos, pMovedByPiston);
         if(!pLevel.isClientSide()) {
+            BlockState neighbourState = pLevel.getBlockState(pNeighborPos);
             pLevel.setBlock(pPos, pState
                     .setValue(NORTH, canConnectTo(pLevel.getBlockState(pPos.north())))
                     .setValue(EAST, canConnectTo(pLevel.getBlockState(pPos.east())))
                     .setValue(SOUTH, canConnectTo(pLevel.getBlockState(pPos.south())))
                     .setValue(WEST, canConnectTo(pLevel.getBlockState(pPos.west())))
                     .setValue(UP, canConnectTo(pLevel.getBlockState(pPos.above())))
-                    .setValue(DOWN, canConnectTo(pLevel.getBlockState(pPos.below()))), 3);
+                    .setValue(DOWN, canConnectTo(pLevel.getBlockState(pPos.below())))
+//                    .setValue(FILLED, neighbourState.getValue(FILLED))
+                    , 3)
+
+            ;
             pLevel.scheduleTick(pPos, this, stagger_time*2);
+
         }
     }
 
@@ -87,6 +93,16 @@ public class SiliconVeinBlock extends Block implements IBloodFillable {
         super.randomTick(pState, pLevel, pPos, pRandom);
         if(pState.getValue(FILLED) == 1) {
             pLevel.setBlock(pPos, pState.setValue(FILLED, 0), 3);
+        }
+    }
+
+    @Override
+    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
+        super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
+
+        if (!pLevel.isClientSide() && pOldState.isAir()) {
+
+            pLevel.setBlock(pPos, pState.setValue(FILLED, 0), 2);
         }
     }
 
@@ -129,7 +145,6 @@ public class SiliconVeinBlock extends Block implements IBloodFillable {
         if(!level.isClientSide()) {
             level.setBlock(pos, state.setValue(FILLED, bloodLevel), 3);
             level.scheduleTick(pos, this, stagger_time);
-
         }
     }
 

@@ -21,7 +21,11 @@ public class RendererSiliconRoller extends MobRenderer<EntitySiliconRoller, Mode
     @Override
     public void render(EntitySiliconRoller pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
 
-
+        if(pEntity.isOnFire()) {
+            float shakeyX = (float) Math.sin(pEntity.shakeTimer * 10) * 0.1f;
+            float shakeyY = (float) Math.cos(pEntity.shakeTimer * 10) * 0.1f;
+            pPoseStack.translate(shakeyX, 0, shakeyY);
+        }
         super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
     }
 }

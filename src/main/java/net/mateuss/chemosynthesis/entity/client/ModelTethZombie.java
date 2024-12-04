@@ -5,6 +5,7 @@ package net.mateuss.chemosynthesis.entity.client;// Made with Blockbench 4.11.2
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.mateuss.chemosynthesis.entity.animations.AnimTetheredZombie;
 import net.mateuss.chemosynthesis.entity.animations.ModAnimDefinitions;
 import net.mateuss.chemosynthesis.entity.custom.EntitySiliconRoller;
 import net.mateuss.chemosynthesis.entity.custom.EntityTethZombie;
@@ -119,8 +120,8 @@ public class ModelTethZombie<T extends Entity> extends HierarchicalModel<T> {
     public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
 
-        this.animateWalk(ModAnimDefinitions.TETH_ZOMBIE_RUN, limbSwing, limbSwingAmount, 2f, 2.5f);
-        this.animate(((EntityTethZombie) entity).AS_isIdle, ModAnimDefinitions.TETH_ZOMBIE_IDLE, ageInTicks, 1f);
+        this.animateWalk(AnimTetheredZombie.TETH_ZOMBIE_RUN, limbSwing, limbSwingAmount, 2f, 2.5f);
+        this.animate(((EntityTethZombie) entity).AS_isIdle, AnimTetheredZombie.TETH_ZOMBIE_IDLE, ageInTicks, 1f);
     }
 
     @Override

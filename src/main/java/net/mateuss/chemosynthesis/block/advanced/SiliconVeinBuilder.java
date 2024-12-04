@@ -42,7 +42,7 @@ public class SiliconVeinBuilder extends Block implements IBloodFillable{
     private boolean canExpandTo(Level level, BlockPos pos) {
         BlockState _state = level.getBlockState(pos);
 
-        return _state.isAir() || !_state.isSolid() || _state.getDestroySpeed(level, pos) <= 1.4f;
+        return _state.isAir() || !_state.isSolid() || _state.getDestroySpeed(level, pos) <= 0.2f;
     }
 
     private boolean surroundedByBlocks(Level level, BlockPos pos) {
@@ -97,98 +97,105 @@ public class SiliconVeinBuilder extends Block implements IBloodFillable{
     @Override
     public void onBloodFlow(Level level, BlockPos pos, BlockState state, int bloodLevel) {
         if(!level.isClientSide()) {
-            if(state.getValue(RESOURCES) > 0) {
-                Direction[] priority_dirs = {
-                        Direction.NORTH,
-                        Direction.EAST,
-                        Direction.SOUTH,
-                        Direction.WEST,
-                        Direction.UP,
-                        Direction.DOWN
-                };
-                Direction moveInDirection = priority_dirs[state.getValue(DIRECTION)];
-                boolean _collapsed = false;
+            if(level.random.nextBoolean()) {
 
-                //first check if it can go down due to gravity
-                //make sure there are no vein blocks to the sides of this one
-                if(level.isEmptyBlock(pos.below())
-                    && !connectedToVeinsDirectly(level, pos.below())) {
+                if(state.getValue(RESOURCES) > 0) {
+                    Direction[] priority_dirs = {
+                            Direction.NORTH,
+                            Direction.EAST,
+                            Direction.SOUTH,
+                            Direction.WEST,
+                            Direction.UP,
+                            Direction.DOWN
+                    };
+                    Direction moveInDirection = priority_dirs[state.getValue(DIRECTION)];
+                    boolean _collapsed = false;
 
-                    level.setBlock(pos.below(), state, 3);
-                    level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
-                    return;
-                }
+                    //first check if it can go down 2 blocks due to gravity
+                    //make sure there are no vein blocks to the sides of this one
+                    if(canExpandTo(level, pos.below())
+                            && canExpandTo(level, pos.below(2))
+                            && !connectedToVeinsDirectly(level, pos.below())
+                            && !connectedToVeinsDirectly(level, pos.below(2)))
+                    {
 
-                //then check if it is surrounded by blocks or by veins on a 2 distance
-                if(surroundedByBlocks(level, pos) || surroundedByBlocks(level, pos)) {
-                    collapseVeinBuilder(level, pos);
-                    return;
-                }
-
-                //check if the block has any blood vessel connected to it other than the one that provided it with blood
-                if(connectedVeinsDirectlySmart(level, pos, priority_dirs[state.getValue(DIRECTION)])) {
-                    //instead of collapsing it would disappear as turning into a vein might cause a loop
-                    level.destroyBlock(pos, false);
-                }
-
-                //check if the block is surrounded, but it can go up
-                if(
-                    !level.isEmptyBlock(pos.relative(Direction.NORTH))
-                        && !level.isEmptyBlock(pos.relative(Direction.SOUTH))
-                        && !level.isEmptyBlock(pos.relative(Direction.WEST))
-                        && !level.isEmptyBlock(pos.relative(Direction.EAST))
-                        && !level.isEmptyBlock(pos.relative(Direction.DOWN))
-                        && level.isEmptyBlock(pos.relative(Direction.UP))
-                ) {
-                    level.setBlock(pos.above(), state, 3);
-                    level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
-                    return;
-                }
-
-                //select random direction and check if it can move there until it moves
-                boolean[] checkedDirs = {
-                        false,
-                        false,
-                        false,
-                        false
-                };
-
-                //check for every other direction on the horizontal plane
-                for(int i=0; i<4; i++) {
-                    int chosenDir = randomDirection(checkedDirs, level);
-
-                    //instead of randomly choosing a direction it will ALWAYS move anywhere it can
-                    if(chosenDir != -1) {
-
-                        //check if we can move 2 blocks in the chosen direction
-                        //make sure the destination doesn't connect to any other veins at any point
-                        if(level.isEmptyBlock(pos.relative(priority_dirs[chosenDir]))
-                                && level.isEmptyBlock(pos.relative(priority_dirs[chosenDir], 2))
-                                && !connectedVeinsDirectlySmart(level, pos.relative(priority_dirs[chosenDir]), priority_dirs[chosenDir])
-                                && !connectedToVeinsDirectly(level, pos.relative(priority_dirs[chosenDir], 2))
-                        ) {
-
-                            //we move in this direction
-                            moveInDirection = priority_dirs[chosenDir];
-                            level.setBlock(pos.relative(moveInDirection, 2), state.setValue(RESOURCES, state.getValue(RESOURCES)-1), 3);
-                            level.setBlock(pos.relative(moveInDirection, 1), ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
-                            level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
-                            //don't return so we can check out other directions we can move in
-                        } else {
-                            //we cannot move in this direction so we check it out
-                            checkedDirs[chosenDir] = true;
-                        }
-                    } else {
-                        //we break off the loop if we get -1
-                        break;
+                        level.setBlock(pos.below(2), state, 3);
+                        level.setBlock(pos.below(), ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                        level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                        return;
                     }
+
+                    //then check if it is surrounded by blocks or by veins on a 2 distance
+                    if(surroundedByBlocks(level, pos) || surroundedByBlocks(level, pos)) {
+                        collapseVeinBuilder(level, pos);
+                        return;
+                    }
+
+                    //check if the block has any blood vessel connected to it other than the one that provided it with blood
+                    if(connectedVeinsDirectlySmart(level, pos, priority_dirs[state.getValue(DIRECTION)])) {
+                        //instead of collapsing it would disappear as turning into a vein might cause a loop
+                        level.destroyBlock(pos, false);
+                    }
+
+                    //check if the block is surrounded, but it can go up
+                    if(
+                        !canExpandTo(level, pos.relative(Direction.NORTH))
+                            && !canExpandTo(level, pos.relative(Direction.SOUTH))
+                            && !canExpandTo(level, pos.relative(Direction.WEST))
+                            && !canExpandTo(level, pos.relative(Direction.EAST))
+                            && !canExpandTo(level, pos.relative(Direction.DOWN))
+                            && canExpandTo(level, pos.relative(Direction.UP))
+                    ) {
+                        level.setBlock(pos.above(), state, 3);
+                        level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                        return;
+                    }
+
+                    //select random direction and check if it can move there until it moves
+                    boolean[] checkedDirs = {
+                            false,
+                            false,
+                            false,
+                            false
+                    };
+
+                    //check for every other direction on the horizontal plane
+                    for(int i=0; i<4; i++) {
+                        int chosenDir = randomDirection(checkedDirs, level);
+
+                        //instead of randomly choosing a direction it will ALWAYS move anywhere it can
+                        if(chosenDir != -1) {
+
+                            //check if we can move 2 blocks in the chosen direction
+                            //make sure the destination doesn't connect to any other veins at any point
+                            if(level.isEmptyBlock(pos.relative(priority_dirs[chosenDir]))
+                                    && level.isEmptyBlock(pos.relative(priority_dirs[chosenDir], 2))
+                                    && !connectedVeinsDirectlySmart(level, pos.relative(priority_dirs[chosenDir]), priority_dirs[chosenDir])
+                                    && !connectedToVeinsDirectly(level, pos.relative(priority_dirs[chosenDir], 2))
+                            ) {
+
+                                //we move in this direction
+                                moveInDirection = priority_dirs[chosenDir];
+                                level.setBlock(pos.relative(moveInDirection, 2), state.setValue(RESOURCES, state.getValue(RESOURCES)-1), 3);
+                                level.setBlock(pos.relative(moveInDirection, 1), ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                                level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                                //don't return so we can check out other directions we can move in
+                            } else {
+                                //we cannot move in this direction so we check it out
+                                checkedDirs[chosenDir] = true;
+                            }
+                        } else {
+                            //we break off the loop if we get -1
+                            break;
+                        }
+                    }
+                    //if we are here it means we cannot move anywhere
+                    //collapse if it cannot move
+                    collapseVeinBuilder(level, pos);
+                } else {
+                    //collapse due to running out of resources
+                    collapseVeinBuilder(level, pos);
                 }
-                //if we are here it means we cannot move anywhere
-                //collapse if it cannot move
-                collapseVeinBuilder(level, pos);
-            } else {
-                //collapse due to running out of resources
-                collapseVeinBuilder(level, pos);
             }
         }
     }

@@ -15,7 +15,7 @@ public class ModEntities {
 
     public static final RegistryObject<EntityType<EntitySiliconRoller>> SILICON_ROLLER =
             ENTITY_TYPES.register("silicon_roller", () -> EntityType.Builder.of(EntitySiliconRoller::new, MobCategory.MONSTER)
-                    .sized(1f, 1f).build("silicon_roller"));
+                    .sized(0.7f, 0.7f).build("silicon_roller"));
 
     public static final RegistryObject<EntityType<EntitySiliconTripod>> SILICON_TRIPOD =
             ENTITY_TYPES.register("silicon_tripod", () -> EntityType.Builder.of(EntitySiliconTripod::new, MobCategory.MONSTER)
@@ -32,11 +32,20 @@ public class ModEntities {
     public static final RegistryObject<EntityType<EntityTethSheep>> TETH_SHEEP =
             ENTITY_TYPES.register("teth_sheep", () -> EntityType.Builder.of(EntityTethSheep::new, MobCategory.MONSTER)
                     .sized(0.7f, 1.8f).build("teth_sheep"));
+    public static final RegistryObject<EntityType<EntityTethPig>> TETH_PIG =
+            ENTITY_TYPES.register("teth_pig", () -> EntityType.Builder.of(EntityTethPig::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f).build("teth_pig"));
 
 
     public static final RegistryObject<EntityType<EntityHomunculus>> HOMUNCULUS_HEART =
             ENTITY_TYPES.register("homunculus_heart", () -> EntityType.Builder.of(EntityHomunculus::new, MobCategory.MONSTER)
                     .sized(0.7f, 1.8f).build("homunculus_heart"));
+    public static final RegistryObject<EntityType<EntitySilipede>> SILIPEDE =
+            ENTITY_TYPES.register("silipede", () -> EntityType.Builder.of(EntitySilipede::new, MobCategory.MONSTER)
+                    .sized(0.7f, 2.3f).build("silipede"));
+    public static final RegistryObject<EntityType<EntityBrachaticStage>> BRACHATIC_STAGE =
+            ENTITY_TYPES.register("brachatic_stage", () -> EntityType.Builder.of(EntityBrachaticStage::new, MobCategory.MONSTER)
+                    .sized(0.7f, 2.3f).build("brachatic_stage"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

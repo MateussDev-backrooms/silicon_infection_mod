@@ -34,6 +34,8 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModItems.SPAWN_TETH_ZOMBIE.get());
                         pOutput.accept(ModItems.SPAWN_TETH_SHEEP.get());
                         pOutput.accept(ModItems.SPAWN_TETH_COW.get());
+                        pOutput.accept(ModItems.SPAWN_TETH_PIG.get());
+
                         pOutput.accept(ModItems.SPAWN_HOMUNCULUS_HEART.get());
 
                     })

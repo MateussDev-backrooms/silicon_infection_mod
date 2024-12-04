@@ -188,6 +188,8 @@ public class ModelSiliconRoller<T extends Entity> extends HierarchicalModel<T> {
         root.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
+
+
     @Override
     public ModelPart root() {
         return root;
