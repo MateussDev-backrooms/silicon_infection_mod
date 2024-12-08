@@ -24,6 +24,9 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_SILICON_TRIPOD = ITEMS.register("spawn_silicon_tripod",
             () -> new ForgeSpawnEggItem(ModEntities.SILICON_TRIPOD, 0x7b3c32, 0x7b4657,
                     new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_SILIPEDE = ITEMS.register("spawn_silipede",
+            () -> new ForgeSpawnEggItem(ModEntities.SILIPEDE, 0x7b3c32, 0x553531,
+                    new Item.Properties()));
     public static final RegistryObject<Item> SPAWN_TETH_ZOMBIE = ITEMS.register("spawn_teth_zombie",
             () -> new ForgeSpawnEggItem(ModEntities.TETH_ZOMBIE, 0x00cccc, 0x8b4d39,
                     new Item.Properties()));
@@ -39,6 +42,9 @@ public class ModItems {
 
     public static final RegistryObject<Item> SPAWN_HOMUNCULUS_HEART = ITEMS.register("spawn_homunculus_heart",
             () -> new ForgeSpawnEggItem(ModEntities.HOMUNCULUS_HEART, 0x8b4d39, 0x8b2132,
+                    new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_BRACHATIC_STAGE = ITEMS.register("spawn_brachatic_stage",
+            () -> new ForgeSpawnEggItem(ModEntities.BRACHATIC_STAGE, 0x8b4d39, 0x7b4657,
                     new Item.Properties()));
 
     public static void register(IEventBus eventBus) {

@@ -19,6 +19,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.TETH_SHEEP_LAYER, ModelTethSheep::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.TETH_PIG_LAYER, ModelTethPig::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.HOMUNCULUS_LAYER, ModelHomunculus::createBodyLayer);
-        event.registerLayerDefinition(ModModelLayers.BRACHATIC_STAGE, ModelBrachaticStage::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.BRACHATIC_STAGE_LAYER, ModelBrachaticStage::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.BRACHATIC_HARPOON_LAYER, ModelBrachaticHarpoonBulb::createBodyLayer);
     }
 }

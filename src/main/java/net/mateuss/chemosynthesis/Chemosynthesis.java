@@ -109,6 +109,7 @@ public class Chemosynthesis
             EntityRenderers.register(ModEntities.TETH_PIG.get(), RendererTethPig::new);
             EntityRenderers.register(ModEntities.HOMUNCULUS_HEART.get(), RendererHomunculus::new);
             EntityRenderers.register(ModEntities.BRACHATIC_STAGE.get(), RendererBrachaticStage::new);
+            EntityRenderers.register(ModEntities.BRACHATIC_HARPOON.get(), context -> new RendererBrachaticHarpoon(context, ModModelLayers.BRACHATIC_HARPOON_LAYER));
         }
     }
 }

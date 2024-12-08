@@ -149,4 +149,6 @@ public class EntityBrachaticStage extends Monster {
 
         return super.killedEntity(pLevel, pEntity);
     }
+
+    
 }

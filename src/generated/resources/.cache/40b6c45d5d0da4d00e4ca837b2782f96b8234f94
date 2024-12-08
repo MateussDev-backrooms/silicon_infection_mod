@@ -1,9 +1,11 @@
-// 1.20.1	2024-11-25T21:49:11.8062788	Item Models: silicon_mod
+// 1.20.1	2024-12-08T21:18:38.6890564	Item Models: silicon_mod
 b811f8f64e82fa01831ab1a895ad81e7ed0abbb0 assets/silicon_mod/models/item/silicon.json
 e508887a568359c86ebd25ec46099de94a4211f4 assets/silicon_mod/models/item/silicon_detector.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_brachatic_stage.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_homunculus_heart.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_silicon_roller.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_silicon_tripod.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_silipede.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_teth_cow.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_teth_pig.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_teth_sheep.json

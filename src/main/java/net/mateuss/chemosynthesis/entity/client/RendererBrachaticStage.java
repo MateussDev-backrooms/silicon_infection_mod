@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class RendererBrachaticStage extends MobRenderer<EntityBrachaticStage, ModelBrachaticStage<EntityBrachaticStage>> {
     public RendererBrachaticStage(EntityRendererProvider.Context pContext) {
-        super(pContext, new ModelBrachaticStage<>(pContext.bakeLayer(ModModelLayers.BRACHATIC_STAGE)), 0.6f);
+        super(pContext, new ModelBrachaticStage<>(pContext.bakeLayer(ModModelLayers.BRACHATIC_STAGE_LAYER)), 0.6f);
     }
 
     @Override

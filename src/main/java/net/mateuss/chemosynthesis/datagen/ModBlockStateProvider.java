@@ -22,7 +22,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(ModBlocks.SILICATE_EXPLOSIVE_BLOCK);
         blockWithItem(ModBlocks.SILICATE_TENDRIL_BLOCK);
 
-        simpleBlockWithItem(ModBlocks.SILICON_VEIN_BLOCK.get(), cubeAll(ModBlocks.SILICON_VEIN_BLOCK.get()));
+//        simpleBlockWithItem(ModBlocks.SILICON_VEIN_BLOCK.get(), cubeAll(ModBlocks.SILICON_VEIN_BLOCK.get()));
 
         blockWithItem(ModBlocks.SILICON_VEIN_BUILDER_BLOCK);
         blockWithItem(ModBlocks.SILICON_TRIPOD_HATCHER);
