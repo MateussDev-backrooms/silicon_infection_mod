@@ -3,6 +3,7 @@ package net.Mateuss.Chemosynthesis.core;
 import net.Mateuss.Chemosynthesis.Chemosynthesis;
 import net.Mateuss.Chemosynthesis.entity.living_entities.conjugonal.EntityBrachaticStage;
 import net.Mateuss.Chemosynthesis.entity.living_entities.homunculoid.EntityHomunculus;
+import net.Mateuss.Chemosynthesis.entity.living_entities.homunculoid.EntityHomVaucole;
 import net.Mateuss.Chemosynthesis.entity.living_entities.pure.EntitySiliconRoller;
 import net.Mateuss.Chemosynthesis.entity.living_entities.pure.EntitySiliconTripod;
 import net.Mateuss.Chemosynthesis.entity.living_entities.pure.EntitySilipede;
@@ -67,6 +68,9 @@ public class ModEntities {
     public static final RegistryObject<EntityType<EntityHomunculus>> HOMUNCULUS_HEART =
             ENTITY_TYPES.register("homunculus_heart", () -> EntityType.Builder.of(EntityHomunculus::new, MobCategory.MONSTER)
                     .sized(0.7f, 1.8f).build("homunculus_heart"));
+    public static final RegistryObject<EntityType<EntityHomVaucole>> HOMUNCULUS_VAUCOLE =
+            ENTITY_TYPES.register("homunculus_vaucole", () -> EntityType.Builder.of(EntityHomVaucole::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f).build("homunculus_vaucole"));
 
     //PROJECTILES
     public static final RegistryObject<EntityType<ProjectileBrachaticHarpoon>> BRACHATIC_HARPOON =

@@ -1,4 +1,4 @@
-package net.Mateuss.Chemosynthesis.block.advanced;
+package net.Mateuss.Chemosynthesis.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;

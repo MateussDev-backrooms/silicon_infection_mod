@@ -22,11 +22,12 @@ public class ModBlockLootTables extends BlockLootSubProvider {
                 block -> createOreDrop(ModBlocks.SILICATE_BLOCK.get(), ModItems.SILICON.get()));
 
         this.dropSelf(ModBlocks.SILICATE_EXPLOSIVE_BLOCK.get());
-        this.dropSelf(ModBlocks.SILICON_VEIN_BLOCK.get());
-        this.dropSelf(ModBlocks.SILICON_VEIN_BUILDER_BLOCK.get());
-        this.dropSelf(ModBlocks.SILICON_TRIPOD_HATCHER.get());
 
         this.dropWhenSilkTouch(ModBlocks.TENDRIL_BLOCK.get());
+        this.dropWhenSilkTouch(ModBlocks.HOM_ROOT_VAUCOLE.get());
+        this.dropWhenSilkTouch(ModBlocks.HOM_TRIPOD_HATCHER.get());
+        this.dropWhenSilkTouch(ModBlocks.HOM_VEIN_BLOCK.get());
+        this.dropWhenSilkTouch(ModBlocks.HOM_VEIN_BUILDER_BLOCK.get());
     }
 
     protected Iterable<Block> getKnownBlocks() {

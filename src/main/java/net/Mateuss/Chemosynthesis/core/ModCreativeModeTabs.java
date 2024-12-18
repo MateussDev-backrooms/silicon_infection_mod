@@ -22,9 +22,11 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.SILICATE_BLOCK.get());
                         pOutput.accept(ModBlocks.SILICATE_TENDRIL_BLOCK.get());
                         pOutput.accept(ModBlocks.SILICATE_EXPLOSIVE_BLOCK.get());
-                        pOutput.accept(ModBlocks.SILICON_VEIN_BLOCK.get());
-                        pOutput.accept(ModBlocks.SILICON_VEIN_BUILDER_BLOCK.get());
-                        pOutput.accept(ModBlocks.SILICON_TRIPOD_HATCHER.get());
+
+                        pOutput.accept(ModBlocks.HOM_VEIN_BLOCK.get());
+                        pOutput.accept(ModBlocks.HOM_VEIN_BUILDER_BLOCK.get());
+                        pOutput.accept(ModBlocks.HOM_TRIPOD_HATCHER.get());
+                        pOutput.accept(ModBlocks.HOM_ROOT_VAUCOLE.get());
 
                         pOutput.accept(ModBlocks.TENDRIL_BLOCK.get());
 
@@ -46,6 +48,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModItems.SPAWN_BRACHATIC_STAGE.get());
 
                         pOutput.accept(ModItems.SPAWN_HOMUNCULUS_HEART.get());
+                        pOutput.accept(ModItems.SPAWN_HOMUNCULUS_VAUCOLE.get());
 
                     })
                     .build());

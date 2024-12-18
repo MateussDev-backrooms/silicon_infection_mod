@@ -50,6 +50,11 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_HOMUNCULUS_HEART = ITEMS.register("spawn_homunculus_heart",
             () -> new ForgeSpawnEggItem(ModEntities.HOMUNCULUS_HEART, 0x8b4d39, 0x8b2132,
                     new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_HOMUNCULUS_VAUCOLE = ITEMS.register("spawn_homunculus_vaucole",
+            () -> new ForgeSpawnEggItem(ModEntities.HOMUNCULUS_VAUCOLE, 0x8b4d39, 0x5e5b38,
+                    new Item.Properties()));
+
+
     public static final RegistryObject<Item> SPAWN_BRACHATIC_STAGE = ITEMS.register("spawn_brachatic_stage",
             () -> new ForgeSpawnEggItem(ModEntities.BRACHATIC_STAGE, 0x8b4d39, 0x7b4657,
                     new Item.Properties()));

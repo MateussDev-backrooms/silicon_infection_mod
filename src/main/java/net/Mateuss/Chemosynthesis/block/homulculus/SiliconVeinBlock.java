@@ -1,5 +1,6 @@
-package net.Mateuss.Chemosynthesis.block.advanced;
+package net.Mateuss.Chemosynthesis.block.homulculus;
 
+import net.Mateuss.Chemosynthesis.block.IBloodFillable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;

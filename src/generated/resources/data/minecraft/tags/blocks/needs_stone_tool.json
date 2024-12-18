@@ -3,8 +3,8 @@
     "silicon_mod:silicate_block",
     "silicon_mod:silicate_explosive_block",
     "silicon_mod:silicate_tendril_block",
-    "silicon_mod:silicon_vein",
-    "silicon_mod:silicon_tripod_hatcher",
+    "silicon_mod:hom_vein",
+    "silicon_mod:hom_tripod_hatcher",
     "silicon_mod:tendril_block"
   ]
 }

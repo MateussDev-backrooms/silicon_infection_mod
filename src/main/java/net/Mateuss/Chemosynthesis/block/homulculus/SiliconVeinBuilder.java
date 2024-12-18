@@ -1,5 +1,6 @@
-package net.Mateuss.Chemosynthesis.block.advanced;
+package net.Mateuss.Chemosynthesis.block.homulculus;
 
+import net.Mateuss.Chemosynthesis.block.IBloodFillable;
 import net.Mateuss.Chemosynthesis.core.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-public class SiliconVeinBuilder extends Block implements IBloodFillable{
+public class SiliconVeinBuilder extends Block implements IBloodFillable {
     public static final IntegerProperty DIRECTION = IntegerProperty.create("build_direction", 0, 5);
     public static final IntegerProperty RESOURCES = IntegerProperty.create("build_resources", 0, 10);
 
@@ -91,7 +92,7 @@ public class SiliconVeinBuilder extends Block implements IBloodFillable{
     }
 
     private void collapseVeinBuilder(Level level, BlockPos pos) {
-        level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+        level.setBlock(pos, ModBlocks.HOM_VEIN_BLOCK.get().defaultBlockState(), 3);
     }
 
     @Override
@@ -120,8 +121,8 @@ public class SiliconVeinBuilder extends Block implements IBloodFillable{
                     {
 
                         level.setBlock(pos.below(2), state, 3);
-                        level.setBlock(pos.below(), ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
-                        level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                        level.setBlock(pos.below(), ModBlocks.HOM_VEIN_BLOCK.get().defaultBlockState(), 3);
+                        level.setBlock(pos, ModBlocks.HOM_VEIN_BLOCK.get().defaultBlockState(), 3);
                         return;
                     }
 
@@ -147,7 +148,7 @@ public class SiliconVeinBuilder extends Block implements IBloodFillable{
                             && canExpandTo(level, pos.relative(Direction.UP))
                     ) {
                         level.setBlock(pos.above(), state, 3);
-                        level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                        level.setBlock(pos, ModBlocks.HOM_VEIN_BLOCK.get().defaultBlockState(), 3);
                         return;
                     }
 
@@ -177,8 +178,8 @@ public class SiliconVeinBuilder extends Block implements IBloodFillable{
                                 //we move in this direction
                                 moveInDirection = priority_dirs[chosenDir];
                                 level.setBlock(pos.relative(moveInDirection, 2), state.setValue(RESOURCES, state.getValue(RESOURCES)-1), 3);
-                                level.setBlock(pos.relative(moveInDirection, 1), ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
-                                level.setBlock(pos, ModBlocks.SILICON_VEIN_BLOCK.get().defaultBlockState(), 3);
+                                level.setBlock(pos.relative(moveInDirection, 1), ModBlocks.HOM_VEIN_BLOCK.get().defaultBlockState(), 3);
+                                level.setBlock(pos, ModBlocks.HOM_VEIN_BLOCK.get().defaultBlockState(), 3);
                                 //don't return so we can check out other directions we can move in
                             } else {
                                 //we cannot move in this direction so we check it out

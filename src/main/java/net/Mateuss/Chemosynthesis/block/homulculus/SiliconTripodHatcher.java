@@ -1,5 +1,6 @@
-package net.Mateuss.Chemosynthesis.block.advanced;
+package net.Mateuss.Chemosynthesis.block.homulculus;
 
+import net.Mateuss.Chemosynthesis.block.IBloodFillable;
 import net.Mateuss.Chemosynthesis.core.ModEntities;
 import net.Mateuss.Chemosynthesis.entity.living_entities.pure.EntitySiliconTripod;
 import net.minecraft.core.BlockPos;
@@ -8,7 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class SiliconTripodHatcher extends Block implements IBloodFillable{
+public class SiliconTripodHatcher extends Block implements IBloodFillable {
 
     public SiliconTripodHatcher(Properties pProperties) {
         super(pProperties);

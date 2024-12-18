@@ -1,4 +1,4 @@
-package net.Mateuss.Chemosynthesis.block.advanced;
+package net.Mateuss.Chemosynthesis.block;
 
 import net.Mateuss.Chemosynthesis.Chemosynthesis;
 import net.Mateuss.Chemosynthesis.entity.living_entities.vegetative.VegetativeBase;

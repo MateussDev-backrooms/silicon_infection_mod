@@ -1,5 +1,6 @@
-// 1.20.1	2024-12-12T18:20:10.5812041	Tags for minecraft:block mod id silicon_mod
+// 1.20.1	2024-12-17T19:58:46.9117788	Tags for minecraft:block mod id silicon_mod
 b71b516d9973253bc471bb65a115e998520a11f3 data/minecraft/tags/blocks/cave_vines.json
 b71b516d9973253bc471bb65a115e998520a11f3 data/minecraft/tags/blocks/mineable/hoe.json
-d419223e41bf84e600566e891700b2626b69b354 data/minecraft/tags/blocks/mineable/pickaxe.json
-e03bb8521f78760885373d0f5ca5b45210a63626 data/minecraft/tags/blocks/needs_stone_tool.json
+5b4b88599def0d6b76c7389304a5d5193e84dfb6 data/minecraft/tags/blocks/mineable/pickaxe.json
+d59d88de06d17c566cefe7c21bc87c8d7718f102 data/minecraft/tags/blocks/needs_iron_tool.json
+707dc80e65e296f466a48539860ba0114051e40e data/minecraft/tags/blocks/needs_stone_tool.json

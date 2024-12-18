@@ -1,7 +1,7 @@
 package net.Mateuss.Chemosynthesis.entity.living_entities.homunculoid;
 
 import net.Mateuss.Chemosynthesis.core.ModBlocks;
-import net.Mateuss.Chemosynthesis.block.advanced.IBloodFillable;
+import net.Mateuss.Chemosynthesis.block.IBloodFillable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
