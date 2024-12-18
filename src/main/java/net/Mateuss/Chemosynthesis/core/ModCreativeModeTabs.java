@@ -25,7 +25,6 @@ public class ModCreativeModeTabs {
 
                         pOutput.accept(ModBlocks.HOM_VEIN_BLOCK.get());
                         pOutput.accept(ModBlocks.HOM_VEIN_BUILDER_BLOCK.get());
-                        pOutput.accept(ModBlocks.HOM_TRIPOD_HATCHER.get());
                         pOutput.accept(ModBlocks.HOM_ROOT_VAUCOLE.get());
 
                         pOutput.accept(ModBlocks.TENDRIL_BLOCK.get());

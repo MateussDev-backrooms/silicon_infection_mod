@@ -65,8 +65,8 @@ public class BaseOrganelleRootEntity extends BlockEntity {
                         organelle.moveTo(worldPosition.getX() + 0.5f, worldPosition.getY()+1f, worldPosition.getZ()+0.5f);
                         slvl.addFreshEntity(organelle);
                         spawned_organelle_uuid = organelle.getUUID();
-                        setChanged();
                         spawn_progress = 0;
+                        setChanged();
                     }
                 }
             }

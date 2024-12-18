@@ -5,6 +5,8 @@ import net.Mateuss.Chemosynthesis.core.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -92,6 +94,15 @@ public class SiliconVeinBuilder extends Block implements IBloodFillable {
     }
 
     private void collapseVeinBuilder(Level level, BlockPos pos) {
+        Block[] collapsibleBlocks = {
+                ModBlocks.HOM_ROOT_VAUCOLE.get(),
+                ModBlocks.HOM_TRIPOD_HATCHER.get()
+        };
+
+        Block chosenBlock = collapsibleBlocks[level.random.nextIntBetweenInclusive(0, collapsibleBlocks.length-1)];
+        level.setBlock(pos, chosenBlock.defaultBlockState(), 3);
+    }
+    private void collapseToVein(Level level, BlockPos pos) {
         level.setBlock(pos, ModBlocks.HOM_VEIN_BLOCK.get().defaultBlockState(), 3);
     }
 
@@ -99,6 +110,7 @@ public class SiliconVeinBuilder extends Block implements IBloodFillable {
     public void onBloodFlow(Level level, BlockPos pos, BlockState state, int bloodLevel) {
         if(!level.isClientSide()) {
             if(level.random.nextBoolean()) {
+                level.playSound(null, pos, SoundEvents.MUD_BREAK, SoundSource.AMBIENT);
 
                 if(state.getValue(RESOURCES) > 0) {
                     Direction[] priority_dirs = {
@@ -135,7 +147,7 @@ public class SiliconVeinBuilder extends Block implements IBloodFillable {
                     //check if the block has any blood vessel connected to it other than the one that provided it with blood
                     if(connectedVeinsDirectlySmart(level, pos, priority_dirs[state.getValue(DIRECTION)])) {
                         //instead of collapsing it would disappear as turning into a vein might cause a loop
-                        level.destroyBlock(pos, false);
+                        collapseVeinBuilder(level, pos);
                     }
 
                     //check if the block is surrounded, but it can go up

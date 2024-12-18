@@ -13,7 +13,9 @@
   "block.silicon_mod.silicate_block": "Silicate block",
   "block.silicon_mod.silicate_tendril_block": "Silicate tendril block",
   "block.silicon_mod.silicate_explosive_block": "Silicate vicious blob block",
-  "block.silicon_mod.silcon_vein_block": "Silicon vein block",
+  "block.silicon_mod.hom_vein_block": "Silicon vein block",
+  "block.silicon_mod.hom_root_vaucole": "Vaucole root",
+  "block.silicon_mod.hom_vein_builder": "Silicon vein builder",
 
   "entity.silicon_mod.silicon_roller": "Silicon Roller",
   "entity.silicon_mod.silicon_tripod": "Silicon Tripod",
