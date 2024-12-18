@@ -6,10 +6,8 @@ import net.Mateuss.Chemosynthesis.entity.living_entities.homunculoid.Homunculoid
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -18,14 +16,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.Optional;
 import java.util.UUID;
 
-public class BaseOrganelleRootEntity extends BlockEntity {
+public class BEVaucoleRootEntity extends BlockEntity {
+
     private int spawn_progress = 0;
     private int has_already_spawned = 0; //0 for false and 1 for true
     private UUID spawned_organelle_uuid = null;
 
 
-    public BaseOrganelleRootEntity(BlockPos pPos, BlockState pBlockState) {
-        super(ModBlockEntities.BASE_ROOT_ENTITY.get(), pPos, pBlockState);
+    public BEVaucoleRootEntity(BlockPos pPos, BlockState pBlockState) {
+        super(ModBlockEntities.VAUCOLE_ROOT_ENTITY.get(), pPos, pBlockState);
     }
 
     @Override
@@ -82,8 +81,8 @@ public class BaseOrganelleRootEntity extends BlockEntity {
         return Optional.ofNullable(lvl.getEntity(spawned_organelle_uuid));
     }
 
-    //override an organelle here
+    //override organelle here
     protected HomunculoidBase getOrganelleSpawn(Level lvl) {
-        return null;
+        return ModEntities.HOMUNCULUS_VAUCOLE.get().create(lvl);
     }
 }

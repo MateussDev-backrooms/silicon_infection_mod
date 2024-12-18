@@ -1,6 +1,7 @@
 package net.Mateuss.Chemosynthesis.block.homulculus;
 
 import net.Mateuss.Chemosynthesis.block.IBloodFillable;
+import net.Mateuss.Chemosynthesis.block.blockentity.BEVaucoleRootEntity;
 import net.Mateuss.Chemosynthesis.block.blockentity.BaseOrganelleRootEntity;
 import net.Mateuss.Chemosynthesis.core.ModBlockEntities;
 import net.Mateuss.Chemosynthesis.core.ModEntities;
@@ -48,27 +49,7 @@ public class BaseOrganelleRoot extends BaseEntityBlock implements IBloodFillable
 
     @Override
     public void onBloodFlow(Level level, BlockPos pos, BlockState state, int bloodLevel) {
-        if(!level.isClientSide() && level instanceof ServerLevel slvl) {
-            if(!state.getValue(HAS_SPAWNED)) {
-                if(state.getValue(SPAWN_PROGRESS) < 10) {
-                    level.setBlock(pos, state.setValue(SPAWN_PROGRESS, state.getValue(SPAWN_PROGRESS) + 1), 3);
-                } else {
-                    spawnOrganelle(slvl, pos);
-                    level.setBlock(pos, state.setValue(HAS_SPAWNED, true), 3);
 
-                }
-            } else {
-                if(organelle != null) {
-                    organelle.heal(1f);
-                }
-            }
-            if(organelle == null) {
-                if(state.getValue(SPAWN_PROGRESS) == 10) {
-                        state.setValue(SPAWN_PROGRESS, 0);
-                        state.setValue(HAS_SPAWNED, false);
-                }
-            }
-        }
     }
 
     @Override
@@ -81,10 +62,7 @@ public class BaseOrganelleRoot extends BaseEntityBlock implements IBloodFillable
         //override the organelle spawning here
     }
 
-    @Override
-    public RenderShape getRenderShape(BlockState pState) {
-        return RenderShape.MODEL;
-    }
+
 
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
@@ -92,17 +70,7 @@ public class BaseOrganelleRoot extends BaseEntityBlock implements IBloodFillable
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        if(pLevel.isClientSide()) {
-            return null;
-        }
-
-        return createTickerHelper(pBlockEntityType, ModBlockEntities.ORGANELLE_ROOT_ENTITY.get(),
-                (level, blockPos, blockState, baseOrganelleRootEntity) -> baseOrganelleRootEntity.tick(level, blockPos, blockState));
-    }
-
-    @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return new BaseOrganelleRootEntity(blockPos, blockState);
+        return new BEVaucoleRootEntity(blockPos, blockState);
     }
 }
