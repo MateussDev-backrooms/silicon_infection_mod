@@ -2,10 +2,6 @@ package net.Mateuss.Chemosynthesis.core;
 
 import net.Mateuss.Chemosynthesis.Chemosynthesis;
 import net.Mateuss.Chemosynthesis.block.*;
-import net.Mateuss.Chemosynthesis.block.homulculus.SiliconTripodHatcher;
-import net.Mateuss.Chemosynthesis.block.homulculus.SiliconRootVaucole;
-import net.Mateuss.Chemosynthesis.block.homulculus.SiliconVeinBlock;
-import net.Mateuss.Chemosynthesis.block.homulculus.SiliconVeinBuilder;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -32,28 +28,19 @@ public class ModBlocks {
             () -> new ExplosiveBlobBlock(BlockBehaviour.Properties.copy(Blocks.DRIPSTONE_BLOCK)));
 
     //HOMUNCULUS PARTS
-    public static final RegistryObject<Block> HOM_VEIN_BLOCK = registerBlock("hom_vein",
-            () -> new SiliconVeinBlock(BlockBehaviour.Properties
+    public static final RegistryObject<Block> HOM_VEIN_BLOCK = registerBlock("hom_vein_block",
+            () -> new HomunculusVein(BlockBehaviour.Properties
                     .copy(Blocks.DRIPSTONE_BLOCK)
-                    .noOcclusion()));
-    public static final RegistryObject<Block> HOM_VEIN_BUILDER_BLOCK = registerBlock("hom_vein_builder",
-            () -> new SiliconVeinBuilder(BlockBehaviour.Properties
-                    .copy(Blocks.DRIPSTONE_BLOCK)
-                    .noOcclusion()));
-    public static final RegistryObject<Block> HOM_TRIPOD_HATCHER = registerBlock("hom_tripod_hatcher",
-            () -> new SiliconTripodHatcher(BlockBehaviour.Properties
-                    .copy(Blocks.DRIPSTONE_BLOCK)
-                    .noOcclusion()));
-    public static final RegistryObject<Block> HOM_ROOT_VAUCOLE = registerBlock("hom_root_vaucole",
-            () -> new SiliconRootVaucole(BlockBehaviour.Properties
-                    .copy(Blocks.DRIPSTONE_BLOCK)
-                    .noOcclusion()));
+                    .noOcclusion()
+                    .randomTicks()
+            ));
 
     //MISC BLOCKS
     public static final RegistryObject<Block> TENDRIL_BLOCK = registerBlock("tendril_block",
             () -> new TendrilBlock(BlockBehaviour.Properties
-                    .copy(Blocks.GLOW_LICHEN)
+                    .copy(Blocks.VINE)
                     .speedFactor(0.33f)
+                    .noOcclusion()
                     .randomTicks()
             ));
 

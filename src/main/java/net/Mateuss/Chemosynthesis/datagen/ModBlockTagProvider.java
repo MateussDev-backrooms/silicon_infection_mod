@@ -23,7 +23,6 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 .add(ModBlocks.SILICATE_EXPLOSIVE_BLOCK.get())
                 .add(ModBlocks.SILICATE_TENDRIL_BLOCK.get())
                 .add(ModBlocks.HOM_VEIN_BLOCK.get())
-                .add(ModBlocks.HOM_TRIPOD_HATCHER.get())
                 .add(ModBlocks.TENDRIL_BLOCK.get())
         ;
         this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
@@ -31,14 +30,12 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 .add(ModBlocks.SILICATE_EXPLOSIVE_BLOCK.get())
                 .add(ModBlocks.SILICATE_TENDRIL_BLOCK.get())
                 .add(ModBlocks.HOM_VEIN_BLOCK.get())
-                .add(ModBlocks.HOM_TRIPOD_HATCHER.get())
         ;
         this.tag(BlockTags.MINEABLE_WITH_HOE)
                 .add(ModBlocks.TENDRIL_BLOCK.get());
         this.tag(BlockTags.CAVE_VINES)
                 .add(ModBlocks.TENDRIL_BLOCK.get());
         this.tag(BlockTags.NEEDS_IRON_TOOL)
-                .add(ModBlocks.HOM_ROOT_VAUCOLE.get())
         ;
     }
 }

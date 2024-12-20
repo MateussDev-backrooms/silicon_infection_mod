@@ -22,12 +22,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public class TendrilBlock extends MultifaceBlock {
+public class HomunculusVein extends MultifaceBlock {
     public final MultifaceSpreader spreader;
 
     private static final Map<Entity, Integer> tethering = new WeakHashMap<>();
 
-    public TendrilBlock(Properties pProperties) {
+    public HomunculusVein(Properties pProperties) {
         super(pProperties);
         this.spreader = new MultifaceSpreader(this);
     }
@@ -40,12 +40,10 @@ public class TendrilBlock extends MultifaceBlock {
     @Override
     public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
         super.tick(pState, pLevel, pPos, pRandom);
-        if(pRandom.nextFloat() < 0.4f) {
-            if(nearAVegetativeForm(pLevel, pPos)) {
-                this.spreader.spreadFromRandomFaceTowardRandomDirection(pState, pLevel, pPos, pRandom);
-            } else {
-                pLevel.setBlock(pPos, Blocks.AIR.defaultBlockState(), 3);
-            }
+        if(nearAHeart(pLevel, pPos)) {
+            this.spreader.spreadFromRandomFaceTowardRandomDirection(pState, pLevel, pPos, pRandom);
+        } else {
+            pLevel.setBlock(pPos, Blocks.AIR.defaultBlockState(), 3);
         }
     }
 
@@ -54,7 +52,7 @@ public class TendrilBlock extends MultifaceBlock {
         return 0;
     }
 
-    private boolean nearAVegetativeForm(ServerLevel lvl, BlockPos pos) {
+    private boolean nearAHeart(ServerLevel lvl, BlockPos pos) {
         List<Entity> nearbyList = lvl.getEntities(
                 (Entity) null, new AABB(pos).inflate(4),
                 entity -> entity instanceof VegetativeBase
@@ -68,6 +66,10 @@ public class TendrilBlock extends MultifaceBlock {
         return false;
     }
 
+    @Override
+    public void entityInside(BlockState pState, Level pLevel, BlockPos pPos, Entity pEntity) {
+
+    }
     protected boolean isSiliconite(Entity entity) {
 
         ResourceLocation entityTypeKey = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
