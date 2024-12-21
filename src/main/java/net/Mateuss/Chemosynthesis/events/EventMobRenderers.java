@@ -27,6 +27,7 @@ public class EventMobRenderers
         EntityRenderers.register(ModEntities.HOMUNCULUS_HEART.get(), RendererHomunculus::new);
         EntityRenderers.register(ModEntities.HOMUNCULUS_VAUCOLE.get(), RendererHomVaucole::new);
         EntityRenderers.register(ModEntities.BRACHATIC_STAGE.get(), RendererBrachaticStage::new);
+        EntityRenderers.register(ModEntities.ZIGOTE.get(), RendererZigote::new);
 
         EntityRenderers.register(ModEntities.VEG_ROLLER.get(), RendererVegRoller::new);
         EntityRenderers.register(ModEntities.BRACHATIC_HARPOON.get(), context -> new RendererBrachaticHarpoon(context, GeneralModModelLayers.BRACHATIC_HARPOON_LAYER));

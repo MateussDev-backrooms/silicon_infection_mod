@@ -31,6 +31,7 @@ public class EventMobAttributes {
         event.put(ModEntities.HOMUNCULUS_HEART.get(), EntityHomunculus.createAttributes().build());
         event.put(ModEntities.HOMUNCULUS_VAUCOLE.get(), EntityHomVaucole.createAttributes().build());
         event.put(ModEntities.BRACHATIC_STAGE.get(), EntityBrachaticStage.createAttributes().build());
+        event.put(ModEntities.ZIGOTE.get(), EntityBrachaticStage.createAttributes().build());
 
         event.put(ModEntities.VEG_ROLLER.get(), EntityVegRoller.createAttributes().build());
     }

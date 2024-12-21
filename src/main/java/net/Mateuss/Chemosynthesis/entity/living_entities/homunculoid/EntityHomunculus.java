@@ -1,24 +1,24 @@
 package net.Mateuss.Chemosynthesis.entity.living_entities.homunculoid;
 
-import net.Mateuss.Chemosynthesis.core.ModBlocks;
-import net.Mateuss.Chemosynthesis.block.IBloodFillable;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.Mateuss.Chemosynthesis.core.ModEntities;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AnimationState;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fluids.FluidType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class EntityHomunculus extends Monster {
     public EntityHomunculus(EntityType<? extends Monster> pEntityType, Level pLevel) {
@@ -27,14 +27,12 @@ public class EntityHomunculus extends Monster {
 
     public final AnimationState AS_isIdle = new AnimationState();
     private int idleAnimTimeout = 0;
-    private int t = 0;
-
-    private int _i = 0, _j = 0, _k = 0;
-
-    private int protection_radius = 3;
-    private int spread_radius = 1;
+    public int t = 0;
 
     public int heartbeat_speed = 40;
+
+    public List<UUID> connectedEntitiesUUIDs = new ArrayList<UUID>();
+    public int maxConnectedEntities = 5;
 
     @Override
     public void tick() {
@@ -51,12 +49,28 @@ public class EntityHomunculus extends Monster {
     public void baseTick() {
         super.baseTick();
 
-        if(!this.level().isClientSide) {
-            ServerLevel lvl = (ServerLevel) this.level();
+        if(!this.level().isClientSide && this.level() instanceof ServerLevel lvl) {
+            pullFarAwayOrganelles();
             this.t++;
             if(t%this.heartbeat_speed==0) {
                 lvl.playSound(null, this.blockPosition(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.HOSTILE);
-                injectBlood();
+                checkConnectedOrganelleStatus();
+            }
+
+            if(t%(this.heartbeat_speed*2)==0) {
+
+                if(connectedEntitiesUUIDs.toArray().length < maxConnectedEntities) {
+                    for(int i = 0; i<maxConnectedEntities- connectedEntitiesUUIDs.toArray().length; i++) {
+                        EntityOrganelleZigote zigote = ModEntities.ZIGOTE.get().create(lvl);
+                        if(zigote != null) {
+                            zigote.moveTo(this.getEyePosition());
+                            zigote.setDeltaMovement((lvl.random.nextDouble()*2.0d-1.0d)*0.33d, 0.5d, (lvl.random.nextDouble()*2.0d-1.0d)*0.33d);
+                            zigote.setParentEntity(this);
+                            connectedEntitiesUUIDs.add(zigote.getUUID());
+                            lvl.addFreshEntity(zigote);
+                        }
+                    }
+                }
             }
 
         }
@@ -64,14 +78,35 @@ public class EntityHomunculus extends Monster {
         this.setAirSupply(this.getMaxAirSupply());
     }
 
-    private void spreadOrganism(ServerLevel lvl) {
-        for(int _x=this.getBlockX()-this.protection_radius; _x<this.getBlockX()+this.protection_radius; _x++) {
-            for(int _y=this.getBlockY()-this.protection_radius; _y<this.getBlockY()+this.protection_radius; _y++) {
-                for(int _z=this.getBlockZ()-this.protection_radius; _z<this.getBlockZ()+this.protection_radius; _z++) {
-                    if(distanceToSqr(_x, _y, _z) > 2) {
-                        lvl.setBlock(new BlockPos(_x, _y, _z), ModBlocks.SILICATE_BLOCK.get().defaultBlockState(), 3);
-                    }
+    private void checkConnectedOrganelleStatus() {
+        //checks every connected organelle if it's alive or valid
+        if(level() instanceof ServerLevel slvl) {
+            for(UUID uuid : connectedEntitiesUUIDs) {
+                if(slvl.getEntity(uuid) != null) {
+                    //do additional checks
+                } else {
+                    connectedEntitiesUUIDs.remove(uuid);
                 }
+            }
+        }
+    }
+
+    public void pullFarAwayOrganelles() {
+        if(level() instanceof ServerLevel slvl) {
+            for(UUID uuid : connectedEntitiesUUIDs) {
+                Entity organelle = slvl.getEntity(uuid);
+                if(organelle.distanceTo(this) > 12f) {
+                    Vec3 movement = new Vec3(getX() - organelle.getX(), getY() - organelle.getY(), getZ() - organelle.getZ()).normalize();
+                    organelle.setDeltaMovement(movement.scale(0.5f));
+                }
+            }
+        }
+    }
+
+    public void connectOrganelle(UUID uuid) {
+        if(level() instanceof ServerLevel slvl) {
+            if(slvl.getEntity(uuid) != null) {
+                connectedEntitiesUUIDs.add(uuid);
             }
         }
     }
@@ -164,18 +199,24 @@ public class EntityHomunculus extends Monster {
         this.setDeltaMovement(0, 0, 0);
     }
 
-    private void injectBlood() {
-        BlockPos pos = this.blockPosition();
-        for (Direction direction : Direction.values()) {
-            BlockPos neighborPos = pos.relative(direction);
-            BlockState neighborState = this.level().getBlockState(neighborPos);
-
-            if (neighborState.getBlock() instanceof IBloodFillable interacted) {
-                if(interacted.canReceiveBlood((ServerLevel) this.level(), neighborPos)) {
-                    interacted.onBloodFlow(this.level(), neighborPos, this.level().getBlockState(neighborPos), 2);
-//                    break;
-                }
-            }
+    @Override
+    public boolean save(CompoundTag pCompound) {
+        pCompound.putInt("homunculus_connected_organelle_amount", connectedEntitiesUUIDs.toArray().length);
+        for(int i=0; i<connectedEntitiesUUIDs.toArray().length; i++) {
+            String keyName = "homunculus_connected_organelles;"+i;
+            pCompound.putUUID(keyName, connectedEntitiesUUIDs.get(i));
         }
+        return super.save(pCompound);
+    }
+
+    @Override
+    public void load(CompoundTag pCompound) {
+        int l = pCompound.getInt("homunculus_connected_organelle_amount");
+        for(int i=0; i<l; i++) {
+            String keyName = "homunculus_connected_organelles;"+i;
+            UUID extracted_id = pCompound.getUUID(keyName);
+            connectedEntitiesUUIDs.add(extracted_id);
+        }
+        super.load(pCompound);
     }
 }

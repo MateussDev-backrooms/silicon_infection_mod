@@ -42,7 +42,7 @@ public class RendererBrachaticHarpoon extends ArrowRenderer<ProjectileBrachaticH
             double parentY = parent.getEyeY() - pEntity.getY();
             double parentZ = parent.getZ() - pEntity.getZ();
 
-            VertexConsumer vc = pBuffer.getBuffer(RenderType.leash());
+            VertexConsumer vc = pBuffer.getBuffer(RenderType.entityCutoutNoCull(new ResourceLocation(Chemosynthesis.MODID, "textures/block/blood_tissue.png")));
             PoseStack.Pose pose = pPoseStack.last();
 
             float dst = pEntity.distanceTo(parent);
@@ -50,7 +50,7 @@ public class RendererBrachaticHarpoon extends ArrowRenderer<ProjectileBrachaticH
 
 
 
-            GeneralRenderingFunctions.renderParabolaLine(vc, pose, 0, 0, 0, parentX, parentY, parentZ, 0.5f, 0f, 0f, thickness, 8, dst);
+            GeneralRenderingFunctions.renderParabolaTube(vc, pose, pPackedLight, 0, 0, 0, parentX, parentY, parentZ, 1f, 1f, 1f, thickness, 8, dst, 1f);
 
             pPoseStack.popPose();
         }

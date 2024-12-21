@@ -24,5 +24,6 @@ public class EventMobRenderLayers {
         event.registerLayerDefinition(GeneralModModelLayers.BRACHATIC_STAGE_LAYER, ModelBrachaticStage::createBodyLayer);
         event.registerLayerDefinition(GeneralModModelLayers.BRACHATIC_HARPOON_LAYER, ModelBrachaticHarpoonBulb::createBodyLayer);
         event.registerLayerDefinition(GeneralModModelLayers.VEG_ROLLER_LAYER, ModelVegRoller::createBodyLayer);
+        event.registerLayerDefinition(GeneralModModelLayers.ZIGOTE_LAYER, ModelZigote::createBodyLayer);
     }
 }

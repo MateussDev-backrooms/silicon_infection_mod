@@ -37,6 +37,8 @@ public class GeneralModModelLayers {
             new ResourceLocation(Chemosynthesis.MODID, "homunculus_layer"), "main");
     public static final ModelLayerLocation HOMUNCULUS_VAUCOLE_LAYER = new ModelLayerLocation(
             new ResourceLocation(Chemosynthesis.MODID, "homunculus_vaucole_layer"), "main");
+    public static final ModelLayerLocation ZIGOTE_LAYER = new ModelLayerLocation(
+            new ResourceLocation(Chemosynthesis.MODID, "zigote_layer"), "main");
 
     //PROJECTILES
     public static final ModelLayerLocation BRACHATIC_HARPOON_LAYER = new ModelLayerLocation(

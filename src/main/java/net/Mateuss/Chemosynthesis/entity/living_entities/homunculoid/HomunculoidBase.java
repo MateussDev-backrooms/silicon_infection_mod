@@ -6,11 +6,15 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.fluids.FluidType;
+
+import java.util.List;
 
 public class HomunculoidBase extends Monster {
     public final AnimationState AS_isIdle = new AnimationState();
@@ -19,6 +23,10 @@ public class HomunculoidBase extends Monster {
     public HomunculoidBase(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
+
+    public float veinThickness = 0.1f + this.level().random.nextFloat()*0.25f;
+    public float yOffset = this.level().random.nextFloat()*0.66f;
+    public float randomBrightness = this.level().random.nextFloat()*0.4f;
 
     @Override
     public void tick() {
@@ -72,30 +80,44 @@ public class HomunculoidBase extends Monster {
 
     @Override
     public void heal(float pHealAmount) {
-        super.heal(pHealAmount);
+        if(getHealth() < getMaxHealth()) {
+            if(this.level() instanceof ServerLevel level) {
+                for (int i = 0; i < 80; i++) {  // Spawn multiple particles for effect
+                    double offsetX = (level.random.nextDouble() - 0.5) * 0.5;
+                    double offsetY = level.random.nextDouble() * 0.5;
+                    double offsetZ = (level.random.nextDouble() - 0.5) * 0.5;
 
-        if(this.level() instanceof ServerLevel level) {
-            for (int i = 0; i < 80; i++) {  // Spawn multiple particles for effect
-                double offsetX = (level.random.nextDouble() - 0.5) * 0.5;
-                double offsetY = level.random.nextDouble() * 0.5;
-                double offsetZ = (level.random.nextDouble() - 0.5) * 0.5;
+                    level.sendParticles(
+                            ParticleTypes.CRIMSON_SPORE,
+                            this.getX(),
+                            this.getY() + 1,
+                            this.getZ(),
+                            1,          // Number of particles per spawn call
+                            offsetX,    // X offset for randomness
+                            offsetY,    // Y offset
+                            offsetZ,    // Z offset
+                            0.1         // Speed of the particle
+                    );
+                }
 
-                level.sendParticles(
-                        ParticleTypes.CRIMSON_SPORE,
-                        this.getX(),
-                        this.getY() + 1,
-                        this.getZ(),
-                        1,          // Number of particles per spawn call
-                        offsetX,    // X offset for randomness
-                        offsetY,    // Y offset
-                        offsetZ,    // Z offset
-                        0.1         // Speed of the particle
-                );
+                level.playSound(null, this.getX(), this.getY(), this.getZ(),
+                        SoundEvents.MUD_PLACE, SoundSource.HOSTILE, 1f, 1f);
             }
-
-            level.playSound(null, this.getX(), this.getY(), this.getZ(),
-                    SoundEvents.MUD_PLACE, SoundSource.HOSTILE, 1f, 1f);
         }
 
+        super.heal(pHealAmount);
+    }
+
+    public Entity findNearestHomunculus() {
+        List<Entity> nearbyList = level().getEntities(
+                (Entity) null, new AABB(this.blockPosition()).inflate(12),
+                entity -> entity instanceof EntityHomunculus
+        );
+        for (Entity entity : nearbyList) {
+            if(distanceTo(entity) <= 12) {
+                return entity;
+            }
+        }
+        return null;
     }
 }
