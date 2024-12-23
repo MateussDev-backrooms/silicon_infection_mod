@@ -26,6 +26,7 @@ public class EventMobRenderers
         EntityRenderers.register(ModEntities.TETH_PIG.get(), RendererTethPig::new);
         EntityRenderers.register(ModEntities.HOMUNCULUS_HEART.get(), RendererHomunculus::new);
         EntityRenderers.register(ModEntities.HOMUNCULUS_VAUCOLE.get(), RendererHomVaucole::new);
+        EntityRenderers.register(ModEntities.HOMUNCULUS_MITOCHONDRIA.get(), RendererHomMitochondria::new);
         EntityRenderers.register(ModEntities.BRACHATIC_STAGE.get(), RendererBrachaticStage::new);
         EntityRenderers.register(ModEntities.ZIGOTE.get(), RendererZigote::new);
 

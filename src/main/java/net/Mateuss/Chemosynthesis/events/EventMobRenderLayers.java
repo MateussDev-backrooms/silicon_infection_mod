@@ -21,6 +21,7 @@ public class EventMobRenderLayers {
         event.registerLayerDefinition(GeneralModModelLayers.TETH_PIG_LAYER, ModelTethPig::createBodyLayer);
         event.registerLayerDefinition(GeneralModModelLayers.HOMUNCULUS_LAYER, ModelHomunculus::createBodyLayer);
         event.registerLayerDefinition(GeneralModModelLayers.HOMUNCULUS_VAUCOLE_LAYER, ModelHomVaucole::createBodyLayer);
+        event.registerLayerDefinition(GeneralModModelLayers.HOMUNCULUS_MITOCHONDRIA_LAYER, ModelHomMitochondria::createBodyLayer);
         event.registerLayerDefinition(GeneralModModelLayers.BRACHATIC_STAGE_LAYER, ModelBrachaticStage::createBodyLayer);
         event.registerLayerDefinition(GeneralModModelLayers.BRACHATIC_HARPOON_LAYER, ModelBrachaticHarpoonBulb::createBodyLayer);
         event.registerLayerDefinition(GeneralModModelLayers.VEG_ROLLER_LAYER, ModelVegRoller::createBodyLayer);

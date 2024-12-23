@@ -17,6 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fluids.FluidType;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +35,8 @@ public class EntityHomunculus extends Monster {
     public List<UUID> connectedEntitiesUUIDs = new ArrayList<UUID>();
     public int maxConnectedEntities = 5;
 
+    private boolean hasWorkingVaucole = false;
+
     @Override
     public void tick() {
         super.tick();
@@ -41,6 +44,14 @@ public class EntityHomunculus extends Monster {
         if(this.level().isClientSide) {
             setupAnimationStates();
         }
+    }
+
+    public void setHasWorkingVaucole(boolean has) {
+        hasWorkingVaucole = has;
+    }
+
+    public boolean needsVaucole() {
+        return hasWorkingVaucole;
     }
 
 
@@ -57,19 +68,10 @@ public class EntityHomunculus extends Monster {
                 checkConnectedOrganelleStatus();
             }
 
-            if(t%(this.heartbeat_speed*2)==0) {
+            if(t%(this.heartbeat_speed/4)==0) {
 
                 if(connectedEntitiesUUIDs.toArray().length < maxConnectedEntities) {
-                    for(int i = 0; i<maxConnectedEntities- connectedEntitiesUUIDs.toArray().length; i++) {
-                        EntityOrganelleZigote zigote = ModEntities.ZIGOTE.get().create(lvl);
-                        if(zigote != null) {
-                            zigote.moveTo(this.getEyePosition());
-                            zigote.setDeltaMovement((lvl.random.nextDouble()*2.0d-1.0d)*0.33d, 0.5d, (lvl.random.nextDouble()*2.0d-1.0d)*0.33d);
-                            zigote.setParentEntity(this);
-                            connectedEntitiesUUIDs.add(zigote.getUUID());
-                            lvl.addFreshEntity(zigote);
-                        }
-                    }
+                    spawnZigote();
                 }
             }
 
@@ -78,14 +80,38 @@ public class EntityHomunculus extends Monster {
         this.setAirSupply(this.getMaxAirSupply());
     }
 
+    private void spawnZigote() {
+        if(!this.level().isClientSide && this.level() instanceof ServerLevel lvl) {
+            EntityOrganelleZigote zigote = ModEntities.ZIGOTE.get().create(lvl);
+            if (zigote != null) {
+                zigote.moveTo(this.getEyePosition());
+                zigote.setDeltaMovement(
+                        0.3d + (lvl.random.nextDouble() * 2.0d - 1.0d) * 0.6d,
+                        0.5d,
+                        0.3d + (lvl.random.nextDouble() * 2.0d - 1.0d) * 0.6d);
+                zigote.setParentEntity(this);
+                if(needsVaucole()) {
+                    zigote.will_spawn_vaucole = true;
+                    setHasWorkingVaucole(true);
+                }
+                connectedEntitiesUUIDs.add(zigote.getUUID());
+                lvl.addFreshEntity(zigote);
+            }
+        }
+    }
+
+    public void disconnect(UUID uuid) {
+        connectedEntitiesUUIDs.remove(uuid);
+    }
+
     private void checkConnectedOrganelleStatus() {
         //checks every connected organelle if it's alive or valid
-        if(level() instanceof ServerLevel slvl) {
-            for(UUID uuid : connectedEntitiesUUIDs) {
-                if(slvl.getEntity(uuid) != null) {
-                    //do additional checks
-                } else {
-                    connectedEntitiesUUIDs.remove(uuid);
+        if (level() instanceof ServerLevel slvl) {
+            Iterator<UUID> iterator = connectedEntitiesUUIDs.iterator();
+            while (iterator.hasNext()) {
+                UUID uuid = iterator.next();
+                if (slvl.getEntity(uuid) == null) {
+                    iterator.remove();
                 }
             }
         }
@@ -95,9 +121,11 @@ public class EntityHomunculus extends Monster {
         if(level() instanceof ServerLevel slvl) {
             for(UUID uuid : connectedEntitiesUUIDs) {
                 Entity organelle = slvl.getEntity(uuid);
-                if(organelle.distanceTo(this) > 12f) {
-                    Vec3 movement = new Vec3(getX() - organelle.getX(), getY() - organelle.getY(), getZ() - organelle.getZ()).normalize();
-                    organelle.setDeltaMovement(movement.scale(0.5f));
+                if(organelle != null) {
+                    if(organelle.distanceTo(this) > 12f) {
+                        Vec3 movement = new Vec3(getX() - organelle.getX(), getY() - organelle.getY(), getZ() - organelle.getZ()).normalize();
+                        organelle.setDeltaMovement(movement.scale(0.5f));
+                    }
                 }
             }
         }
@@ -206,6 +234,7 @@ public class EntityHomunculus extends Monster {
             String keyName = "homunculus_connected_organelles;"+i;
             pCompound.putUUID(keyName, connectedEntitiesUUIDs.get(i));
         }
+        pCompound.putBoolean("homunculus_needs_vaucole", hasWorkingVaucole);
         return super.save(pCompound);
     }
 
@@ -217,6 +246,7 @@ public class EntityHomunculus extends Monster {
             UUID extracted_id = pCompound.getUUID(keyName);
             connectedEntitiesUUIDs.add(extracted_id);
         }
+        hasWorkingVaucole = pCompound.getBoolean("homunculus_needs_vaucole");
         super.load(pCompound);
     }
 }

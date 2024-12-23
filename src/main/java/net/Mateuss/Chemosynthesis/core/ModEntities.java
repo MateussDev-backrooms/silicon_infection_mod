@@ -2,6 +2,7 @@ package net.Mateuss.Chemosynthesis.core;
 
 import net.Mateuss.Chemosynthesis.Chemosynthesis;
 import net.Mateuss.Chemosynthesis.entity.living_entities.conjugonal.EntityBrachaticStage;
+import net.Mateuss.Chemosynthesis.entity.living_entities.homunculoid.EntityHomMitochondria;
 import net.Mateuss.Chemosynthesis.entity.living_entities.homunculoid.EntityHomunculus;
 import net.Mateuss.Chemosynthesis.entity.living_entities.homunculoid.EntityHomVaucole;
 import net.Mateuss.Chemosynthesis.entity.living_entities.homunculoid.EntityOrganelleZigote;
@@ -72,6 +73,10 @@ public class ModEntities {
     public static final RegistryObject<EntityType<EntityHomVaucole>> HOMUNCULUS_VAUCOLE =
             ENTITY_TYPES.register("homunculus_vaucole", () -> EntityType.Builder.of(EntityHomVaucole::new, MobCategory.MONSTER)
                     .sized(0.7f, 1.8f).build("homunculus_vaucole"));
+    public static final RegistryObject<EntityType<EntityHomMitochondria>> HOMUNCULUS_MITOCHONDRIA =
+            ENTITY_TYPES.register("homunculus_mitochondria", () -> EntityType.Builder.of(EntityHomMitochondria::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f).build("homunculus_mitochondria"));
+
     public static final RegistryObject<EntityType<EntityOrganelleZigote>> ZIGOTE =
             ENTITY_TYPES.register("zigote", () -> EntityType.Builder.of(EntityOrganelleZigote::new, MobCategory.MONSTER)
                     .sized(0.6f, 0.6f).build("zigote"));
