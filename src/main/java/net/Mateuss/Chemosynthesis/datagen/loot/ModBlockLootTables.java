@@ -24,7 +24,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(ModBlocks.SILICATE_EXPLOSIVE_BLOCK.get());
 
         this.dropWhenSilkTouch(ModBlocks.TENDRIL_BLOCK.get());
-        this.dropWhenSilkTouch(ModBlocks.HOM_VEIN_BLOCK.get());
+        this.dropWhenSilkTouch(ModBlocks.HOORGANELLE_CONNECTOR.get());
     }
 
     protected Iterable<Block> getKnownBlocks() {

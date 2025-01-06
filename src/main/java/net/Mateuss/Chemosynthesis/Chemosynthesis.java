@@ -37,6 +37,7 @@ public class Chemosynthesis
         ModBlocks.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
         ModEntities.register(modEventBus);
+        ModSounds.register(modEventBus);
         ModBlockEntities.register(modEventBus);
 
 

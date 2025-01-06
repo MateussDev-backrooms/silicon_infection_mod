@@ -2,6 +2,7 @@ package net.Mateuss.Chemosynthesis.item;
 
 import net.Mateuss.Chemosynthesis.core.ModEntities;
 import net.Mateuss.Chemosynthesis.entity.projectile.ProjectileBrachaticHarpoon;
+import net.Mateuss.Chemosynthesis.entity.projectile.ProjectileBulb;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -37,9 +38,9 @@ public class SiliconStageDetector extends Item {
         if(!pLevel.isClientSide) {
             Vec3 lookDir = pPlayer.getLookAngle();
 
-            ProjectileBrachaticHarpoon harpoon = ModEntities.BRACHATIC_HARPOON.get().create(pLevel);
+            ProjectileBulb harpoon = ModEntities.BULB_PROJECTILE.get().create(pLevel);
             harpoon.setPos(pPlayer.getX(), pPlayer.getEyeY() - 0.1, pPlayer.getZ());
-            harpoon.shoot(lookDir, 2f, 0.1f, pPlayer, 2, 100);
+            harpoon.shoot(lookDir.x, lookDir.y, lookDir.z, 2, 0);
             harpoon.setOwner(pPlayer);
             pLevel.addFreshEntity(harpoon);
 

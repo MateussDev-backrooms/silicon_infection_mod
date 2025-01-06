@@ -11,11 +11,11 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.Entity;
 
-public class ModelBrachaticHarpoonBulb<T extends Entity> extends HierarchicalModel<T> {
+public class ModelBulbProjectile<T extends Entity> extends HierarchicalModel<T> {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     private final ModelPart bulb1;
 
-    public ModelBrachaticHarpoonBulb(ModelPart root) {
+    public ModelBulbProjectile(ModelPart root) {
         this.bulb1 = root.getChild("bulb1");
     }
 
@@ -23,8 +23,8 @@ public class ModelBrachaticHarpoonBulb<T extends Entity> extends HierarchicalMod
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
-        PartDefinition bulb1 = partdefinition.addOrReplaceChild("bulb1", CubeListBuilder.create().texOffs(0, 0).addBox(-1.5F, 6.5F, -1.5F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 6).addBox(-0.5F, 0.5F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.023F, 23.9602F, -5.025F, 1.5708F, 0.0F, 0.0F));
+        PartDefinition bulb1 = partdefinition.addOrReplaceChild("bulb1", CubeListBuilder.create().texOffs(0, 0).addBox(-1.5F, 6.5F, -1.475F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 6).addBox(-0.5F, 0.5F, -0.475F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.023F, 22.4602F, -5.025F, 1.5708F, 0.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 16, 16);
     }
@@ -36,6 +36,7 @@ public class ModelBrachaticHarpoonBulb<T extends Entity> extends HierarchicalMod
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+        poseStack.translate(0f, 0f, 0f);
         bulb1.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 

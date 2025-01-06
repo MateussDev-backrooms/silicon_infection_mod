@@ -268,4 +268,10 @@ public class GeneralRenderingFunctions {
 
         return new float[]{_r, _g, _b};
     }
+
+    public static void shake(PoseStack pPoseStack, int shakeTimer, float freq, float power) {
+        float shakeyX = (float) Math.sin(shakeTimer * freq) * power;
+        float shakeyY = (float) Math.cos(shakeTimer * freq) * power;
+        pPoseStack.translate(shakeyX, 0, shakeyY);
+    }
 }

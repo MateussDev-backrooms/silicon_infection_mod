@@ -3,6 +3,7 @@ package net.Mateuss.Chemosynthesis.client.renderers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.Mateuss.Chemosynthesis.Chemosynthesis;
 import net.Mateuss.Chemosynthesis.client.GeneralModModelLayers;
+import net.Mateuss.Chemosynthesis.client.GeneralRenderingFunctions;
 import net.Mateuss.Chemosynthesis.client.models.ModelSiliconRoller;
 import net.Mateuss.Chemosynthesis.entity.living_entities.pure.EntitySiliconRoller;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -27,6 +28,11 @@ public class RendererSiliconRoller extends MobRenderer<EntitySiliconRoller, Mode
             float shakeyX = (float) Math.sin(pEntity.shakeTimer * 10) * 0.1f;
             float shakeyY = (float) Math.cos(pEntity.shakeTimer * 10) * 0.1f;
             pPoseStack.translate(shakeyX, 0, shakeyY);
+        }
+
+        //small effect for when a bulb jerks
+        if(pEntity.bulb_jerk_timer > 0) {
+            GeneralRenderingFunctions.shake(pPoseStack, pEntity.bulb_jerk_timer, 3, 0.5f);
         }
         super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
     }

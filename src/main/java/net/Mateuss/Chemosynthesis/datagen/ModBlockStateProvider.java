@@ -19,6 +19,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(ModBlocks.SILICATE_EXPLOSIVE_BLOCK);
         blockWithItem(ModBlocks.SILICATE_TENDRIL_BLOCK);
 
+        blockWithItem(ModBlocks.HOORGANELLE_CONNECTOR);
+
 //        simpleBlockWithItem(ModBlocks.SILICON_VEIN_BLOCK.get(), cubeAll(ModBlocks.SILICON_VEIN_BLOCK.get()));
 //        blockWithItem(ModBlocks.TENDRIL_BLOCK);
     }

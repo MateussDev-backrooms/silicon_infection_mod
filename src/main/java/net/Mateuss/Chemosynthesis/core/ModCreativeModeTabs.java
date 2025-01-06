@@ -23,7 +23,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.SILICATE_TENDRIL_BLOCK.get());
                         pOutput.accept(ModBlocks.SILICATE_EXPLOSIVE_BLOCK.get());
 
-                        pOutput.accept(ModBlocks.HOM_VEIN_BLOCK.get());
+                        pOutput.accept(ModBlocks.HOORGANELLE_CONNECTOR.get());
 
                         pOutput.accept(ModBlocks.TENDRIL_BLOCK.get());
 

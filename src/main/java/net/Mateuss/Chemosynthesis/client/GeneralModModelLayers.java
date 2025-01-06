@@ -45,6 +45,8 @@ public class GeneralModModelLayers {
     //PROJECTILES
     public static final ModelLayerLocation BRACHATIC_HARPOON_LAYER = new ModelLayerLocation(
             new ResourceLocation(Chemosynthesis.MODID, "brachatic_harpoon_layer"), "main");
+    public static final ModelLayerLocation BULB_PROJECTILE_LAYER = new ModelLayerLocation(
+            new ResourceLocation(Chemosynthesis.MODID, "bulb_projectile_layer"), "main");
 
     //MISC
 }

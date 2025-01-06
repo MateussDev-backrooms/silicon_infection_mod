@@ -21,11 +21,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "silicon_mod:hom_tripod_hatcher"
+          "name": "silicon_mod:h_organelle_connector"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "silicon_mod:blocks/hom_tripod_hatcher"
+  "random_sequence": "silicon_mod:blocks/h_organelle_connector"
 }

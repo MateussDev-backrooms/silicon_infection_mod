@@ -4,25 +4,24 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.Mateuss.Chemosynthesis.Chemosynthesis;
 import net.Mateuss.Chemosynthesis.client.GeneralRenderingFunctions;
-import net.Mateuss.Chemosynthesis.client.models.ModelBrachaticHarpoonBulb;
+import net.Mateuss.Chemosynthesis.client.models.ModelBulbProjectile;
 import net.Mateuss.Chemosynthesis.entity.projectile.ProjectileBrachaticHarpoon;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 public class RendererBrachaticHarpoon extends ArrowRenderer<ProjectileBrachaticHarpoon> {
 
-    private final ModelBrachaticHarpoonBulb model;
+    private final ModelBulbProjectile model;
 
 
     public RendererBrachaticHarpoon(EntityRendererProvider.Context pContext, ModelLayerLocation layer) {
         super(pContext);
-        this.model = new ModelBrachaticHarpoonBulb(pContext.bakeLayer(layer));
+        this.model = new ModelBulbProjectile(pContext.bakeLayer(layer));
     }
 
     @Override

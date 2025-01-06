@@ -23,5 +23,7 @@
   "entity.silicon_mod.teth_cow": "Tethered cow",
   "entity.silicon_mod.teth_sheep": "Tethered sheep",
 
+  "sounds.silicon_mod.bulb_jerk": "Siliconite bulb moves",
+
   "creativetab.silicon_tab": "Chemosynthesis"
 }

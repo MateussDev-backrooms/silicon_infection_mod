@@ -15,6 +15,7 @@ import net.Mateuss.Chemosynthesis.entity.living_entities.tethered.EntityTethShee
 import net.Mateuss.Chemosynthesis.entity.living_entities.tethered.EntityTethZombie;
 import net.Mateuss.Chemosynthesis.entity.living_entities.vegetative.EntityVegRoller;
 import net.Mateuss.Chemosynthesis.entity.projectile.ProjectileBrachaticHarpoon;
+import net.Mateuss.Chemosynthesis.entity.projectile.ProjectileBulb;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -85,6 +86,9 @@ public class ModEntities {
     public static final RegistryObject<EntityType<ProjectileBrachaticHarpoon>> BRACHATIC_HARPOON =
             ENTITY_TYPES.register("brachatic_harpoon", () -> EntityType.Builder.of(ProjectileBrachaticHarpoon::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f).build("brachatic_harpoon"));
+    public static final RegistryObject<EntityType<ProjectileBulb>> BULB_PROJECTILE =
+            ENTITY_TYPES.register("bulb_projectile", () -> EntityType.Builder.of(ProjectileBulb::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f).build("bulb_projectile"));
 
 
     public static void register(IEventBus eventBus) {

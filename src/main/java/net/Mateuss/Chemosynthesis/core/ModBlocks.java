@@ -2,6 +2,7 @@ package net.Mateuss.Chemosynthesis.core;
 
 import net.Mateuss.Chemosynthesis.Chemosynthesis;
 import net.Mateuss.Chemosynthesis.block.*;
+import net.Mateuss.Chemosynthesis.block.homulculus.HOrganelleConnector;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -28,11 +29,10 @@ public class ModBlocks {
             () -> new ExplosiveBlobBlock(BlockBehaviour.Properties.copy(Blocks.DRIPSTONE_BLOCK)));
 
     //HOMUNCULUS PARTS
-    public static final RegistryObject<Block> HOM_VEIN_BLOCK = registerBlock("hom_vein_block",
-            () -> new HomunculusVein(BlockBehaviour.Properties
+    public static final RegistryObject<Block> HOORGANELLE_CONNECTOR = registerBlock("h_organelle_connector",
+            () -> new HOrganelleConnector(BlockBehaviour.Properties
                     .copy(Blocks.DRIPSTONE_BLOCK)
                     .noOcclusion()
-                    .randomTicks()
             ));
 
     //MISC BLOCKS

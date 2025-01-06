@@ -2,7 +2,9 @@ package net.Mateuss.Chemosynthesis.entity.living_entities;
 
 import net.Mateuss.Chemosynthesis.Chemosynthesis;
 import net.Mateuss.Chemosynthesis.core.ModEntities;
+import net.Mateuss.Chemosynthesis.core.ModSounds;
 import net.Mateuss.Chemosynthesis.entity.living_entities.pure.EntitySiliconTripod;
+import net.Mateuss.Chemosynthesis.entity.projectile.ProjectileBulb;
 import net.Mateuss.Chemosynthesis.stage_system.InfectionProgressManager;
 import net.Mateuss.Chemosynthesis.stage_system.InfectionProgress;
 import net.minecraft.core.particles.ParticleTypes;
@@ -16,6 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -39,6 +42,8 @@ public class SiliconiteBase extends Monster {
     public static final EntityDataAccessor<Integer> ENERGY = SynchedEntityData.defineId(SiliconiteBase.class, EntityDataSerializers.INT);
 
     protected boolean isVegetated = false;
+
+    public int bulb_jerk_timer = 0;
 
     //Access to the stage of the infection
     @Nullable
@@ -90,6 +95,8 @@ public class SiliconiteBase extends Monster {
 
     //used to calculate time
     private int t = 0;
+    //used to select after how many seconds to play the bulb jerk sound
+    private float rng = getBulbSoundMinCooldown();
 
     @Override
     public void baseTick() {
@@ -129,7 +136,26 @@ public class SiliconiteBase extends Monster {
                 entityData.set(ENERGY, entityData.get(ENERGY) - 1);
             }
 
+            //sounds
+
+            //scale to ticks
+            if(t%(Mth.floor(rng*20))==0) {
+                this.level().playSound(null, blockPosition(), ModSounds.BULB_JERK.get(), SoundSource.HOSTILE, 1f, this.level().random.nextFloat());
+                generateRandomBufferSoundNum();
+                bulb_jerk_timer = this.level().random.nextIntBetweenInclusive(33, 100);
+            }
+
+            //jerk animation for when bulbs
+            if(bulb_jerk_timer > 0) {
+                bulb_jerk_timer--;
+            }
+
         }
+    }
+
+    private void generateRandomBufferSoundNum() {
+        float s_rng = level().random.nextFloat(); //between 0 and 1
+        rng = s_rng * (getBulbSoundMaxCooldown() - getBulbSoundMinCooldown() + 1) + getBulbSoundMinCooldown();
     }
 
     //determines conditions at which metabolism is gained
@@ -233,6 +259,12 @@ public class SiliconiteBase extends Monster {
                     level.addFreshEntity(tripod);
                 }
             }
+            for(int i=0; i<k*2; i++) {
+                ProjectileBulb bulb = ModEntities.BULB_PROJECTILE.get().create(level);
+                bulb.setPos(getX(), getY(), getZ());
+                bulb.shoot((level.random.nextDouble()*2.0d-1.0d)*0.33d, (level.random.nextDouble())*0.33d, (level.random.nextDouble()*2.0d-1.0d)*0.33d, 0.5f, 0);
+                level.addFreshEntity(bulb);
+            }
         }
     }
 
@@ -290,5 +322,13 @@ public class SiliconiteBase extends Monster {
         ResourceLocation entityTypeKey = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
         // Check if the entity is not part of your mod
         return entityTypeKey == null || !entityTypeKey.getNamespace().equals(Chemosynthesis.MODID);
+    }
+
+    //these functions are used to customise how often bulb jerk sounds will play
+    protected float getBulbSoundMinCooldown() {
+        return 0.33f;
+    }
+    protected float getBulbSoundMaxCooldown() {
+        return 2f;
     }
 }

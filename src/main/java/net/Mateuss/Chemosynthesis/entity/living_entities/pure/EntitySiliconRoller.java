@@ -1,6 +1,7 @@
 package net.Mateuss.Chemosynthesis.entity.living_entities.pure;
 
 import net.Mateuss.Chemosynthesis.Chemosynthesis;
+import net.Mateuss.Chemosynthesis.core.ModBlocks;
 import net.Mateuss.Chemosynthesis.core.ModEntities;
 import net.Mateuss.Chemosynthesis.entity.living_entities.SiliconiteBase;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -125,6 +126,19 @@ public class EntitySiliconRoller extends SiliconiteBase {
             newEntity.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
 
 
+            this.discard();
+            this.level().addFreshEntity(newEntity);
+        }
+    }
+
+    @Override
+    public void vegetate() {
+        if (!this.level().isClientSide) {
+
+            Entity newEntity = ModEntities.VEG_ROLLER.get().create(level());
+            newEntity.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+
+            this.level().setBlock(blockPosition(), ModBlocks.TENDRIL_BLOCK.get().defaultBlockState(), 3);
             this.discard();
             this.level().addFreshEntity(newEntity);
         }

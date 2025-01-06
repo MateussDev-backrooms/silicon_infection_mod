@@ -23,7 +23,8 @@ public class EventMobRenderLayers {
         event.registerLayerDefinition(GeneralModModelLayers.HOMUNCULUS_VAUCOLE_LAYER, ModelHomVaucole::createBodyLayer);
         event.registerLayerDefinition(GeneralModModelLayers.HOMUNCULUS_MITOCHONDRIA_LAYER, ModelHomMitochondria::createBodyLayer);
         event.registerLayerDefinition(GeneralModModelLayers.BRACHATIC_STAGE_LAYER, ModelBrachaticStage::createBodyLayer);
-        event.registerLayerDefinition(GeneralModModelLayers.BRACHATIC_HARPOON_LAYER, ModelBrachaticHarpoonBulb::createBodyLayer);
+        event.registerLayerDefinition(GeneralModModelLayers.BRACHATIC_HARPOON_LAYER, ModelBulbProjectile::createBodyLayer);
+        event.registerLayerDefinition(GeneralModModelLayers.BULB_PROJECTILE_LAYER, ModelBulbProjectile::createBodyLayer);
         event.registerLayerDefinition(GeneralModModelLayers.VEG_ROLLER_LAYER, ModelVegRoller::createBodyLayer);
         event.registerLayerDefinition(GeneralModModelLayers.ZIGOTE_LAYER, ModelZigote::createBodyLayer);
     }

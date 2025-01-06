@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "silicon_mod:block/hom_tripod_hatcher"
+    "all": "silicon_mod:block/h_organelle_connector"
   }
 }

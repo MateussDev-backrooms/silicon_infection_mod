@@ -1,0 +1,9 @@
+{
+  "bulb_jerk": {
+    "subtitles": "sounds.silicon_mod.bulb_jerk",
+    "sounds": [
+      "silicon_mod:bulb_jerk_1",
+      "silicon_mod:bulb_jerk_2"
+    ]
+  }
+}
