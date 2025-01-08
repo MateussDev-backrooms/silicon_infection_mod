@@ -913,7 +913,7 @@
 		},
 		"walk": {
 			"loop": true,
-			"animation_length": 0.5,
+			"animation_length": 1,
 			"bones": {
 				"root": {
 					"rotation": {
@@ -922,7 +922,7 @@
 							"easing": "linear"
 						},
 						"1.0": {
-							"vector": [180, 0, 0],
+							"vector": [360, 0, 0],
 							"easing": "linear"
 						}
 					}

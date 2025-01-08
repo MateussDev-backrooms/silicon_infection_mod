@@ -15,6 +15,9 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,6 +27,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 public class BaseSiliconite extends Monster implements GeoEntity {
     protected BaseSiliconite(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -70,13 +74,10 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     //##### GENERAL ENTITY LOGIC #####//
 
     // - Entity AI
-    private boolean shouldTargetMob(LivingEntity entity) {
+    protected boolean shouldTargetMob(LivingEntity entity) {
         //Targets entities outside of this mod by comparing their namespace
-
         //TODO: Add ability to blacklist mobs and/or namespaces
-
-        ResourceLocation entityTypeKey = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
-        return !entityTypeKey.getNamespace().equals(Chemosynthesis.MODID);
+        return !StaticSiliconiteMethods.isMobFromChemosynthesisMod(entity);
     }
 
     @Override
@@ -84,10 +85,15 @@ public class BaseSiliconite extends Monster implements GeoEntity {
         //Default settings override when new behavior is required
 
         // - GOALS
-        //Attack targets (condition customizeable)
-        this.goalSelector.addGoal(1, new ConditionalAttackGoal(this, 1.2f, true, this::shouldAttackTarget));
-        //Flee players (condition customizeable)
-        this.goalSelector.addGoal(0, new ConditionalFleeGoal(this, LivingEntity.class, 16.0f, 1.3d, 1.5d, this::shouldFlee));
+        if(!isBrave()) {
+            //Attack targets (condition customizeable)
+            this.goalSelector.addGoal(1, new ConditionalAttackGoal(this, 1.0f, true, this::shouldAttackTarget));
+            //Flee players (condition customizeable)
+            this.goalSelector.addGoal(0, new ConditionalFleeGoal(this, LivingEntity.class, 16.0f, 1.2d, 1.3d, this::shouldFlee));
+        } else {
+            //if brave it will always attack no matter the health/should flee conditions
+            this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 1.0f, true));
+        }
 
         //Avoid water (No float task cuz they are immune to water damage)
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.1D));
@@ -106,7 +112,7 @@ public class BaseSiliconite extends Monster implements GeoEntity {
         }
 
         //Seek out
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal(this, Player.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, this::shouldTargetMob));
     }
 
@@ -124,7 +130,7 @@ public class BaseSiliconite extends Monster implements GeoEntity {
         if (!this.level().isClientSide) {
             t++;
 
-            //metabolism stuffs
+            //Metabolism stuffs
             if (t % 40 == 0) {
                 //add to metabolism
                 entityData.set(METABOLISM_VALUE, entityData.get(METABOLISM_VALUE) + getMetabolismGain());
@@ -136,13 +142,13 @@ public class BaseSiliconite extends Monster implements GeoEntity {
 
             }
 
-            //evolution
+            //Evolution
             if (entityData.get(METABOLISM_VALUE) >= evolvesAtMetabolism()) {
                 entityData.set(METABOLISM_VALUE, 0);
                 this.evolve();
             }
 
-            //energy stuffs
+            //Energy stuffs
             if (entityData.get(ENERGY) <= 0 && entityData.get(ENERGY) > -999) {
                 this.vegetate();
                 entityData.set(ENERGY, -999);
@@ -157,9 +163,46 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     //##### ===== #####//
 
     //##### ENTITY OVERRIDES N FUNCTIONALITY #####//
-
     //stuff that overrides upper classes like sounds behaviors and interaction with the world
 
+    //Custom hurt mechanics
+    @Override
+    public boolean hurt(DamageSource pSource, float pAmount) {
+
+        //only get dealt 25% of fire damage
+        if(pSource.is(DamageTypeTags.IS_FIRE) || pSource.is(DamageTypeTags.BURNS_ARMOR_STANDS) || pSource.is(DamageTypeTags.IGNITES_ARMOR_STANDS)) {
+            pAmount *= 0.25F;
+        }
+        //TODO spawn a bulb projectile with a certain chance on hurt
+        return super.hurt(pSource, pAmount);
+    }
+
+    //On hurt others
+    @Override
+    public boolean doHurtTarget(Entity pEntity) {
+        boolean success = super.doHurtTarget(pEntity);
+        if(success) {
+            //Check if attacking entity
+            if(pEntity instanceof LivingEntity le) {
+                //Add energy on hurting target
+                //TODO add Tethered effect when hurt
+                //TODO ride/attach to entity that can be tethered
+                entityData.set(ENERGY, entityData.get(ENERGY) + 10);
+            }
+        }
+        return success;
+    }
+
+    @Override
+    public boolean killedEntity(ServerLevel pLevel, LivingEntity pEntity) {
+        tether(pEntity);
+        return super.killedEntity(pLevel, pEntity);
+    }
+
+    @Override
+    public boolean isAffectedByPotions() {
+        return false;
+    }
 
     //##### ===== #####//
 
@@ -170,9 +213,10 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     //should alert nearby siliconites when hurt
 
     //AI
-    protected boolean shouldAlertOthersOnHurt () {
-        return false;
-    }
+    protected boolean shouldAlertOthersOnHurt () { return false; }
+
+    //Determines if the entity will run away for its life when at low health. Cannot and should not change in gameplay
+    protected boolean isBrave () { return false; }
 
     protected boolean shouldAttackTarget ( boolean _idk){
         //Default behavior is to stop when health is below 30%
@@ -191,6 +235,12 @@ public class BaseSiliconite extends Monster implements GeoEntity {
         return 1;
     }
 
+    //Defines the chance between 0 and 1 for this siliconite to tether a mob that can be tethered
+    protected float getTetherChance() { return 1.0F; }
+
+    //Defines whether the siliconite will destroy itself after tethering
+    protected boolean destructiveTether() { return true; }
+
     protected int evolvesAtMetabolism() {
         //Defines at what point the organism evolves
         return 100;
@@ -204,6 +254,20 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     public void vegetate() {
         //This runs when the energy is very low, requiring the organism to adapt to conserve energy
         //Override functionality here
+    }
+
+    public void tether(LivingEntity target) {
+        //This runs when the siliconite wishes to tether a mob
+        //Default functionality is to tether the mob and discard if destructiveTether is true
+        //Override when necessary
+        if(level() instanceof ServerLevel slvl) {
+            StaticSiliconiteMethods.tetherMob(slvl, target);
+            //discard if destructive
+            if(destructiveTether()) {
+                this.discard();
+            }
+        }
+
     }
 
     //##### ===== #####//
