@@ -58,7 +58,7 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         //Movement anim controller
-        controllers.add(new AnimationController<>(this, "movement", 0, event ->
+        controllers.add(new AnimationController<>(this, "movement", 5, event ->
         {
             return event.setAndContinue(
                     // If moving, play the walking animation
@@ -66,6 +66,8 @@ public class BaseSiliconite extends Monster implements GeoEntity {
                             // If not moving, play the idle animation
                             RawAnimation.begin().thenLoop("idle"));
         }));
+
+
     }
 
 
