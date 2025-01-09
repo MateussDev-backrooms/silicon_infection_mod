@@ -221,12 +221,12 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     protected boolean shouldAttackTarget ( boolean _idk){
         //Default behavior is to stop when health is below 30%
         //ignore the boolean arg it's always true. I just didn't figure predicates properly yet
-        return getHealth() / getMaxHealth() > 0.5f;
+        return getHealth() / getMaxHealth() > 0.4f;
     }
 
     protected boolean shouldFlee ( Object _idk){
         //Default behavior is to flee when health is below 30% as well as requiring the target to not be null
-        return getHealth() / getMaxHealth() < 0.5f && getTarget() != null;
+        return getHealth() / getMaxHealth() < 0.4f && getTarget() != null;
     }
 
     //Stats n stuff

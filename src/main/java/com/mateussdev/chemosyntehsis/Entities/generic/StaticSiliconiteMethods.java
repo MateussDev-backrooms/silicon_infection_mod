@@ -1,6 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -11,17 +12,27 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class StaticSiliconiteMethods {
-    public static HashMap<EntityType<LivingEntity>, EntityType<BaseTethered>> tetherHashMap =
+    public static Map<EntityType<?>, EntityType<? extends BaseTethered>> tetherHashMap =
             //Defines all tetherable mobs and their tether result
             //the key is the target mob and the value is the tether result
-            new HashMap<EntityType<LivingEntity>, EntityType<BaseTethered>>();
+            new HashMap<>();
+
+    static {
+        //Define all tether pairs here
+        tetherHashMap.put(EntityType.ZOMBIE, ModEntities.TETH_ZOMBIE.get());
+        tetherHashMap.put(EntityType.HUSK, ModEntities.TETH_ZOMBIE.get());
+        tetherHashMap.put(EntityType.DROWNED, ModEntities.TETH_ZOMBIE.get());
+    }
 
     public static void tetherMob(ServerLevel serverLevel, LivingEntity tetherTarget) {
-        LivingEntity tethered_result = null;
-
-
+        EntityType<? extends LivingEntity> tethered_result_type = tetherHashMap.get(tetherTarget);
+        if(tethered_result_type==null) {
+            return;
+        }
+        LivingEntity tethered_result = tethered_result_type.create(serverLevel);
         //spawn the chosen entity
         if(tethered_result!=null) {
             tethered_result.moveTo(tetherTarget.getX(), tetherTarget.getY(), tetherTarget.getZ());

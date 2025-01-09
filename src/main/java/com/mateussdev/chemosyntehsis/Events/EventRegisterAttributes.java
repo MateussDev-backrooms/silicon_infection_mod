@@ -4,6 +4,7 @@ package com.mateussdev.chemosyntehsis.Events;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
+import com.mateussdev.chemosyntehsis.Entities.teth_zombie.TethZombie;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -13,5 +14,7 @@ public class EventRegisterAttributes {
     @SubscribeEvent
     public static void registerMobAttributes(EntityAttributeCreationEvent event) {
         event.put(ModEntities.SILICON_ROLLER.get(), SiliconRoller.createAttributes().build());
+
+        event.put(ModEntities.TETH_ZOMBIE.get(), TethZombie.createAttributes().build());
     }
 }
