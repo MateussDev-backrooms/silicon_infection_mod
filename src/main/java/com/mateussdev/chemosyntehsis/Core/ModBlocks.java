@@ -1,9 +1,12 @@
 package com.mateussdev.chemosyntehsis.Core;
 
+import com.mateussdev.chemosyntehsis.Blocks.VeinBlock;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -17,7 +20,17 @@ public class ModBlocks {
 
     //===== DEFINE BLOCKS HERE =====//
 
+    public static final RegistryObject<Block> SILICATE_BLOCK = registerBlock("silicate_block",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.DRIPSTONE_BLOCK)
+                    .requiresCorrectToolForDrops()));
 
+    public static final RegistryObject<Block> MUSHY_SILICON_BLOCK = registerBlock("mushy_silicate_block",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)
+                    .requiresCorrectToolForDrops()));
+
+    public static final RegistryObject<VeinBlock> VEIN_BLOCK = registerBlock("vein_block",
+            () -> new VeinBlock(BlockBehaviour.Properties.copy(Blocks.MUD)
+                    .requiresCorrectToolForDrops()));
 
     //===== DEFINE BLOCKS HERE =====//
 

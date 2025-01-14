@@ -1,9 +1,6 @@
 package com.mateussdev.chemosyntehsis;
 
-import com.mateussdev.chemosyntehsis.Core.ModBlocks;
-import com.mateussdev.chemosyntehsis.Core.ModCreativeTabs;
-import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import com.mateussdev.chemosyntehsis.Core.ModItems;
+import com.mateussdev.chemosyntehsis.Core.*;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -35,6 +32,7 @@ public class Chemosynthesis
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModEntities.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);

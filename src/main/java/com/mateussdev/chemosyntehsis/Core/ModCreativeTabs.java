@@ -18,7 +18,7 @@ public class ModCreativeTabs {
                     .icon(() -> new ItemStack(ModItems.SILICON.get()))
                     .title(Component.translatable("creativetab.silicon_tab"))
                     .displayItems((pParameters, pOutput) -> {
-
+                        ModBlocks.VEIN_BLOCK.get();
                     })
                     .build());
 

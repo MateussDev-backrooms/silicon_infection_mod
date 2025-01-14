@@ -26,13 +26,5 @@ public class TethZombie extends BaseTethered {
                 .add(Attributes.ATTACK_DAMAGE, 6D);
     }
 
-    @Override
-    protected boolean destructiveTether() {
-        return false;
-    }
 
-    @Override
-    protected float getTetherChance() {
-        return 0.6f;
-    }
 }

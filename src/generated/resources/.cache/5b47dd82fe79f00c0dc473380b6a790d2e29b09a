@@ -1,0 +1,10 @@
+// 1.20.1	2025-01-14T20:48:25.0953438	Block States: silicon_mod
+4f4ed55ed18cb37e61a4b88fe31aada37b30588e assets/silicon_mod/blockstates/mushy_silicate_block.json
+72f67455779b5c7d7bfef5fe1c5310edd1be58c7 assets/silicon_mod/blockstates/silicate_block.json
+0763796d95da4978994b3888c920391f67956a36 assets/silicon_mod/blockstates/vein_block.json
+fc28f399bad0eab05d68ad68ea6332c2256bcc32 assets/silicon_mod/models/block/mushy_silicate_block.json
+df194649cfabc0396617f7b98987dfad3b66929d assets/silicon_mod/models/block/silicate_block.json
+94382aa23a2c298896c60cc51b5838d370877fa3 assets/silicon_mod/models/block/vein_block.json
+c32dfcae008a5bb0ce9a266ec731cfbbe7e018f6 assets/silicon_mod/models/item/mushy_silicate_block.json
+d0f29ffb469b332b5e1152f46c329481437fa2fd assets/silicon_mod/models/item/silicate_block.json
+d261d40edaee8562cf0fc37f9e63929bbc949d9b assets/silicon_mod/models/item/vein_block.json
