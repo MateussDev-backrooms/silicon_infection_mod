@@ -1,0 +1,78 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 32,
+				"texture_height": 32,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "root",
+					"pivot": [0, 8, 0],
+					"cubes": [
+						{"origin": [-3, 4, -2], "size": [6, 6, 6], "pivot": [0, 7, 1], "rotation": [9.61518, 14.6914, 33.7424], "uv": [8, 20]},
+						{"origin": [0, 6, -2], "size": [6, 6, 4], "pivot": [3, 9, 1], "rotation": [49.54528, 39.2651, 38.9736], "uv": [12, 22]},
+						{"origin": [-3, 8, -3], "size": [4, 4, 6], "pivot": [-1, 10, 0], "rotation": [68.9379, 7.31038, 7.75649], "uv": [10, 20]},
+						{"origin": [-3, 6, -5], "size": [6, 4, 6], "pivot": [1, 8, -2], "rotation": [99.57517, 22.11746, 10.2442], "uv": [8, 16]}
+					]
+				},
+				{
+					"name": "appendage6",
+					"parent": "root",
+					"pivot": [-1, 7.5, 0],
+					"rotation": [0, 0, 45],
+					"cubes": [
+						{"origin": [-2.5, -2, -1.5], "size": [3, 3, 3], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "appendage_spike6",
+					"parent": "appendage6",
+					"pivot": [-1.5, 1, -0.5],
+					"cubes": [
+						{"origin": [-1.5, 1, -0.5], "size": [1, 6, 1], "uv": [0, 16]}
+					]
+				},
+				{
+					"name": "appendage5",
+					"parent": "root",
+					"pivot": [3, 7.5, 0],
+					"rotation": [0, 0, -45],
+					"cubes": [
+						{"origin": [1.5, -2, -1.5], "size": [3, 3, 3], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "appendage_spike5",
+					"parent": "appendage5",
+					"pivot": [2.5, 1, -0.5],
+					"cubes": [
+						{"origin": [2.5, 1, -0.5], "size": [1, 6, 1], "uv": [0, 16]}
+					]
+				},
+				{
+					"name": "appendage2",
+					"parent": "root",
+					"pivot": [0, 9.5, 0],
+					"rotation": [0, 0, -180],
+					"cubes": [
+						{"origin": [-1.5, 0, -1.5], "size": [3, 3, 3], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "appendage_spike2",
+					"parent": "appendage2",
+					"pivot": [-0.5, 3, -0.5],
+					"cubes": [
+						{"origin": [-0.5, 3, -0.5], "size": [1, 6, 1], "uv": [0, 16]}
+					]
+				}
+			]
+		}
+	]
+}

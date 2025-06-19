@@ -1,0 +1,9 @@
+{
+  "item.silicon_mod.silicon": "Silicon",
+
+  "item.silicon_mod.spawn_roller": "Roller Spawn Egg",
+  "item.silicon_mod.spawn_teth_zombie": "Tethered Zombie Spawn Egg",
+
+
+  "creativetab.silicon_tab": "Chemosynthesiss"
+}

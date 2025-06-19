@@ -24,7 +24,7 @@
                   }
                 }
               ],
-              "name": "silicon_mod:silicate_block"
+              "name": "silicon_mod:mushy_silicate_block"
             },
             {
               "type": "minecraft:item",

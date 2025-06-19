@@ -1,7 +1,11 @@
 package com.mateussdev.chemosyntehsis.Core;
 
+import com.mateussdev.chemosyntehsis.Blocks.BiomushBlock;
 import com.mateussdev.chemosyntehsis.Blocks.VeinBlock;
+import com.mateussdev.chemosyntehsis.Blocks.corpses.CowCorpse;
+import com.mateussdev.chemosyntehsis.Blocks.corpses.PigCorpse;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -31,6 +35,18 @@ public class ModBlocks {
     public static final RegistryObject<VeinBlock> VEIN_BLOCK = registerBlock("vein_block",
             () -> new VeinBlock(BlockBehaviour.Properties.copy(Blocks.MUD)
                     .requiresCorrectToolForDrops()));
+
+
+    public static final RegistryObject<BiomushBlock> BIOMUSH = registerBlock("biomush",
+            () -> new BiomushBlock(BlockBehaviour.Properties.copy(Blocks.MUD)
+                    .noOcclusion()));
+
+    public static final RegistryObject<CowCorpse> CORPSE_COW = registerBlock("cow_corpse",
+            () -> new CowCorpse(BlockBehaviour.Properties.copy(Blocks.MUD)
+                    .noOcclusion()));
+    public static final RegistryObject<PigCorpse> CORPSE_PIG = registerBlock("pig_corpse",
+            () -> new PigCorpse(BlockBehaviour.Properties.copy(Blocks.MUD)
+                    .noOcclusion()));
 
     //===== DEFINE BLOCKS HERE =====//
 

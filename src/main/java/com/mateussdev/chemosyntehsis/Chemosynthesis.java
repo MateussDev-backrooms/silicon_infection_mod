@@ -29,11 +29,11 @@ public class Chemosynthesis
         modEventBus.addListener(this::commonSetup);
 
         //registries
+        ModCreativeTabs.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModEntities.register(modEventBus);
         ModBlockEntities.register(modEventBus);
-        ModCreativeTabs.register(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -51,15 +51,5 @@ public class Chemosynthesis
     public void onServerStarting(ServerStartingEvent event)
     {
 
-    }
-
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents
-    {
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
-        {
-
-        }
     }
 }

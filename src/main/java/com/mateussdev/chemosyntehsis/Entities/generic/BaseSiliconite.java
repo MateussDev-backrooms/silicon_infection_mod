@@ -38,11 +38,6 @@ public class BaseSiliconite extends Monster implements GeoEntity {
 
     public static final EntityDataAccessor<Integer> METABOLISM_VALUE = SynchedEntityData.defineId(BaseSiliconite.class, EntityDataSerializers.INT);
 
-    //This value determines how much energy the siliconite has left. When it reaches zero it turns vegetative
-    //Optional as the function can be overriden to do nothing
-    //By default slows down the siliconite by 75%
-    public static final EntityDataAccessor<Integer> ENERGY = SynchedEntityData.defineId(BaseSiliconite.class, EntityDataSerializers.INT);
-
     //##### ===== #####//
 
 
@@ -124,7 +119,6 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     @Override
     public void baseTick() {
         super.baseTick();
-        super.baseTick();
 
         //prevent drowning
         this.setAirSupply(this.getMaxAirSupply());
@@ -140,7 +134,6 @@ public class BaseSiliconite extends Monster implements GeoEntity {
             //increase metabolism every tick by a lot if on fire
             if (isOnFire()) {
                 entityData.set(METABOLISM_VALUE, entityData.get(METABOLISM_VALUE) + getMetabolismGain() * 5);
-                entityData.set(ENERGY, entityData.get(ENERGY) + 1);
 
             }
 
@@ -148,16 +141,6 @@ public class BaseSiliconite extends Monster implements GeoEntity {
             if (entityData.get(METABOLISM_VALUE) >= evolvesAtMetabolism()) {
                 entityData.set(METABOLISM_VALUE, 0);
                 this.evolve();
-            }
-
-            //Energy stuffs
-            if (entityData.get(ENERGY) <= 0 && entityData.get(ENERGY) > -999) {
-                this.vegetate();
-                entityData.set(ENERGY, -999);
-            }
-            if (t % 20 == 0) {
-                //remove energy
-                entityData.set(ENERGY, entityData.get(ENERGY) - 1);
             }
         }
     }
@@ -189,16 +172,20 @@ public class BaseSiliconite extends Monster implements GeoEntity {
                 //Add energy on hurting target
                 //TODO add Tethered effect when hurt
                 //TODO ride/attach to entity that can be tethered
-                entityData.set(ENERGY, entityData.get(ENERGY) + 10);
             }
         }
         return success;
     }
 
     @Override
-    public boolean killedEntity(ServerLevel pLevel, LivingEntity pEntity) {
-        tether(pEntity);
-        return super.killedEntity(pLevel, pEntity);
+    public void awardKillScore(Entity killed, int score, DamageSource source) {
+        super.awardKillScore(killed, score, source);
+
+        if (!this.level().isClientSide && killed instanceof LivingEntity victim && source.getEntity() == this) {
+            if (StaticSiliconiteMethods.isTetherable(victim)) {
+                StaticSiliconiteMethods.tetherMob((ServerLevel) level(), victim);
+            }
+        }
     }
 
     @Override
@@ -280,21 +267,18 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     public void addAdditionalSaveData (CompoundTag tag){
         super.addAdditionalSaveData(tag);
         tag.putInt("metabolism_value", entityData.get(METABOLISM_VALUE));
-        tag.putInt("energy", entityData.get(ENERGY));
     }
 
     @Override
     public void readAdditionalSaveData (CompoundTag tag){
         super.readAdditionalSaveData(tag);
         entityData.set(METABOLISM_VALUE, tag.getInt("metabolism_value"));
-        entityData.set(ENERGY, tag.getInt("energy"));
     }
 
     @Override
     protected void defineSynchedData () {
         super.defineSynchedData();
         this.entityData.define(METABOLISM_VALUE, 0);
-        this.entityData.define(ENERGY, 100);
     }
 
     //##### ===== #####//

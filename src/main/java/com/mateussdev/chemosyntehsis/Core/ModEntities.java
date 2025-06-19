@@ -1,8 +1,11 @@
 package com.mateussdev.chemosyntehsis.Core;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Model;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import com.mateussdev.chemosyntehsis.Entities.teth_zombie.TethZombie;
+import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -21,10 +24,21 @@ public class ModEntities {
                     .sized(0.7f, 0.7f)
                     .build("silicon_roller"));
 
+    public static final RegistryObject<EntityType<ChunkOfFlesh>> CHUNK_OF_FLESH =
+            ENTITIES.register("chunk_of_flesh", () -> EntityType.Builder.of(ChunkOfFlesh::new, MobCategory.MONSTER)
+                    .sized(0.7f, 0.7f)
+                    .build("chunk_of_flesh"));
+
+
     public static final RegistryObject<EntityType<TethZombie>> TETH_ZOMBIE =
             ENTITIES.register("teth_zombie", () -> EntityType.Builder.of(TethZombie::new, MobCategory.MONSTER)
                     .sized(0.7f, 1.8f)
                     .build("teth_zombie"));
+
+    public static final RegistryObject<EntityType<TethCow>> TETH_COW =
+            ENTITIES.register("teth_cow", () -> EntityType.Builder.of(TethCow::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f)
+                    .build("teth_cow"));
 
     //===== DEFINE ENTITIES HERE =====//
 

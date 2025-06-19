@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "silicon_mod:block/pig_corpse",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "silicon_mod:block/pig_corpse"
+    },
+    "facing=south": {
+      "model": "silicon_mod:block/pig_corpse",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "silicon_mod:block/pig_corpse",
+      "y": 270
+    }
+  }
+}

@@ -4,6 +4,7 @@ import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModItems;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -19,12 +20,21 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.add(ModBlocks.SILICATE_BLOCK.get(),
                 block -> createOreDrop(ModBlocks.SILICATE_BLOCK.get(), ModItems.SILICON.get()));
         this.add(ModBlocks.MUSHY_SILICON_BLOCK.get(),
-                block -> createOreDrop(ModBlocks.SILICATE_BLOCK.get(), ModItems.SILICON.get()));
+                block -> createOreDrop(ModBlocks.MUSHY_SILICON_BLOCK.get(), ModItems.SILICON.get()));
 
         this.dropSelf(ModBlocks.VEIN_BLOCK.get());
+        this.dropWhenSilkTouch(ModBlocks.BIOMUSH.get());
+
+        //Corpses
+        this.add(ModBlocks.CORPSE_COW.get(),
+                block -> createOreDrop(ModBlocks.CORPSE_COW.get(), Items.ROTTEN_FLESH));
+        this.add(ModBlocks.CORPSE_PIG.get(),
+                block -> createOreDrop(ModBlocks.CORPSE_PIG.get(), Items.ROTTEN_FLESH));
     }
 
     protected Iterable<Block> getKnownBlocks() {
-        return ModBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
+        return ModBlocks.BLOCKS.getEntries().stream()
+                .map(RegistryObject::get)
+                .toList();
     }
 }

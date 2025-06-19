@@ -25,10 +25,11 @@ public class StaticSiliconiteMethods {
         tetherHashMap.put(EntityType.ZOMBIE, ModEntities.TETH_ZOMBIE.get());
         tetherHashMap.put(EntityType.HUSK, ModEntities.TETH_ZOMBIE.get());
         tetherHashMap.put(EntityType.DROWNED, ModEntities.TETH_ZOMBIE.get());
+        tetherHashMap.put(EntityType.COW, ModEntities.TETH_COW.get());
     }
 
     public static void tetherMob(ServerLevel serverLevel, LivingEntity tetherTarget) {
-        EntityType<? extends LivingEntity> tethered_result_type = tetherHashMap.get(tetherTarget);
+        EntityType<? extends LivingEntity> tethered_result_type = tetherHashMap.get(tetherTarget.getType());
         if(tethered_result_type==null) {
             return;
         }
@@ -54,6 +55,7 @@ public class StaticSiliconiteMethods {
                     SoundSource.HOSTILE,
                     1f,
                     1f);
+
             serverLevel.addFreshEntity(tethered_result);
         }
     }

@@ -18,7 +18,25 @@ public class ModCreativeTabs {
                     .icon(() -> new ItemStack(ModItems.SILICON.get()))
                     .title(Component.translatable("creativetab.silicon_tab"))
                     .displayItems((pParameters, pOutput) -> {
-                        ModBlocks.VEIN_BLOCK.get();
+                        //Items
+                        pOutput.accept(ModItems.SILICON.get());
+                        pOutput.accept(ModItems.ATMOSPHERE_ANALYZER.get());
+
+                        //Mobs
+                        pOutput.accept(ModItems.SPAWN_ROLLER.get());
+                        pOutput.accept(ModItems.SPAWN_TETH_ZOMBIE.get());
+                        pOutput.accept(ModItems.SPAWN_TETH_COW.get());
+                        pOutput.accept(ModItems.SPAWN_CHUNK_OF_FLESH.get());
+
+                        //Blocks
+                        pOutput.accept(ModBlocks.SILICATE_BLOCK.get());
+                        pOutput.accept(ModBlocks.MUSHY_SILICON_BLOCK.get());
+                        pOutput.accept(ModBlocks.VEIN_BLOCK.get());
+
+                        //Corpses
+                        pOutput.accept(ModBlocks.BIOMUSH.get());
+                        pOutput.accept(ModBlocks.CORPSE_COW.get());
+                        pOutput.accept(ModBlocks.CORPSE_PIG.get());
                     })
                     .build());
 
