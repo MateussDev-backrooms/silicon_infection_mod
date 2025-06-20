@@ -5,6 +5,7 @@ import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock_Render
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModBlockEntities;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow;
@@ -26,6 +27,8 @@ public class EventRegisterRenderer {
 
         EntityRenderers.register(ModEntities.TETH_ZOMBIE.get(), TethZombie_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_COW.get(), TethCow_Renderer::new);
+
+        EntityRenderers.register(ModEntities.BULB_PROJECTILE.get(), BulbProjectileEntity_Render::new);
 
         event.registerBlockEntityRenderer(ModBlockEntities.VEIN_BLOCK.get(), BEVeinBlock_Renderer::new);
     }

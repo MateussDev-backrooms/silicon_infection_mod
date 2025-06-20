@@ -1,6 +1,7 @@
 package com.mateussdev.chemosyntehsis.Core;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Model;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
@@ -29,6 +30,7 @@ public class ModEntities {
                     .sized(0.7f, 0.7f)
                     .build("chunk_of_flesh"));
 
+    //Tethered mobs
 
     public static final RegistryObject<EntityType<TethZombie>> TETH_ZOMBIE =
             ENTITIES.register("teth_zombie", () -> EntityType.Builder.of(TethZombie::new, MobCategory.MONSTER)
@@ -39,6 +41,13 @@ public class ModEntities {
             ENTITIES.register("teth_cow", () -> EntityType.Builder.of(TethCow::new, MobCategory.MONSTER)
                     .sized(0.7f, 1.8f)
                     .build("teth_cow"));
+
+    //Projectile
+
+    public static final RegistryObject<EntityType<BulbProjectileEntity>> BULB_PROJECTILE =
+            ENTITIES.register("bulb_projectile", () -> EntityType.Builder.<BulbProjectileEntity>of(BulbProjectileEntity::new, MobCategory.MISC)
+                    .sized(0.33f, 0.33f)
+                    .build("bulb_projectile"));
 
     //===== DEFINE ENTITIES HERE =====//
 

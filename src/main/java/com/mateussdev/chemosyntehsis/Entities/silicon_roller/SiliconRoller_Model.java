@@ -1,8 +1,10 @@
 package com.mateussdev.chemosyntehsis.Entities.silicon_roller;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 public class SiliconRoller_Model extends GeoModel<SiliconRoller> {
     //MODEL PATH
@@ -23,4 +25,20 @@ public class SiliconRoller_Model extends GeoModel<SiliconRoller> {
 
     @Override
     public ResourceLocation getAnimationResource(SiliconRoller object) { return animation; }
+
+    private int t = 0;
+    @Override
+    public void setCustomAnimations(SiliconRoller animatable, long instanceId, AnimationState<SiliconRoller> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
+        var root = this.getBone("root");
+
+
+        if(root != null && animatable.isDeadOrDying()) {
+            ++t;
+            float scale = Mth.sin(t*8f)*0.15f;
+            root.get().setScaleX(1f + scale);
+            root.get().setScaleY(1f + scale);
+            root.get().setScaleZ(1f + scale);
+        }
+    }
 }

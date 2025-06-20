@@ -1,5 +1,6 @@
 package com.mateussdev.chemosyntehsis.Items;
 
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.GlobalWarming.GlobalWarmingData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
@@ -30,6 +31,7 @@ public class AtmosphereAnalyzer extends Item {
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
 
         displayDiagnostics(pLevel, pPlayer);
+
         return InteractionResultHolder.success(pPlayer.getItemInHand(pUsedHand));
     }
 

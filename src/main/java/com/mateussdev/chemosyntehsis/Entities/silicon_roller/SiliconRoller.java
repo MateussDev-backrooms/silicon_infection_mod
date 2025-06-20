@@ -1,16 +1,27 @@
 package com.mateussdev.chemosyntehsis.Entities.silicon_roller;
 
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
+import org.joml.Vector3f;
 
 public class SiliconRoller extends BaseSiliconite {
     public SiliconRoller(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
+    }
+
+    @Override
+    protected boolean destructiveTether() {
+        return true;
     }
 
     //##### Entity setup and stats #####//
@@ -24,4 +35,61 @@ public class SiliconRoller extends BaseSiliconite {
                 .add(Attributes.ATTACK_SPEED, 2D)
                 .add(Attributes.ATTACK_DAMAGE, 4D);
     }
+
+    public int deathTime = 0;
+    @Override
+    protected void tickDeath() {
+        ++deathTime;
+
+        if (deathTime == 20 && !level().isClientSide) {
+            explodeIntoBulbs();
+            spawnBloodBurst();
+            level().playSound(
+                    null,
+                    blockPosition(),
+                    SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR,
+                    SoundSource.HOSTILE,
+                    1f,
+                    1f);
+            this.level().broadcastEntityEvent(this, (byte)60);
+            this.remove(RemovalReason.KILLED);
+        }
+    }
+
+    public void explodeIntoBulbs() {
+        for (int i = 0; i < 16; i++) {
+            BulbProjectileEntity shard = new BulbProjectileEntity(level(),this);
+            shard.shoot(
+                    level().random.triangle(0, 1),
+                    level().random.triangle(0.2, 1),
+                    level().random.triangle(0, 1),
+                    1.2f, // speed
+                    10.0f // inaccuracy
+            );
+            level().addFreshEntity(shard);
+        }
+    }
+
+    private void spawnBloodBurst() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+
+        DustParticleOptions blood = new DustParticleOptions(
+                new Vector3f(0.8f, 0.2f, 0.0f),
+                3.0f
+        );
+
+        serverLevel.sendParticles(
+                blood,
+                this.getX(),
+                this.getY() + 1.0,
+                this.getZ(),
+                30,
+                0.3,
+                0.5,
+                0.3,
+                0.1
+        );
+    }
+
+
 }

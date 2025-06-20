@@ -1,6 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
 import mod.azure.azurelib.animatable.GeoEntity;
@@ -154,11 +155,25 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
 
-        //only get dealt 25% of fire damage
+        //only get dealt 10% of fire damage
         if(pSource.is(DamageTypeTags.IS_FIRE) || pSource.is(DamageTypeTags.BURNS_ARMOR_STANDS) || pSource.is(DamageTypeTags.IGNITES_ARMOR_STANDS)) {
-            pAmount *= 0.25F;
+            pAmount *= 0.1F;
         }
-        //TODO spawn a bulb projectile with a certain chance on hurt
+
+        if(level () instanceof ServerLevel slvl ) {
+            if(slvl.random.nextFloat() < getBulbBreakoffChance()) {
+                BulbProjectileEntity shard = new BulbProjectileEntity(level(),this);
+                shard.shoot(
+                        level().random.triangle(0, 1),
+                        level().random.triangle(0.2, 1),
+                        level().random.triangle(0, 1),
+                        1.2f, // speed
+                        10.0f // inaccuracy
+                );
+                level().addFreshEntity(shard);
+            }
+        }
+
         return super.hurt(pSource, pAmount);
     }
 
@@ -184,6 +199,10 @@ public class BaseSiliconite extends Monster implements GeoEntity {
         if (!this.level().isClientSide && killed instanceof LivingEntity victim && source.getEntity() == this) {
             if (StaticSiliconiteMethods.isTetherable(victim)) {
                 StaticSiliconiteMethods.tetherMob((ServerLevel) level(), victim);
+
+                if(destructiveTether()) {
+                    this.remove(RemovalReason.DISCARDED);
+                }
             }
         }
     }
@@ -226,6 +245,9 @@ public class BaseSiliconite extends Monster implements GeoEntity {
 
     //Defines the chance between 0 and 1 for this siliconite to tether a mob that can be tethered
     protected float getTetherChance() { return 1.0F; }
+
+    //Defines the chance between 0 and 1 for a bulb to break off on attack
+    protected float getBulbBreakoffChance() { return 0.4F; }
 
     //Defines whether the siliconite will destroy itself after tethering
     protected boolean destructiveTether() { return true; }

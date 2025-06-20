@@ -1,5 +1,6 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
+import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Core.ModParticles;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
@@ -106,6 +107,7 @@ public class BaseTethered extends BaseSiliconite {
             //Particles
             spawnBloodBurst();
 
+            slvl.setBlock(blockPosition(), ModBlocks.BIOMUSH.get().defaultBlockState(), 2);
 
             //Spawn chunks
             for (int i = 0; i < count; i++) {
@@ -114,6 +116,7 @@ public class BaseTethered extends BaseSiliconite {
                 chunkOfFlesh.addDeltaMovement(new Vec3((slvl.random.nextDouble()*2f - 1f)*0.1f, (slvl.random.nextDouble())*0.5f, (slvl.random.nextDouble()*2f - 1f)*0.1f));
                 slvl.addFreshEntity(chunkOfFlesh);
             }
+
         }
     }
 
