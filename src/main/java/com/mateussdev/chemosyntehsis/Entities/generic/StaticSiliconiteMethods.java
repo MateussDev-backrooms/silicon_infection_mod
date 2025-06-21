@@ -26,6 +26,8 @@ public class StaticSiliconiteMethods {
         tetherHashMap.put(EntityType.HUSK, ModEntities.TETH_ZOMBIE.get());
         tetherHashMap.put(EntityType.DROWNED, ModEntities.TETH_ZOMBIE.get());
         tetherHashMap.put(EntityType.COW, ModEntities.TETH_COW.get());
+        tetherHashMap.put(EntityType.SKELETON, ModEntities.TETH_SKELETON.get());
+        tetherHashMap.put(EntityType.STRAY, ModEntities.TETH_SKELETON.get());
     }
 
     public static void tetherMob(ServerLevel serverLevel, LivingEntity tetherTarget) {

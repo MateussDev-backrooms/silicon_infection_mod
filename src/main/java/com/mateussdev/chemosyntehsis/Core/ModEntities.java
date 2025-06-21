@@ -5,6 +5,7 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Model;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
+import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton;
 import com.mateussdev.chemosyntehsis.Entities.teth_zombie.TethZombie;
 import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow;
 import net.minecraft.world.entity.EntityType;
@@ -37,10 +38,17 @@ public class ModEntities {
                     .sized(0.7f, 1.8f)
                     .build("teth_zombie"));
 
+    public static final RegistryObject<EntityType<TethSkeleton>> TETH_SKELETON =
+            ENTITIES.register("teth_skeleton", () -> EntityType.Builder.of(TethSkeleton::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f)
+                    .build("teth_skeleton"));
+
     public static final RegistryObject<EntityType<TethCow>> TETH_COW =
             ENTITIES.register("teth_cow", () -> EntityType.Builder.of(TethCow::new, MobCategory.MONSTER)
                     .sized(0.7f, 1.8f)
                     .build("teth_cow"));
+
+
 
     //Projectile
 

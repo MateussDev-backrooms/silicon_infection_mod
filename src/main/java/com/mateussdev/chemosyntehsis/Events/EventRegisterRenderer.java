@@ -10,6 +10,8 @@ import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Render
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow;
 import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton;
+import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.teth_zombie.TethZombie_Renderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -26,6 +28,7 @@ public class EventRegisterRenderer {
         EntityRenderers.register(ModEntities.CHUNK_OF_FLESH.get(), ChunkOfFlesh_Renderer::new);
 
         EntityRenderers.register(ModEntities.TETH_ZOMBIE.get(), TethZombie_Renderer::new);
+        EntityRenderers.register(ModEntities.TETH_SKELETON.get(), TethSkeleton_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_COW.get(), TethCow_Renderer::new);
 
         EntityRenderers.register(ModEntities.BULB_PROJECTILE.get(), BulbProjectileEntity_Render::new);
