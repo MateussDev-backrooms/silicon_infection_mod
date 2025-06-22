@@ -167,7 +167,7 @@ public class BaseSiliconite extends Monster implements GeoEntity {
                         level().random.triangle(0, 1),
                         level().random.triangle(0.2, 1),
                         level().random.triangle(0, 1),
-                        1.2f, // speed
+                        0.4f, // speed
                         10.0f // inaccuracy
                 );
                 level().addFreshEntity(shard);

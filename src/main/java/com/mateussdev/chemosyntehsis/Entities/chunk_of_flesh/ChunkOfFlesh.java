@@ -30,4 +30,9 @@ public class ChunkOfFlesh extends BaseSiliconite {
     protected float getTetherChance() {
         return 0.0f;
     }
+
+    @Override
+    protected float getBulbBreakoffChance() {
+        return 0.0f;
+    }
 }

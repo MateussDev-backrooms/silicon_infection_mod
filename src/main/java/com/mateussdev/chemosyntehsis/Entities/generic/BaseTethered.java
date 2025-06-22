@@ -30,6 +30,10 @@ public class BaseTethered extends BaseSiliconite {
     protected int globalWarmingRate = 64;
     protected int chunk_count = 3;
 
+    protected boolean explodeOnDeath() {
+        return true;
+    }
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         //Movement anim controller
@@ -80,13 +84,17 @@ public class BaseTethered extends BaseSiliconite {
     private int deathTime = 0;
     @Override
     public void tickDeath() {
-        ++this.deathTime;
+        if(explodeOnDeath()) {
+            ++this.deathTime;
 
 
-        if (this.deathTime == 40 && !this.level().isClientSide) {
-            this.splitIntoChunks(3);
-            this.level().broadcastEntityEvent(this, (byte)60);
-            this.remove(RemovalReason.KILLED);
+            if (this.deathTime == 40 && !this.level().isClientSide) {
+                this.splitIntoChunks(3);
+                this.level().broadcastEntityEvent(this, (byte)60);
+                this.remove(RemovalReason.KILLED);
+            }
+        } else {
+            super.tickDeath();
         }
     }
 

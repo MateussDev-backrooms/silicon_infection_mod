@@ -47,10 +47,13 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
         if (result.getEntity() instanceof LivingEntity target) {
             target.hurt(damageSources().arrow(this, this.getOwner()), 4.0F);
 
-            if(level() instanceof ServerLevel slvl) {
-                if(StaticSiliconiteMethods.isTetherable(target)) {
-                    StaticSiliconiteMethods.tetherMob(slvl, target);
-                    target.discard();
+            if(target.getHealth() / target.getMaxHealth() < 0.33f) {
+                //Only tether if the mob has under 1/3 HP
+                if(level() instanceof ServerLevel slvl) {
+                    if(StaticSiliconiteMethods.isTetherable(target)) {
+                        StaticSiliconiteMethods.tetherMob(slvl, target);
+                        target.discard();
+                    }
                 }
             }
         }

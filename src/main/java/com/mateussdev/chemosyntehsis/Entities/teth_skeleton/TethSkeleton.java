@@ -3,8 +3,13 @@ package com.mateussdev.chemosyntehsis.Entities.teth_skeleton;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
+import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -74,8 +79,30 @@ public class TethSkeleton extends BaseTethered implements RangedAttackMob {
         float velocity = 1.6f;
         float spread = 0.3f;
 
+        // Shoot
         bulbProjectile.shoot(dx, dy, dz, velocity, spread);
+
+        // Recoil
+
+        double length = Math.sqrt(dx * dx + dz * dz);
+        double dx_n = 0;
+        double dz_n = 0;
+        if (length != 0) {
+            dx_n = dx/length;
+            dz_n = dz/length;
+        }
+
+        float strength = 0.3F;
+        this.push(-dx_n * strength, 0.1F, -dz_n * strength);
+
+        // Post shoot
+        this.hurt(this.damageSources().generic(), 1f);
         this.level().addFreshEntity(bulbProjectile);
         this.level().playSound(null, this.blockPosition(), SoundEvents.MUD_BREAK, SoundSource.HOSTILE, 1.0F, 1.0F);
+    }
+
+    @Override
+    protected boolean explodeOnDeath() {
+        return false;
     }
 }
