@@ -2,6 +2,8 @@ package com.mateussdev.chemosyntehsis.Entities.generic;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import mod.azure.azurelib.cache.object.GeoBone;
+import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -13,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class StaticSiliconiteMethods {
     public static Map<EntityType<?>, EntityType<? extends BaseTethered>> tetherHashMap =
@@ -72,5 +75,28 @@ public class StaticSiliconiteMethods {
     public static boolean isMobFromChemosynthesisMod(LivingEntity entity) {
         ResourceLocation entityTypeKey = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
         return entityTypeKey.getNamespace().equals(Chemosynthesis.MODID);
+    }
+
+    public static GeoBone[] scrambleBones(GeoBone[] array) {
+        Random rng = new Random();
+        GeoBone[] result = array.clone();
+
+        for (int i = 0; i < array.length; i++) {
+            int el_1 = rng.nextInt(array.length);
+            int el_2 = rng.nextInt(array.length);
+
+            GeoBone buffer = result[el_2];
+            result[el_2] = result[el_1];
+            result[el_1] = buffer;
+        }
+
+        return result;
+    }
+
+    public static void updateBulbVisuals(BaseSiliconite animatable, GeoModel<?> model) {
+        GeoBone[] bulbs = animatable.getBulbsArray(model).clone();
+        for (int i = 0; i < animatable.getBulbCount(); i++) {
+            bulbs[i].setHidden(animatable.getBrokenOffBulbs() > i);
+        }
     }
 }

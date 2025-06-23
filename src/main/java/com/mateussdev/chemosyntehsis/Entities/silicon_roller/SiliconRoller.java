@@ -2,6 +2,9 @@ package com.mateussdev.chemosyntehsis.Entities.silicon_roller;
 
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
+import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import mod.azure.azurelib.cache.object.GeoBone;
+import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -57,7 +60,7 @@ public class SiliconRoller extends BaseSiliconite {
     }
 
     public void explodeIntoBulbs() {
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < getBulbCount()-getBrokenOffBulbs(); i++) {
             BulbProjectileEntity shard = new BulbProjectileEntity(level(),this);
             shard.shoot(
                     level().random.triangle(0, 1),
@@ -91,5 +94,45 @@ public class SiliconRoller extends BaseSiliconite {
         );
     }
 
+    // ===== Bulb setup ===== //
+    private boolean hasScrambled = false;
+    private GeoBone[] scrambled_bulbs = {};
 
+    @Override
+    public GeoBone[] getBulbsArray(GeoModel<?> model) {
+
+        GeoBone[] bulbs = {
+                model.getBone("appendage1").get(),
+                model.getBone("appendage2").get(),
+                model.getBone("appendage3").get(),
+                model.getBone("appendage4").get(),
+                model.getBone("appendage5").get(),
+                model.getBone("appendage6").get(),
+                model.getBone("appendage7").get(),
+                model.getBone("appendage8").get(),
+                model.getBone("appendage9").get(),
+                model.getBone("appendage10").get(),
+                model.getBone("appendage11").get(),
+                model.getBone("appendage12").get(),
+                model.getBone("appendage13").get(),
+                model.getBone("appendage14").get(),
+                model.getBone("appendage15").get(),
+                model.getBone("appendage16").get(),
+                model.getBone("appendage17").get(),
+                model.getBone("appendage18").get()
+        };
+
+        if(hasScrambled) {
+            return scrambled_bulbs;
+        } else {
+            scrambled_bulbs = StaticSiliconiteMethods.scrambleBones(bulbs);
+            hasScrambled = true;
+            return scrambled_bulbs;
+        }
+    }
+
+    @Override
+    public int getBulbCount() {
+        return 18;
+    }
 }

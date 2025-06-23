@@ -1,6 +1,8 @@
 package com.mateussdev.chemosyntehsis.Entities.silicon_roller;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import mod.azure.azurelib.cache.object.GeoBone;
 import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +34,7 @@ public class SiliconRoller_Model extends GeoModel<SiliconRoller> {
         super.setCustomAnimations(animatable, instanceId, animationState);
         var root = this.getBone("root");
 
-
+        // Death anim
         if(root != null && animatable.isDeadOrDying()) {
             ++t;
             float scale = Mth.sin(t*8f)*0.15f;
@@ -40,5 +42,9 @@ public class SiliconRoller_Model extends GeoModel<SiliconRoller> {
             root.get().setScaleY(1f + scale);
             root.get().setScaleZ(1f + scale);
         }
+        //Broken off bulbs
+        StaticSiliconiteMethods.updateBulbVisuals(animatable, this);
+
+
     }
 }

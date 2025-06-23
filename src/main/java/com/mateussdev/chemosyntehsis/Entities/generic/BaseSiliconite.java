@@ -1,21 +1,20 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
-import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
 import mod.azure.azurelib.animatable.GeoEntity;
+import mod.azure.azurelib.cache.object.GeoBone;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
 import mod.azure.azurelib.core.animation.AnimatableManager;
 import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.animation.RawAnimation;
+import mod.azure.azurelib.model.GeoModel;
 import mod.azure.azurelib.util.AzureLibUtil;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
@@ -28,7 +27,6 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 
 public class BaseSiliconite extends Monster implements GeoEntity {
     protected BaseSiliconite(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -38,6 +36,7 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     //##### ENTITY CUSTOM DATA #####//
 
     public static final EntityDataAccessor<Integer> METABOLISM_VALUE = SynchedEntityData.defineId(BaseSiliconite.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> BROKEN_OFF_BULBS_VALUE = SynchedEntityData.defineId(BaseSiliconite.class, EntityDataSerializers.INT);
 
     //##### ===== #####//
 
@@ -152,6 +151,8 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     //stuff that overrides upper classes like sounds behaviors and interaction with the world
 
     //Custom hurt mechanics
+
+    private int brokenOffBulbs = 0;
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
 
@@ -161,16 +162,23 @@ public class BaseSiliconite extends Monster implements GeoEntity {
         }
 
         if(level () instanceof ServerLevel slvl ) {
+
+            //Break off bulb
             if(slvl.random.nextFloat() < getBulbBreakoffChance()) {
-                BulbProjectileEntity shard = new BulbProjectileEntity(level(),this);
-                shard.shoot(
-                        level().random.triangle(0, 1),
-                        level().random.triangle(0.2, 1),
-                        level().random.triangle(0, 1),
-                        0.4f, // speed
-                        10.0f // inaccuracy
-                );
-                level().addFreshEntity(shard);
+
+
+                if(entityData.get(BROKEN_OFF_BULBS_VALUE) < getBulbCount()) {
+                    BulbProjectileEntity shard = new BulbProjectileEntity(level(),this);
+                    shard.shoot(
+                            level().random.triangle(0, 1),
+                            level().random.triangle(0.2, 1),
+                            level().random.triangle(0, 1),
+                            0.4f,
+                            10.0f
+                    );
+                    level().addFreshEntity(shard);
+                    entityData.set(BROKEN_OFF_BULBS_VALUE, entityData.get(BROKEN_OFF_BULBS_VALUE) + 1);
+                }
             }
         }
 
@@ -249,6 +257,17 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     //Defines the chance between 0 and 1 for a bulb to break off on attack
     protected float getBulbBreakoffChance() { return 0.4F; }
 
+    public int getBulbCount() { return 0; }
+
+    public int getBrokenOffBulbs() { return entityData.get(BROKEN_OFF_BULBS_VALUE); }
+
+    public GeoBone[] getBulbsArray(GeoModel<?> model) {
+      GeoBone[] bulbs = {
+
+      };
+      return bulbs;
+    };
+
     //Defines whether the siliconite will destroy itself after tethering
     protected boolean destructiveTether() { return true; }
 
@@ -289,18 +308,21 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     public void addAdditionalSaveData (CompoundTag tag){
         super.addAdditionalSaveData(tag);
         tag.putInt("metabolism_value", entityData.get(METABOLISM_VALUE));
+        tag.putInt("broken_off_bulbs_value", entityData.get(BROKEN_OFF_BULBS_VALUE));
     }
 
     @Override
     public void readAdditionalSaveData (CompoundTag tag){
         super.readAdditionalSaveData(tag);
         entityData.set(METABOLISM_VALUE, tag.getInt("metabolism_value"));
+        entityData.set(BROKEN_OFF_BULBS_VALUE, tag.getInt("broken_off_bulbs_value"));
     }
 
     @Override
     protected void defineSynchedData () {
         super.defineSynchedData();
         this.entityData.define(METABOLISM_VALUE, 0);
+        this.entityData.define(BROKEN_OFF_BULBS_VALUE, 0);
     }
 
     //##### ===== #####//
