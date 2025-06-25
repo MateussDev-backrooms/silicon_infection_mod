@@ -24,10 +24,14 @@ public class ModCreativeTabs {
 
                         //Mobs
                         pOutput.accept(ModItems.SPAWN_ROLLER.get());
+                        pOutput.accept(ModItems.SPAWN_CHUNK_OF_FLESH.get());
+
                         pOutput.accept(ModItems.SPAWN_TETH_ZOMBIE.get());
                         pOutput.accept(ModItems.SPAWN_TETH_SKELETON.get());
                         pOutput.accept(ModItems.SPAWN_TETH_COW.get());
-                        pOutput.accept(ModItems.SPAWN_CHUNK_OF_FLESH.get());
+
+                        pOutput.accept(ModItems.SPAWN_THROMBOCYTE.get());
+                        pOutput.accept(ModItems.SPAWN_ERYTHROCYTE.get());
 
                         //Blocks
                         pOutput.accept(ModBlocks.SILICATE_BLOCK.get());

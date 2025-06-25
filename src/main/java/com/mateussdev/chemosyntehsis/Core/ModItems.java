@@ -23,12 +23,15 @@ public class ModItems {
             ITEMS.register("atmosphere_analyzer", () -> new AtmosphereAnalyzer(new Item.Properties()));
 
     //Spawn eggs
+    //Pure
     public static final RegistryObject<Item> SPAWN_ROLLER =
             ITEMS.register("spawn_roller",
                     () -> new ForgeSpawnEggItem(ModEntities.SILICON_ROLLER, 0x967445, 0x7c4b45, new Item.Properties()));
     public static final RegistryObject<Item> SPAWN_CHUNK_OF_FLESH =
             ITEMS.register("spawn_chunk_of_flesh",
                     () -> new ForgeSpawnEggItem(ModEntities.CHUNK_OF_FLESH, 0x967445, 0x7c4b45, new Item.Properties()));
+
+    //Tethered mobs
     public static final RegistryObject<Item> SPAWN_TETH_ZOMBIE =
             ITEMS.register("spawn_teth_zombie",
                     () -> new ForgeSpawnEggItem(ModEntities.TETH_ZOMBIE, 0x967445, 0x7c4b45, new Item.Properties()));
@@ -38,6 +41,16 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_TETH_COW =
             ITEMS.register("spawn_teth_cow",
                     () -> new ForgeSpawnEggItem(ModEntities.TETH_COW, 0x967445, 0x7c4b45, new Item.Properties()));
+
+    //Hybrids
+
+    //Tier 1
+    public static final RegistryObject<Item> SPAWN_THROMBOCYTE =
+            ITEMS.register("spawn_thrombocyte",
+                    () -> new ForgeSpawnEggItem(ModEntities.THROMBOCYTE, 0xc66f5b, 0x7b4842, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_ERYTHROCYTE =
+            ITEMS.register("spawn_erythrocyte",
+                    () -> new ForgeSpawnEggItem(ModEntities.ERYTHROCYTE, 0xc66f5b, 0x7b4842, new Item.Properties()));
 
     //===== DEFINE ITEMS HERE =====//
 

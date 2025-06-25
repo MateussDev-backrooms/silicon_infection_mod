@@ -6,6 +6,8 @@ import com.mateussdev.chemosyntehsis.Core.ModBlockEntities;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.hybt1_erythrocyte.HybridErythrocyte_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.hybt1_thrombocyte.HybridThrombocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton_Renderer;
@@ -20,13 +22,23 @@ import net.minecraftforge.fml.common.Mod;
 public class EventRegisterRenderer {
     @SubscribeEvent
     public static void registerEntityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
+        //Pure
         EntityRenderers.register(ModEntities.SILICON_ROLLER.get(), SiliconRoller_Renderer::new);
         EntityRenderers.register(ModEntities.CHUNK_OF_FLESH.get(), ChunkOfFlesh_Renderer::new);
 
+        //Tethered mobs
         EntityRenderers.register(ModEntities.TETH_ZOMBIE.get(), TethZombie_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_SKELETON.get(), TethSkeleton_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_COW.get(), TethCow_Renderer::new);
 
+        //Hybrids
+
+        //Tier1
+        EntityRenderers.register(ModEntities.THROMBOCYTE.get(), HybridThrombocyte_Renderer::new);
+        EntityRenderers.register(ModEntities.ERYTHROCYTE.get(), HybridErythrocyte_Renderer::new);
+
+
+        //Projectile
         EntityRenderers.register(ModEntities.BULB_PROJECTILE.get(), BulbProjectileEntity_Render::new);
 
         event.registerBlockEntityRenderer(ModBlockEntities.VEIN_BLOCK.get(), BEVeinBlock_Renderer::new);

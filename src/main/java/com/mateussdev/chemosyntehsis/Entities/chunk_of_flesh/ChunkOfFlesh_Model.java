@@ -1,8 +1,10 @@
 package com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 public class ChunkOfFlesh_Model extends GeoModel<ChunkOfFlesh> {
     //MODEL PATH
@@ -23,4 +25,20 @@ public class ChunkOfFlesh_Model extends GeoModel<ChunkOfFlesh> {
 
     @Override
     public ResourceLocation getAnimationResource(ChunkOfFlesh object) { return animation; }
+
+    private int t;
+    @Override
+    public void setCustomAnimations(ChunkOfFlesh animatable, long instanceId, AnimationState<ChunkOfFlesh> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
+        var root = this.getBone("root");
+
+        // Evolve anim
+        if(root != null && animatable.mustEvolve) {
+            ++t;
+            float scale = Mth.sin(t*8f)*0.15f;
+            root.get().setScaleX(1f + scale);
+            root.get().setScaleY(1f + scale);
+            root.get().setScaleZ(1f + scale);
+        }
+    }
 }

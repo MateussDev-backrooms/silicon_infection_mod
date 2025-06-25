@@ -1,0 +1,91 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 3,
+				"visible_bounds_offset": [0, 0.5, 0]
+			},
+			"bones": [
+				{
+					"name": "root",
+					"pivot": [0, -7, 0]
+				},
+				{
+					"name": "body",
+					"parent": "root",
+					"pivot": [0, -7, 0],
+					"cubes": [
+						{"origin": [-4, 0, -8], "size": [10, 10, 15], "pivot": [0, 6, -0.5], "rotation": [0, 0, 45], "uv": [0, 0]},
+						{"origin": [1.23223, 0, -11.26777], "size": [8, 8, 8], "pivot": [3.23223, 6, -5.26777], "rotation": [45, 45, 90], "uv": [0, 25]},
+						{"origin": [-3.84619, 0.58579, 2.14645], "size": [8, 8, 8], "pivot": [0.15381, 4.58579, 6.14645], "rotation": [45, -45, 90], "uv": [0, 25]}
+					]
+				},
+				{
+					"name": "bottom",
+					"parent": "root",
+					"pivot": [0, -7, 0],
+					"cubes": [
+						{"origin": [-2, -2.25, -1], "size": [4, 2, 10], "uv": [0, 49]},
+						{"origin": [-6, -1.41421, 3], "size": [12, 12, 2], "pivot": [0, 4.58579, 4], "rotation": [-14.43276, 13.99545, 43.21918], "uv": [36, 41]},
+						{"origin": [-5, -1.5, 0], "size": [10, 0, 8], "uv": [0, 41]}
+					]
+				},
+				{
+					"name": "appendage2",
+					"parent": "bottom",
+					"pivot": [0, -0.5, 1],
+					"cubes": [
+						{"origin": [-1.5, -10, -0.5], "size": [3, 3, 3], "uv": [50, 0]}
+					]
+				},
+				{
+					"name": "appendage_spike2",
+					"parent": "appendage2",
+					"pivot": [-0.5, -7, 0.5],
+					"cubes": [
+						{"origin": [-0.5, -7, 0.5], "size": [1, 6, 1], "uv": [35, 0]}
+					]
+				},
+				{
+					"name": "appendage3",
+					"parent": "bottom",
+					"pivot": [0, -0.5, 3],
+					"rotation": [15, 0, 0],
+					"cubes": [
+						{"origin": [-1.5, -10, 1.5], "size": [3, 3, 3], "uv": [50, 0]}
+					]
+				},
+				{
+					"name": "appendage_spike3",
+					"parent": "appendage3",
+					"pivot": [-0.5, -7, 2.5],
+					"cubes": [
+						{"origin": [-0.5, -7, 2.5], "size": [1, 6, 1], "uv": [35, 0]}
+					]
+				},
+				{
+					"name": "appendage4",
+					"parent": "bottom",
+					"pivot": [0, -0.5, 4],
+					"rotation": [50, 0, 0],
+					"cubes": [
+						{"origin": [-1.5, -10, 2.5], "size": [3, 3, 3], "uv": [50, 0]}
+					]
+				},
+				{
+					"name": "appendage_spike4",
+					"parent": "appendage4",
+					"pivot": [-0.5, -7, 3.5],
+					"cubes": [
+						{"origin": [-0.5, -7, 3.5], "size": [1, 6, 1], "uv": [35, 0]}
+					]
+				}
+			]
+		}
+	]
+}

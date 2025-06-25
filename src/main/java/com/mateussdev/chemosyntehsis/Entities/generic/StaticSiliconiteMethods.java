@@ -4,6 +4,8 @@ import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import mod.azure.azurelib.cache.object.GeoBone;
 import mod.azure.azurelib.model.GeoModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -12,6 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import org.joml.Vector3f;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -98,5 +101,24 @@ public class StaticSiliconiteMethods {
         for (int i = 0; i < animatable.getBulbCount(); i++) {
             bulbs[i].setHidden(animatable.getBrokenOffBulbs() > i);
         }
+    }
+
+    public static void spawnBloodBurst(ServerLevel slvl, BlockPos blockPos) {
+        DustParticleOptions blood = new DustParticleOptions(
+                new Vector3f(0.8f, 0.0f, 0.0f),
+                3.0f
+        );
+
+        slvl.sendParticles(
+                blood,
+                blockPos.getX(),
+                blockPos.getY() + 1.0,
+                blockPos.getZ(),
+                30,
+                0.3,
+                0.5,
+                0.3,
+                0.1
+        );
     }
 }

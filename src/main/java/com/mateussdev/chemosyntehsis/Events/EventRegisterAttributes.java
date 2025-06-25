@@ -4,6 +4,8 @@ package com.mateussdev.chemosyntehsis.Events;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.hybt1_erythrocyte.HybridErythrocyte;
+import com.mateussdev.chemosyntehsis.Entities.hybt1_thrombocyte.HybridThrombocyte;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow;
 import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton;
@@ -16,11 +18,17 @@ import net.minecraftforge.fml.common.Mod;
 public class EventRegisterAttributes {
     @SubscribeEvent
     public static void registerMobAttributes(EntityAttributeCreationEvent event) {
+        //Pure
         event.put(ModEntities.SILICON_ROLLER.get(), SiliconRoller.createAttributes().build());
         event.put(ModEntities.CHUNK_OF_FLESH.get(), ChunkOfFlesh.createAttributes().build());
 
+        //Tethered mobs
         event.put(ModEntities.TETH_ZOMBIE.get(), TethZombie.createAttributes().build());
         event.put(ModEntities.TETH_SKELETON.get(), TethSkeleton.createAttributes().build());
         event.put(ModEntities.TETH_COW.get(), TethCow.createAttributes().build());
+
+        //Hybrids
+        event.put(ModEntities.THROMBOCYTE.get(), HybridThrombocyte.createAttributes().build());
+        event.put(ModEntities.ERYTHROCYTE.get(), HybridErythrocyte.createAttributes().build());
     }
 }

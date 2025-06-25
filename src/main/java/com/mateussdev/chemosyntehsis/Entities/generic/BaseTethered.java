@@ -89,7 +89,11 @@ public class BaseTethered extends BaseSiliconite {
 
 
             if (this.deathTime == 40 && !this.level().isClientSide) {
-                this.splitIntoChunks(3);
+                if(this.level().random.nextFloat() < 0.5f) {
+                    this.splitIntoChunks(3);
+                } else {
+                    this.turnIntoBiomush();
+                }
                 this.level().broadcastEntityEvent(this, (byte)60);
                 this.remove(RemovalReason.KILLED);
             }
@@ -99,7 +103,20 @@ public class BaseTethered extends BaseSiliconite {
     }
 
     public void turnIntoBiomush() {
+        if(level() instanceof ServerLevel slvl) {
+            slvl.playSound(
+                    null,
+                    blockPosition(),
+                    SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR,
+                    SoundSource.HOSTILE,
+                    1f,
+                    1f);
 
+            //Particles
+            StaticSiliconiteMethods.spawnBloodBurst(slvl, blockPosition());
+
+            slvl.setBlock(blockPosition(), ModBlocks.BIOMUSH.get().defaultBlockState(), 2);
+        }
     }
 
     public void splitIntoChunks(int count) {
@@ -113,9 +130,7 @@ public class BaseTethered extends BaseSiliconite {
                     1f);
 
             //Particles
-            spawnBloodBurst();
-
-            slvl.setBlock(blockPosition(), ModBlocks.BIOMUSH.get().defaultBlockState(), 2);
+            StaticSiliconiteMethods.spawnBloodBurst(slvl, blockPosition());
 
             //Spawn chunks
             for (int i = 0; i < count; i++) {
@@ -126,26 +141,5 @@ public class BaseTethered extends BaseSiliconite {
             }
 
         }
-    }
-
-    private void spawnBloodBurst() {
-        if (!(this.level() instanceof ServerLevel serverLevel)) return;
-
-        DustParticleOptions blood = new DustParticleOptions(
-                new Vector3f(0.8f, 0.0f, 0.0f),
-                3.0f
-        );
-
-        serverLevel.sendParticles(
-                blood,
-                this.getX(),
-                this.getY() + 1.0,
-                this.getZ(),
-                30,
-                0.3,
-                0.5,
-                0.3,
-                0.1
-        );
     }
 }

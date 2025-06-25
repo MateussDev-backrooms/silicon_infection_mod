@@ -1,8 +1,10 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
+import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
+import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.cache.object.GeoBone;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
@@ -22,11 +24,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+
+import java.util.*;
 
 public class BaseSiliconite extends Monster implements GeoEntity {
     protected BaseSiliconite(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -61,8 +64,6 @@ public class BaseSiliconite extends Monster implements GeoEntity {
                             // If not moving, play the idle animation
                             RawAnimation.begin().thenLoop("idle"));
         }));
-
-
     }
 
 
@@ -71,10 +72,19 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     //##### GENERAL ENTITY LOGIC #####//
 
     // - Entity AI
+
+    public static final Set<EntityType<? extends LivingEntity>> BLACKLISTED_MOBS = Set.of(
+            EntityType.CREEPER,
+            EntityType.BAT
+    );
+
+
     protected boolean shouldTargetMob(LivingEntity entity) {
-        //Targets entities outside of this mod by comparing their namespace
-        //TODO: Add ability to blacklist mobs and/or namespaces
-        return !StaticSiliconiteMethods.isMobFromChemosynthesisMod(entity);
+        //Don't target mobs of this namespace
+        if(StaticSiliconiteMethods.isMobFromChemosynthesisMod(entity)) return false;
+
+        //Don't target blacklisted mobs
+        return !BLACKLISTED_MOBS.contains(entity);
     }
 
     @Override
@@ -102,15 +112,15 @@ public class BaseSiliconite extends Monster implements GeoEntity {
         // - TARGETS
         if(shouldAlertOthersOnHurt()) {
             //get aggressive and alert
-            this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, new Class[0])).setAlertOthers(new Class[]{BaseSiliconite.class}));
+            this.targetSelector.addGoal(1, (new HurtByNonSiliconiteGoal(this, new Class[0])).setAlertOthers(new Class[]{BaseSiliconite.class}));
         } else {
             //only get aggressive
-            this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+            this.targetSelector.addGoal(1, new HurtByNonSiliconiteGoal(this));
         }
 
         //Seek out
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, this::shouldTargetMob));
+        this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, this::shouldTargetMob));
     }
 
     // - Entity base behavior
@@ -204,12 +214,14 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     public void awardKillScore(Entity killed, int score, DamageSource source) {
         super.awardKillScore(killed, score, source);
 
-        if (!this.level().isClientSide && killed instanceof LivingEntity victim && source.getEntity() == this) {
-            if (StaticSiliconiteMethods.isTetherable(victim)) {
-                StaticSiliconiteMethods.tetherMob((ServerLevel) level(), victim);
+        if(level().random.nextFloat() < getTetherChance()) {
+            if (!this.level().isClientSide && killed instanceof LivingEntity victim && source.getEntity() == this) {
+                if (StaticSiliconiteMethods.isTetherable(victim)) {
+                    StaticSiliconiteMethods.tetherMob((ServerLevel) level(), victim);
 
-                if(destructiveTether()) {
-                    this.remove(RemovalReason.DISCARDED);
+                    if(destructiveTether()) {
+                        this.remove(RemovalReason.DISCARDED);
+                    }
                 }
             }
         }

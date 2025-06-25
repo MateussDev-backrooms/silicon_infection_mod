@@ -3,6 +3,8 @@ package com.mateussdev.chemosyntehsis.Core;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.hybt1_erythrocyte.HybridErythrocyte;
+import com.mateussdev.chemosyntehsis.Entities.hybt1_thrombocyte.HybridThrombocyte;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton;
 import com.mateussdev.chemosyntehsis.Entities.teth_zombie.TethZombie;
@@ -47,6 +49,21 @@ public class ModEntities {
                     .sized(0.7f, 1.8f)
                     .build("teth_cow"));
 
+    //Hybrid mobs
+
+    //Tier 1
+    public static final RegistryObject<EntityType<HybridThrombocyte>> THROMBOCYTE =
+            ENTITIES.register("hybt1_thrombocyte", () -> EntityType.Builder.of(HybridThrombocyte::new, MobCategory.MONSTER)
+                    .sized(0.7f, 0.7f)
+                    .build("hybt1_thrombocyte"));
+    public static final RegistryObject<EntityType<HybridErythrocyte>> ERYTHROCYTE =
+            ENTITIES.register("hybt1_erythrocyte", () -> EntityType.Builder.of(HybridErythrocyte::new, MobCategory.MONSTER)
+                    .sized(0.85f, 0.85f)
+                    .build("hybt1_erythrocyte"));
+
+    //Tier 2
+
+    //Tier 3
 
 
     //Projectile

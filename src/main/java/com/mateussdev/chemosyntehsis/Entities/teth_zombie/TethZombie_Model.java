@@ -1,6 +1,8 @@
 package com.mateussdev.chemosyntehsis.Entities.teth_zombie;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
 
@@ -23,4 +25,10 @@ public class TethZombie_Model extends GeoModel<TethZombie> {
 
     @Override
     public ResourceLocation getAnimationResource(TethZombie object) { return animation; }
+
+    @Override
+    public void setCustomAnimations(TethZombie animatable, long instanceId, AnimationState<TethZombie> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
+        StaticSiliconiteMethods.updateBulbVisuals(animatable, this);
+    }
 }
