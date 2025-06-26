@@ -1,12 +1,18 @@
 package com.mateussdev.chemosyntehsis.Entities.Projectiles;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
 import mod.azure.azurelib.core.animatable.GeoAnimatable;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
 import mod.azure.azurelib.core.animation.AnimatableManager;
 import mod.azure.azurelib.util.AzureLibUtil;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,6 +32,9 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
         this.pickup = Pickup.CREATIVE_ONLY;
     }
 
+    public static final EntityDataAccessor<Integer> TRANSFORM_TIMER = SynchedEntityData.defineId(BulbProjectileEntity.class, EntityDataSerializers.INT);
+    public final int TRANSFORM_IN_SECONDS = 30;
+
     @Override
     protected ItemStack getPickupItem() {
         return ItemStack.EMPTY;
@@ -37,6 +46,34 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
         if (!this.inGround && this.level().isClientSide) {
             this.level().addParticle(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
         }
+
+        if(this.level() instanceof ServerLevel slvl) {
+            if(this.inGround) {
+                entityData.set(TRANSFORM_TIMER, entityData.get(TRANSFORM_TIMER)+1);
+
+                if(entityData.get(TRANSFORM_TIMER) >= 20*TRANSFORM_IN_SECONDS) {
+                    this.vegetate(slvl);
+                }
+            }
+        }
+    }
+
+    public void vegetate(ServerLevel slvl) {
+        VegetativeBulb bulb = ModEntities.VEG_BULB.get().create(slvl);
+        bulb.moveTo(this.position());
+        slvl.sendParticles(
+                ParticleTypes.EXPLOSION,
+                this.getX() + 0.5,
+                this.getY() + 0.5,
+                this.getZ() + 0.5,
+                1,
+                0,
+                0,
+                0,
+                0.1
+        );
+        slvl.addFreshEntity(bulb);
+        this.discard();
     }
 
     @Override
@@ -71,5 +108,23 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
     @Override
     public double getTick(Object o) {
         return 0;
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag pCompound) {
+        super.addAdditionalSaveData(pCompound);
+        pCompound.putInt("transform_timer", entityData.get(TRANSFORM_TIMER));
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag pCompound) {
+        super.readAdditionalSaveData(pCompound);
+        entityData.set(TRANSFORM_TIMER, pCompound.getInt("transform_timer"));
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        entityData.define(TRANSFORM_TIMER, 0);
     }
 }

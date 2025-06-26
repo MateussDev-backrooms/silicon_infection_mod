@@ -2,9 +2,11 @@ package com.mateussdev.chemosyntehsis.Entities.hybt1_erythrocyte;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import mod.azure.azurelib.cache.object.GeoBone;
 import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 public class HybridErythrocyte_Model extends GeoModel<HybridErythrocyte> {
     //MODEL PATH
@@ -26,15 +28,22 @@ public class HybridErythrocyte_Model extends GeoModel<HybridErythrocyte> {
     @Override
     public ResourceLocation getAnimationResource(HybridErythrocyte object) { return animation; }
 
+    private int t=0;
     @Override
     public void setCustomAnimations(HybridErythrocyte animatable, long instanceId, AnimationState<HybridErythrocyte> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
 
-        var root = this.getBone("root");
-
-        double dy = animatable.getDeltaMovement().y;
-
-        root.get().setRotY((float) dy);
+        GeoBone body = this.getBone("body").get();
+        // Death anim
+        if(animatable.isDeadOrDying()) {
+            ++t;
+            float scale = Mth.sin(t*8f)*0.15f;
+            body.setScaleX(1f + scale);
+            body.setScaleY(1f + scale);
+            body.setScaleZ(1f + scale);
+        }
+        //Broken off bulbs
+        StaticSiliconiteMethods.updateBulbVisuals(animatable, this);
 
     }
 }

@@ -12,6 +12,7 @@ import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller_Rende
 import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.teth_zombie.TethZombie_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb_Renderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -30,6 +31,9 @@ public class EventRegisterRenderer {
         EntityRenderers.register(ModEntities.TETH_ZOMBIE.get(), TethZombie_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_SKELETON.get(), TethSkeleton_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_COW.get(), TethCow_Renderer::new);
+
+        //Vegetated mobs
+        EntityRenderers.register(ModEntities.VEG_BULB.get(), VegetativeBulb_Renderer::new);
 
         //Hybrids
 

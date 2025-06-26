@@ -73,20 +73,6 @@ public class BaseSiliconite extends Monster implements GeoEntity {
 
     // - Entity AI
 
-    public static final Set<EntityType<? extends LivingEntity>> BLACKLISTED_MOBS = Set.of(
-            EntityType.CREEPER,
-            EntityType.BAT
-    );
-
-
-    protected boolean shouldTargetMob(LivingEntity entity) {
-        //Don't target mobs of this namespace
-        if(StaticSiliconiteMethods.isMobFromChemosynthesisMod(entity)) return false;
-
-        //Don't target blacklisted mobs
-        return !BLACKLISTED_MOBS.contains(entity);
-    }
-
     @Override
     protected void registerGoals() {
         //Default settings override when new behavior is required
@@ -120,7 +106,7 @@ public class BaseSiliconite extends Monster implements GeoEntity {
 
         //Seek out
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, this::shouldTargetMob));
+        this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
     }
 
     // - Entity base behavior

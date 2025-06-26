@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -19,9 +20,11 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
+import java.util.List;
 
 public class HybridErythrocyte extends BaseHybrid {
     public HybridErythrocyte(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -44,11 +47,12 @@ public class HybridErythrocyte extends BaseHybrid {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatingLungeGoal(this));
-        this.goalSelector.addGoal(2, new FloatingSiliconiteRandomStrollGoal(this));
+        this.goalSelector.addGoal(0, new FloatingLookAtTargetGoal(this));
+        this.goalSelector.addGoal(2, new FloatingSiliconiteRandomStrollGoal(this, 12f, 8f));
 
         //Seek out
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, this::shouldTargetMob));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
     }
 
     private int cooldown;
@@ -59,7 +63,7 @@ public class HybridErythrocyte extends BaseHybrid {
 
     @Override
     public boolean isNoGravity() {
-        return true;
+        return !isDeadOrDying();
     }
 
     @Override
@@ -73,14 +77,56 @@ public class HybridErythrocyte extends BaseHybrid {
         return false;
     }
 
+    private int atk_cooldown = 0;
+
     @Override
     public void aiStep() {
         super.aiStep();
+        if(atk_cooldown > 0) {
+            --atk_cooldown;
+        }
 
         if (this.level() instanceof ServerLevel slvl) {
-            if(this.getDeltaMovement().length() > 1.0f && this.getTarget() != null) {
-                if(this.getTarget().distanceTo(this) < 0.5f) {
-                    this.doHurtTarget(this.getTarget());
+
+            //Dash damage
+            if(this.getDeltaMovement().length() > 0.3f) {
+                List<Entity> entities = slvl.getEntities(null,
+                        new AABB(
+                                this.getEyePosition().add(-1, -1, -1),
+                                this.getEyePosition().add(1, 1, 1)
+                        ));
+                for (int i = 0; i < entities.size(); i++) {
+                    if(entities.get(i) instanceof LivingEntity l_entity) {
+                        if(l_entity instanceof Player player) {
+                            if (player.isBlocking() && atk_cooldown <= 0) {
+                                if (player.isUsingItem()) {
+                                    player.disableShield(true);
+
+                                    if (!player.getUseItem().isEmpty()) {
+                                        player.getUseItem().hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(player.getUsedItemHand()));
+                                    }
+
+                                    this.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                                            net.minecraft.sounds.SoundEvents.SHIELD_BREAK,
+                                            net.minecraft.sounds.SoundSource.PLAYERS,
+                                            1.0F, 1.0F);
+
+                                    atk_cooldown = 20;
+
+                                    this.setDeltaMovement(player.getLookAngle().scale(this.getSpeed()));
+                                    this.hasImpulse = true;
+                                }
+                            } else {
+                                if(atk_cooldown <= 0) {
+                                    this.doHurtTarget(player);
+                                }
+                            }
+                        } else {
+                            if(StaticSiliconiteMethods.shouldAttackMob(l_entity) && l_entity.isAlive()) {
+                                this.doHurtTarget(l_entity);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -89,7 +135,7 @@ public class HybridErythrocyte extends BaseHybrid {
             } else {
                 boolean isFalling = this.getDeltaMovement().length() > 1.0f;
                 if(isFalling && canLunge(0)) {
-                    cooldown = max_cooldown;
+                    cooldown = max_cooldown + (slvl.random.nextInt(10) - 5);
                 }
             }
         }
@@ -108,19 +154,7 @@ public class HybridErythrocyte extends BaseHybrid {
     protected void tickDeath() {
         if (this.level() instanceof ServerLevel slvl) {
             ++this.deathTime;
-
-            if (last_attacker != null && last_attacker.isAlive()) {
-                Vec3 dir = last_attacker.position().subtract(this.position()).normalize().scale(this.getSpeed() * 1.5f);
-                this.setDeltaMovement(dir);
-            } else {
-                if (!hasSelectedRandomDir) {
-                    hasSelectedRandomDir = true;
-                    rngx = slvl.random.nextDouble() * 2 - 1;
-                    rngy = slvl.random.nextDouble() * 2 - 1;
-                    rngz = slvl.random.nextDouble() * 2 - 1;
-                }
-                this.setDeltaMovement(new Vec3(rngx, rngy, rngz).normalize().scale(this.getSpeed() * 1.2f));
-            }
+            this.setNoGravity(false);
 
             if (this.deathTime >= 60) {
                 slvl.explode(this, this.getX(), this.getY(), this.getZ(), 3, Level.ExplosionInteraction.TNT);

@@ -30,6 +30,8 @@ public class ModCreativeTabs {
                         pOutput.accept(ModItems.SPAWN_TETH_SKELETON.get());
                         pOutput.accept(ModItems.SPAWN_TETH_COW.get());
 
+                        pOutput.accept(ModItems.SPAWN_VEG_BULB.get());
+
                         pOutput.accept(ModItems.SPAWN_THROMBOCYTE.get());
                         pOutput.accept(ModItems.SPAWN_ERYTHROCYTE.get());
 

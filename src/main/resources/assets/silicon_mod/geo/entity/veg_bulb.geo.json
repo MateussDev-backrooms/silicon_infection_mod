@@ -1,0 +1,41 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 16,
+				"texture_height": 16,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "bulb",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-4, 0.1, -4], "size": [8, 0, 8], "uv": [-8, 0]}
+					]
+				},
+				{
+					"name": "appendage1",
+					"parent": "bulb",
+					"pivot": [0, -0.5, 0],
+					"rotation": [0, 0, -180],
+					"cubes": [
+						{"origin": [-1.5, -10, -1.5], "size": [3, 3, 3], "uv": [0, 8]}
+					]
+				},
+				{
+					"name": "appendage_spike1",
+					"parent": "appendage1",
+					"pivot": [-0.5, -7, -0.5],
+					"cubes": [
+						{"origin": [-0.5, -7, -0.5], "size": [1, 6, 1], "uv": [12, 8]}
+					]
+				}
+			]
+		}
+	]
+}

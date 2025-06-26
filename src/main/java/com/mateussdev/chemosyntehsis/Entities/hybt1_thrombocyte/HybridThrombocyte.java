@@ -95,7 +95,7 @@ public class HybridThrombocyte extends BaseHybrid {
 
         //Seek out
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, this::shouldTargetMob));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
     }
 
     @Override
@@ -110,6 +110,7 @@ public class HybridThrombocyte extends BaseHybrid {
 
     private int cooldown = 0;
     private int jump_cld = 20;
+    private int atk_cooldown = 0;
     @Override
     public void aiStep() {
         super.aiStep();
@@ -117,6 +118,7 @@ public class HybridThrombocyte extends BaseHybrid {
         if (!this.level().isClientSide && this.getTarget() != null) {
             LivingEntity target = this.getTarget();
             if(cooldown > 0) cooldown--;
+            if(atk_cooldown > 0) atk_cooldown--;
 
             boolean isFalling = !this.onGround() && this.getDeltaMovement().y < 0;
             if(isFalling && canLunge(0)) {
@@ -129,7 +131,34 @@ public class HybridThrombocyte extends BaseHybrid {
                 if (distance < 1.5D && target.getFirstPassenger() == null) {
                     this.startRiding(target, true);
                 }
+            } else if(target instanceof Player player && this.getDeltaMovement().length() > 0.3f && !this.onGround()) {
+                double distance = this.distanceTo(target);
+                if (distance < 1.0D) {
+                    if (player.isBlocking() && atk_cooldown <= 0) {
+                        if (player.isUsingItem()) {
+                            player.disableShield(false);
+
+                            if (!player.getUseItem().isEmpty()) {
+                                player.getUseItem().hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(player.getUsedItemHand()));
+                            }
+
+                            this.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                                    net.minecraft.sounds.SoundEvents.SHIELD_BREAK,
+                                    net.minecraft.sounds.SoundSource.PLAYERS,
+                                    1.0F, 1.0F);
+
+                            atk_cooldown = 20;
+
+                            this.setDeltaMovement(player.getLookAngle().scale(this.getSpeed()));
+                            this.hasImpulse = true;
+                        }
+                    } else {
+                        this.doHurtTarget(player);
+                    }
+                }
             }
+
+
         }
 
         if (this.isPassenger()) {

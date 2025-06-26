@@ -5,9 +5,17 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidType;
 
-public class BaseVegetated extends Monster {
+public class BaseVegetated extends BaseSiliconite {
     protected BaseVegetated(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+        this.setPersistenceRequired();
+    }
+
+    // ===== Vegetative overrides ===== //
+
+    @Override
+    protected void registerGoals() {
+        //RESET cuz very different AI
     }
 
     @Override
@@ -30,5 +38,13 @@ public class BaseVegetated extends Monster {
         super.knockback(0, 0, 0);
     }
 
+    @Override
+    protected boolean isBrave() {
+        return true;
+    }
 
+    @Override
+    public boolean removeWhenFarAway(double pDistanceToClosestPlayer) {
+        return false;
+    }
 }

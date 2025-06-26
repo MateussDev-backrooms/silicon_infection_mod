@@ -12,9 +12,13 @@ import java.util.EnumSet;
 
 public class FloatingSiliconiteRandomStrollGoal extends Goal {
     private final BaseSiliconite siliconite;
+    private final float horizontal_range;
+    private final float vertical_range;
 
-    public FloatingSiliconiteRandomStrollGoal(BaseSiliconite siliconite) {
+    public FloatingSiliconiteRandomStrollGoal(BaseSiliconite siliconite, float horizontal_range, float vertical_range) {
         this.siliconite = siliconite;
+        this.horizontal_range = horizontal_range;
+        this.vertical_range = vertical_range;
         this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
@@ -37,9 +41,9 @@ public class FloatingSiliconiteRandomStrollGoal extends Goal {
 
     public void start() {
         RandomSource rng = this.siliconite.getRandom();
-        double $$1 = this.siliconite.getX() + (double)((rng.nextFloat() * 2.0F - 1.0F) * 16.0F);
-        double $$2 = this.siliconite.getY() + (double)((rng.nextFloat() * 2.0F - 1.0F) * 16.0F);
-        double $$3 = this.siliconite.getZ() + (double)((rng.nextFloat() * 2.0F - 1.0F) * 16.0F);
+        double $$1 = this.siliconite.getX() + (double)((rng.nextFloat() * 2.0F - 1.0F) * horizontal_range);
+        double $$2 = this.siliconite.getY() + (double)((rng.nextFloat() * 2.0F - 1.0F) * vertical_range);
+        double $$3 = this.siliconite.getZ() + (double)((rng.nextFloat() * 2.0F - 1.0F) * horizontal_range);
         this.siliconite.getMoveControl().setWantedPosition($$1, $$2, $$3, 1.0);
     }
 }

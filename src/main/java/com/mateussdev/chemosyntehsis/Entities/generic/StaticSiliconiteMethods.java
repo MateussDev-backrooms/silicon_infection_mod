@@ -16,9 +16,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import org.joml.Vector3f;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class StaticSiliconiteMethods {
     public static Map<EntityType<?>, EntityType<? extends BaseTethered>> tetherHashMap =
@@ -120,5 +118,16 @@ public class StaticSiliconiteMethods {
                 0.3,
                 0.1
         );
+    }
+
+    public static final Set<EntityType<? extends LivingEntity>> BLACKLISTED_MOBS = Set.of(
+            EntityType.CREEPER,
+            EntityType.BAT
+    );
+    public static boolean shouldAttackMob(LivingEntity entity) {
+        if(entity instanceof BaseSiliconite) return false;
+        if(isMobFromChemosynthesisMod(entity)) return false;
+        if(BLACKLISTED_MOBS.contains(entity.getType())) return false;
+        return true;
     }
 }

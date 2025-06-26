@@ -40,7 +40,11 @@ public class FloatingLungeGoal extends Goal {
 
                 if (this.chargeTime == 20) {
                     level.playSound(null, siliconite.blockPosition(), SoundEvents.BAT_TAKEOFF, SoundSource.HOSTILE, 1f, 1f);
-                    siliconite.getMoveControl().setWantedPosition(target.getX(), target.getY(), target.getZ(), 10.0f);
+                    Vec3 targetVec = target.getEyePosition().subtract(siliconite.position());
+                    Vec3 dashVec = targetVec.normalize().scale(1.3f);
+
+                    siliconite.setDeltaMovement(dashVec);
+                    siliconite.hasImpulse = true;
                     this.chargeTime = -40;
                 }
             } else if (this.chargeTime > 0) {

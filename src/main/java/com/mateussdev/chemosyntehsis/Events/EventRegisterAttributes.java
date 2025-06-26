@@ -10,6 +10,7 @@ import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow;
 import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton;
 import com.mateussdev.chemosyntehsis.Entities.teth_zombie.TethZombie;
+import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,6 +27,9 @@ public class EventRegisterAttributes {
         event.put(ModEntities.TETH_ZOMBIE.get(), TethZombie.createAttributes().build());
         event.put(ModEntities.TETH_SKELETON.get(), TethSkeleton.createAttributes().build());
         event.put(ModEntities.TETH_COW.get(), TethCow.createAttributes().build());
+
+        //Vegatated mobs
+        event.put(ModEntities.VEG_BULB.get(), VegetativeBulb.createAttributes().build());
 
         //Hybrids
         event.put(ModEntities.THROMBOCYTE.get(), HybridThrombocyte.createAttributes().build());

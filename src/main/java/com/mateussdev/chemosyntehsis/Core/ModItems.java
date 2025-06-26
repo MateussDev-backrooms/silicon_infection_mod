@@ -42,6 +42,11 @@ public class ModItems {
             ITEMS.register("spawn_teth_cow",
                     () -> new ForgeSpawnEggItem(ModEntities.TETH_COW, 0x967445, 0x7c4b45, new Item.Properties()));
 
+    //Vegetated mobs
+    public static final RegistryObject<Item> SPAWN_VEG_BULB =
+            ITEMS.register("spawn_veg_bulb",
+                    () -> new ForgeSpawnEggItem(ModEntities.VEG_BULB, 0x22201f, 0x855d36, new Item.Properties()));
+
     //Hybrids
 
     //Tier 1
