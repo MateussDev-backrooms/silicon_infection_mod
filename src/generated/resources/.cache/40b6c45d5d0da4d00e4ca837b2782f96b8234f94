@@ -1,4 +1,4 @@
-// 1.20.1	2025-06-25T21:56:26.4127646	Item Models: silicon_mod
+// 1.20.1	2025-06-27T11:37:09.2034118	Item Models: silicon_mod
 dcc706d77a44261c41a383792702d29b9e4e1629 assets/silicon_mod/models/item/atmosphere_analyzer.json
 b811f8f64e82fa01831ab1a895ad81e7ed0abbb0 assets/silicon_mod/models/item/silicon.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_chunk_of_flesh.json
@@ -8,3 +8,4 @@ b811f8f64e82fa01831ab1a895ad81e7ed0abbb0 assets/silicon_mod/models/item/silicon.
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_teth_skeleton.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_teth_zombie.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_thrombocyte.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_veg_bulb.json

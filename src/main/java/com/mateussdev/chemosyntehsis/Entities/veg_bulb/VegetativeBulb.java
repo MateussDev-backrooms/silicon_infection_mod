@@ -8,6 +8,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -27,9 +29,11 @@ public class VegetativeBulb extends BaseVegetated {
     public VegetativeBulb(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
         this.setNoGravity(true);
+        this.setYBodyRot(0);
     }
 
     public static final EntityDataAccessor<Vector3f> ALIGNMENT = SynchedEntityData.defineId(VegetativeBulb.class, EntityDataSerializers.VECTOR3);
+    private boolean hasSettled = false;
 
     // ##### Entity setup and stats ##### //
     public static AttributeSupplier.Builder createAttributes() {
@@ -43,61 +47,77 @@ public class VegetativeBulb extends BaseVegetated {
                 .add(Attributes.ATTACK_DAMAGE, 6D);
     }
 
-    protected Vec3 attach_normal = new Vec3(0, 1, 0);
-
     @Override
     public boolean isNoGravity() {
         return true;
     }
 
     public void calculateAttachOrientation() {
-        Vec3 origin = this.position();
-        if(this.level() instanceof ServerLevel slvl) {
-            Vec3[] dirs = {
-                    new Vec3(1, 0, 0), new Vec3(-1, 0, 0),
-                    new Vec3(0, 1, 0), new Vec3(0, -1, 0),
-                    new Vec3(0, 0, 1), new Vec3(0, 0, -1),
-            };
+        if(!hasSettled) {
+            Vec3 origin = this.position().add(0, this.getBbHeight() / 2f, 0);
+            if(this.level() instanceof ServerLevel slvl) {
+                Vec3[] dirs = {
+                        new Vec3(0, 1, 0), new Vec3(0, -1, 0),
+                        new Vec3(1, 0, 0), new Vec3(-1, 0, 0),
+                        new Vec3(0, 0, 1), new Vec3(0, 0, -1),
+                };
 
-            double dist = 2d;
-            Vec3 closestNormal = null;
-            double shortestDist = Double.MAX_VALUE;
+                double dist = 1.2d;
+                Vec3 closestNormal = null;
+                double shortestDist = Double.MAX_VALUE;
+                Vec3 closestPosition = null;
 
-            for(Vec3 dir : dirs) {
-                BlockHitResult hitResult = slvl.clip(new ClipContext(origin, dir.scale(dist), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+                for(Vec3 dir : dirs) {
+                    BlockHitResult hitResult = slvl.clip(new ClipContext(origin, dir.scale(dist).add(origin), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
 
-                if(hitResult.getType() == HitResult.Type.BLOCK) {
-                    double raycastDist = origin.distanceTo(hitResult.getLocation());
+                    if(hitResult.getType() == HitResult.Type.BLOCK) {
+                        double raycastDist = origin.distanceTo(hitResult.getLocation());
 
-                    if(raycastDist < shortestDist) {
-                        shortestDist = raycastDist;
-                        closestNormal = Vec3.atLowerCornerOf(hitResult.getDirection().getNormal());
+                        if(raycastDist < shortestDist) {
+                            shortestDist = raycastDist;
+                            closestNormal = new Vec3(
+                                    hitResult.getDirection().getNormal().getX(),
+                                    hitResult.getDirection().getNormal().getY(),
+                                    hitResult.getDirection().getNormal().getZ()
+                            );
+                            closestPosition = hitResult.getLocation();
+                        }
                     }
                 }
-            }
 
-            if(closestNormal != null) {
-                setAttachNormal(closestNormal);
-            }
+                if(closestNormal != null) {
+                    setAttachNormal(closestNormal);
+                    this.moveTo(closestPosition);
+                    hasSettled = true;
+                }
 
+            }
         }
     }
 
-    public Map<Vec3, Vec3> directionRotHashMap =
+    public Map<Vector3f, Vec3> directionRotHashMap =
             new HashMap<>();
 
     @Override
     public void tick() {
         super.tick();
-        System.out.println(attach_normal.x +" "+ attach_normal.y +" "+ attach_normal.z);
+        Vector3f vec = entityData.get(ALIGNMENT);
+        System.out.println(vec.x +" "+ vec.y +" "+ vec.z);
+        Vec3 rot = directionRotHashMap.get(vec);
+        System.out.println(rot.x +" "+ rot.y +" "+ rot.z);
+        this.setYBodyRot(0);
     }
 
     public void setAttachNormal(Vec3 normal) {
-        attach_normal = normal.normalize();
+        entityData.set(ALIGNMENT, normal.normalize().toVector3f());
     }
 
-    public Vec3 getAttachNormal() {
-        return attach_normal;
+    public Vector3f getAttachNormal() {
+        return entityData.get(ALIGNMENT);
+    }
+
+    public Vec3 getNormalRot() {
+        return directionRotHashMap.get(entityData.get(ALIGNMENT));
     }
 
     @Override
@@ -105,12 +125,12 @@ public class VegetativeBulb extends BaseVegetated {
         super.onAddedToWorld();
         calculateAttachOrientation();
 
-        directionRotHashMap.put(new Vec3(1, 0, 0), new Vec3(0, 0, 90));
-        directionRotHashMap.put(new Vec3(-1, 0, 0), new Vec3(0, 0, -90));
-        directionRotHashMap.put(new Vec3(0, 1, 0), new Vec3(0, 0, 0));
-        directionRotHashMap.put(new Vec3(0, -1, 0), new Vec3(0, 0, 180));
-        directionRotHashMap.put(new Vec3(0, 0, 1), new Vec3(90, 0, 0));
-        directionRotHashMap.put(new Vec3(0, 0, -1), new Vec3(-90, 0, 0));
+        directionRotHashMap.put(new Vector3f(1.0f, 0.0f, 0.0f), new Vec3(0, 0, 90));
+        directionRotHashMap.put(new Vector3f(-1.0f, 0.0f, 0.0f), new Vec3(0, 0, -90));
+        directionRotHashMap.put(new Vector3f(0.0f, 1.0f, 0.0f), new Vec3(0, 0, 0));
+        directionRotHashMap.put(new Vector3f(0.0f, -1.0f, 0.0f), new Vec3(0, 0, 180));
+        directionRotHashMap.put(new Vector3f(0.0f, 0.0f, 1.0f), new Vec3(-90, 0, 0));
+        directionRotHashMap.put(new Vector3f(0.0f, 0.0f, -1.0f), new Vec3(90, 0, 0));
     }
 
     @Override
@@ -135,5 +155,10 @@ public class VegetativeBulb extends BaseVegetated {
                 tag.getFloat("alignment_y"),
                 tag.getFloat("alignment_z")
         ));
+    }
+
+    @Override
+    public boolean isInWall() {
+        return false;
     }
 }

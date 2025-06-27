@@ -1,35 +1,35 @@
-[26Jun2025 19:48:26.092] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgedatauserdev, --assetIndex, 5, --assetsDir, C:\Users\MateussDev\.gradle\caches\forge_gradle\assets, --gameDir, ., --fml.forgeVersion, 47.3.22, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412, --mod, silicon_mod, --all, --output, D:\Programmr\silicon_infection_mod_reprise\src\generated\resources, --existing, D:\Programmr\silicon_infection_mod_reprise\src\main\resources]
-[26Jun2025 19:48:26.099] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.10 by Oracle Corporation; OS Windows 10 arch amd64 version 10.0
-[26Jun2025 19:48:26.217] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgedatauserdev
-[26Jun2025 19:48:26.267] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/MateussDev/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23128!/ Service=ModLauncher Env=CLIENT
-[26Jun2025 19:48:26.574] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\MateussDev\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.3.22\9a1d96e9108940786d846c8cc0dac07100e79f56\javafmllanguage-1.20.1-47.3.22.jar is missing mods.toml file
-[26Jun2025 19:48:26.577] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\MateussDev\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.3.22\2529f2c27d8f8a63ee54efc81fdfc3cea2d43c8\lowcodelanguage-1.20.1-47.3.22.jar is missing mods.toml file
-[26Jun2025 19:48:26.579] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\MateussDev\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.3.22\2de14adfd8715f1956007499d8d75c6a4e6fa872\mclanguage-1.20.1-47.3.22.jar is missing mods.toml file
-[26Jun2025 19:48:26.582] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\MateussDev\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.3.22\cf26aeb747e0d323f8eed9b00ebfb783282d5837\fmlcore-1.20.1-47.3.22.jar is missing mods.toml file
-[26Jun2025 19:48:26.661] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
-[26Jun2025 19:48:27.852] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
-[26Jun2025 19:48:27.853] [main/ERROR] [mixin/]: Mixin config azurelib.mixins.json does not specify "minVersion" property
-[26Jun2025 19:48:27.855] [main/ERROR] [mixin/]: Mixin config azurelib.forge.mixins.json does not specify "minVersion" property
-[26Jun2025 19:48:27.857] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgedatauserdev' with arguments [--gameDir, ., --assetsDir, C:\Users\MateussDev\.gradle\caches\forge_gradle\assets, --assetIndex, 5, --mod, silicon_mod, --all, --output, D:\Programmr\silicon_infection_mod_reprise\src\generated\resources, --existing, D:\Programmr\silicon_infection_mod_reprise\src\main\resources]
-[26Jun2025 19:48:28.281] [main/INFO] [mixin/]: Remapping refMap azurelib.refmap.json using D:\Programmr\silicon_infection_mod_reprise\build\createSrgToMcp\output.srg
-[26Jun2025 19:48:28.283] [main/INFO] [mixin/]: Remapping refMap azurelib.refmap.json using D:\Programmr\silicon_infection_mod_reprise\build\createSrgToMcp\output.srg
-[26Jun2025 19:48:28.588] [main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [silicon_mod]
-[26Jun2025 19:48:32.360] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 47.3.22, for MC 1.20.1 with MCP 20230612.114412
-[26Jun2025 19:48:32.363] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v47.3.22 Initialized
-[26Jun2025 19:48:32.585] [modloading-worker-0/INFO] [azurelib/FileWatching]: Registered azurelib config for auto-sync function
-[26Jun2025 19:48:32.986] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/MateussDev/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.3.22_mapped_parchment_2023.09.03-1.20.1/forge-1.20.1-47.3.22_mapped_parchment_2023.09.03-1.20.1.jar%23191!/assets/.mcassetsroot' uses unexpected schema
-[26Jun2025 19:48:32.986] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/MateussDev/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.3.22_mapped_parchment_2023.09.03-1.20.1/forge-1.20.1-47.3.22_mapped_parchment_2023.09.03-1.20.1.jar%23191!/data/.mcassetsroot' uses unexpected schema
-[26Jun2025 19:48:33.136] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Recipes
-[26Jun2025 19:48:33.167] [main/INFO] [net.minecraft.data.DataGenerator/]: Recipes finished after 30 ms
-[26Jun2025 19:48:33.167] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
-[26Jun2025 19:48:33.205] [main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 37 ms
-[26Jun2025 19:48:33.205] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Block States: silicon_mod
-[26Jun2025 19:48:33.317] [main/INFO] [net.minecraft.data.DataGenerator/]: Block States: silicon_mod finished after 111 ms
-[26Jun2025 19:48:33.317] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Item Models: silicon_mod
-[26Jun2025 19:48:33.320] [main/INFO] [net.minecraft.data.DataGenerator/]: Item Models: silicon_mod finished after 3 ms
-[26Jun2025 19:48:33.320] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:block mod id silicon_mod
-[26Jun2025 19:48:33.331] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:block mod id silicon_mod finished after 10 ms
-[26Jun2025 19:48:33.331] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:item mod id silicon_mod
-[26Jun2025 19:48:33.332] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:item mod id silicon_mod finished after 0 ms
-[26Jun2025 19:48:33.332] [main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 196 ms
-[26Jun2025 19:48:33.336] [main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 37, old count: 37, new count: 38, removed stale: 0, written: 1
+[27Jun2025 11:37:00.092] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgedatauserdev, --assetIndex, 5, --assetsDir, C:\Users\MateussDev\.gradle\caches\forge_gradle\assets, --gameDir, ., --fml.forgeVersion, 47.3.22, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412, --mod, silicon_mod, --all, --output, D:\Programmr\silicon_infection_mod_reprise\src\generated\resources, --existing, D:\Programmr\silicon_infection_mod_reprise\src\main\resources]
+[27Jun2025 11:37:00.098] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.10 by Oracle Corporation; OS Windows 10 arch amd64 version 10.0
+[27Jun2025 11:37:00.293] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgedatauserdev
+[27Jun2025 11:37:00.347] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/MateussDev/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23128!/ Service=ModLauncher Env=CLIENT
+[27Jun2025 11:37:00.663] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\MateussDev\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.3.22\9a1d96e9108940786d846c8cc0dac07100e79f56\javafmllanguage-1.20.1-47.3.22.jar is missing mods.toml file
+[27Jun2025 11:37:00.666] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\MateussDev\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.3.22\2529f2c27d8f8a63ee54efc81fdfc3cea2d43c8\lowcodelanguage-1.20.1-47.3.22.jar is missing mods.toml file
+[27Jun2025 11:37:00.670] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\MateussDev\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.3.22\2de14adfd8715f1956007499d8d75c6a4e6fa872\mclanguage-1.20.1-47.3.22.jar is missing mods.toml file
+[27Jun2025 11:37:00.674] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\MateussDev\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.3.22\cf26aeb747e0d323f8eed9b00ebfb783282d5837\fmlcore-1.20.1-47.3.22.jar is missing mods.toml file
+[27Jun2025 11:37:00.770] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
+[27Jun2025 11:37:02.049] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[27Jun2025 11:37:02.050] [main/ERROR] [mixin/]: Mixin config azurelib.mixins.json does not specify "minVersion" property
+[27Jun2025 11:37:02.052] [main/ERROR] [mixin/]: Mixin config azurelib.forge.mixins.json does not specify "minVersion" property
+[27Jun2025 11:37:02.055] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgedatauserdev' with arguments [--gameDir, ., --assetsDir, C:\Users\MateussDev\.gradle\caches\forge_gradle\assets, --assetIndex, 5, --mod, silicon_mod, --all, --output, D:\Programmr\silicon_infection_mod_reprise\src\generated\resources, --existing, D:\Programmr\silicon_infection_mod_reprise\src\main\resources]
+[27Jun2025 11:37:02.866] [main/INFO] [mixin/]: Remapping refMap azurelib.refmap.json using D:\Programmr\silicon_infection_mod_reprise\build\createSrgToMcp\output.srg
+[27Jun2025 11:37:02.868] [main/INFO] [mixin/]: Remapping refMap azurelib.refmap.json using D:\Programmr\silicon_infection_mod_reprise\build\createSrgToMcp\output.srg
+[27Jun2025 11:37:03.186] [main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [silicon_mod]
+[27Jun2025 11:37:07.518] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 47.3.22, for MC 1.20.1 with MCP 20230612.114412
+[27Jun2025 11:37:07.521] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v47.3.22 Initialized
+[27Jun2025 11:37:07.811] [modloading-worker-0/INFO] [azurelib/FileWatching]: Registered azurelib config for auto-sync function
+[27Jun2025 11:37:08.270] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/MateussDev/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.3.22_mapped_parchment_2023.09.03-1.20.1/forge-1.20.1-47.3.22_mapped_parchment_2023.09.03-1.20.1.jar%23191!/assets/.mcassetsroot' uses unexpected schema
+[27Jun2025 11:37:08.270] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/MateussDev/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.3.22_mapped_parchment_2023.09.03-1.20.1/forge-1.20.1-47.3.22_mapped_parchment_2023.09.03-1.20.1.jar%23191!/data/.mcassetsroot' uses unexpected schema
+[27Jun2025 11:37:08.668] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Recipes
+[27Jun2025 11:37:08.713] [main/INFO] [net.minecraft.data.DataGenerator/]: Recipes finished after 44 ms
+[27Jun2025 11:37:08.713] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
+[27Jun2025 11:37:08.860] [main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 147 ms
+[27Jun2025 11:37:08.860] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Block States: silicon_mod
+[27Jun2025 11:37:09.129] [main/INFO] [net.minecraft.data.DataGenerator/]: Block States: silicon_mod finished after 268 ms
+[27Jun2025 11:37:09.129] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Item Models: silicon_mod
+[27Jun2025 11:37:09.157] [main/INFO] [net.minecraft.data.DataGenerator/]: Item Models: silicon_mod finished after 27 ms
+[27Jun2025 11:37:09.157] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:block mod id silicon_mod
+[27Jun2025 11:37:09.201] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:block mod id silicon_mod finished after 43 ms
+[27Jun2025 11:37:09.201] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:item mod id silicon_mod
+[27Jun2025 11:37:09.202] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:item mod id silicon_mod finished after 0 ms
+[27Jun2025 11:37:09.202] [main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 534 ms
+[27Jun2025 11:37:09.209] [main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 38, old count: 37, new count: 39, removed stale: 0, written: 2

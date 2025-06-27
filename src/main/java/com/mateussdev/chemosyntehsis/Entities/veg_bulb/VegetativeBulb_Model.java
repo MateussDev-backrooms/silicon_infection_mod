@@ -7,6 +7,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
 
@@ -38,12 +39,12 @@ public class VegetativeBulb_Model extends GeoModel<VegetativeBulb> {
         super.setCustomAnimations(animatable, instanceId, animationState);
 
         var root = this.getBone("bulb");
-        Vec3 normal = animatable.getAttachNormal();
-
-        Vec3 rot = animatable.directionRotHashMap.get(normal);
-        root.get().setRotX((float) rot.x);
-        root.get().setRotY((float) rot.y);
-        root.get().setRotZ((float) rot.z);
+        Vec3 rot = animatable.getNormalRot();
+        if(rot != null) {
+            root.get().setRotX((float) rot.x * Mth.PI / 180f);
+            root.get().setRotY((float) rot.y * Mth.PI / 180f);
+            root.get().setRotZ((float) rot.z * Mth.PI / 180f);
+        }
 
     }
 }
