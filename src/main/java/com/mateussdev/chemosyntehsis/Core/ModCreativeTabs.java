@@ -39,6 +39,7 @@ public class ModCreativeTabs {
                         pOutput.accept(ModBlocks.SILICATE_BLOCK.get());
                         pOutput.accept(ModBlocks.MUSHY_SILICON_BLOCK.get());
                         pOutput.accept(ModBlocks.VEIN_BLOCK.get());
+                        pOutput.accept(ModBlocks.TENDRILS.get());
 
                         //Corpses
                         pOutput.accept(ModBlocks.BIOMUSH.get());

@@ -1,6 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import mod.azure.azurelib.cache.object.GeoBone;
 import mod.azure.azurelib.model.GeoModel;
@@ -14,6 +15,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -24,6 +27,10 @@ public class StaticSiliconiteMethods {
             //the key is the target mob and the value is the tether result
             new HashMap<>();
 
+    public static Map<Block, Block> infectionConversionMap = new HashMap<>();
+
+    public static Map<EntityType<? extends BaseVegetated>, Integer> vegetatedRadiusMap = new HashMap<>();
+
     static {
         //Define all tether pairs here
         tetherHashMap.put(EntityType.ZOMBIE, ModEntities.TETH_ZOMBIE.get());
@@ -32,6 +39,28 @@ public class StaticSiliconiteMethods {
         tetherHashMap.put(EntityType.COW, ModEntities.TETH_COW.get());
         tetherHashMap.put(EntityType.SKELETON, ModEntities.TETH_SKELETON.get());
         tetherHashMap.put(EntityType.STRAY, ModEntities.TETH_SKELETON.get());
+
+        //Define all block infection pairs
+
+        //mushy
+        infectionConversionMap.put(Blocks.GRASS_BLOCK, ModBlocks.MUSHY_SILICON_BLOCK.get());
+        infectionConversionMap.put(Blocks.DIRT, ModBlocks.MUSHY_SILICON_BLOCK.get());
+        infectionConversionMap.put(Blocks.PODZOL, ModBlocks.MUSHY_SILICON_BLOCK.get());
+        infectionConversionMap.put(Blocks.MYCELIUM, ModBlocks.MUSHY_SILICON_BLOCK.get());
+        infectionConversionMap.put(Blocks.CLAY, ModBlocks.MUSHY_SILICON_BLOCK.get());
+
+        //hard
+        infectionConversionMap.put(Blocks.STONE, ModBlocks.SILICATE_BLOCK.get());
+        infectionConversionMap.put(Blocks.DEEPSLATE, ModBlocks.SILICATE_BLOCK.get());
+        infectionConversionMap.put(Blocks.DIORITE, ModBlocks.SILICATE_BLOCK.get());
+        infectionConversionMap.put(Blocks.GRANITE, ModBlocks.SILICATE_BLOCK.get());
+        infectionConversionMap.put(Blocks.ANDESITE, ModBlocks.SILICATE_BLOCK.get());
+        infectionConversionMap.put(Blocks.SANDSTONE, ModBlocks.SILICATE_BLOCK.get());
+        infectionConversionMap.put(Blocks.TUFF, ModBlocks.SILICATE_BLOCK.get());
+        infectionConversionMap.put(Blocks.CALCITE, ModBlocks.SILICATE_BLOCK.get());
+
+        //Define vegetated radiuses
+        vegetatedRadiusMap.put(ModEntities.VEG_BULB.get(), 8);
     }
 
     public static void tetherMob(ServerLevel serverLevel, LivingEntity tetherTarget) {

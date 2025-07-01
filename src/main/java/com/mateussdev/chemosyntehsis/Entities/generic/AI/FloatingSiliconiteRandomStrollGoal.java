@@ -6,6 +6,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.level.block.GlowLichenBlock;
+import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
@@ -41,9 +43,11 @@ public class FloatingSiliconiteRandomStrollGoal extends Goal {
 
     public void start() {
         RandomSource rng = this.siliconite.getRandom();
-        double $$1 = this.siliconite.getX() + (double)((rng.nextFloat() * 2.0F - 1.0F) * horizontal_range);
-        double $$2 = this.siliconite.getY() + (double)((rng.nextFloat() * 2.0F - 1.0F) * vertical_range);
-        double $$3 = this.siliconite.getZ() + (double)((rng.nextFloat() * 2.0F - 1.0F) * horizontal_range);
+        float targeting_factor = 1.0f;
+        if(this.siliconite.getTarget() != null) targeting_factor = 0.4f;
+        double $$1 = this.siliconite.getX() + (double)((rng.nextFloat() * 2.0F - 1.0F) * (horizontal_range*targeting_factor));
+        double $$2 = this.siliconite.getY() + (double)((rng.nextFloat() * 2.0F - 1.0F) * (vertical_range*targeting_factor));
+        double $$3 = this.siliconite.getZ() + (double)((rng.nextFloat() * 2.0F - 1.0F) * (horizontal_range*targeting_factor));
         this.siliconite.getMoveControl().setWantedPosition($$1, $$2, $$3, 1.0);
     }
 }

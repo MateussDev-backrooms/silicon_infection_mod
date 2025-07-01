@@ -46,7 +46,7 @@ public class HybridErythrocyte extends BaseHybrid {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatingLungeGoal(this));
+        this.goalSelector.addGoal(0, new FloatingLungeGoal(this, 8f));
         this.goalSelector.addGoal(0, new FloatingLookAtTargetGoal(this));
         this.goalSelector.addGoal(2, new FloatingSiliconiteRandomStrollGoal(this, 12f, 8f));
 

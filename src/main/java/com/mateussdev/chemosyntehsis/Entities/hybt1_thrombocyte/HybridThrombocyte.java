@@ -45,7 +45,7 @@ public class HybridThrombocyte extends BaseHybrid {
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 18D)
-                .add(Attributes.MOVEMENT_SPEED, 0.5D)
+                .add(Attributes.MOVEMENT_SPEED, 0.44D)
                 .add(Attributes.FOLLOW_RANGE, 25D)
                 .add(Attributes.ARMOR_TOUGHNESS, 2D)
                 .add(Attributes.ATTACK_KNOCKBACK, 0.5D)
@@ -74,7 +74,7 @@ public class HybridThrombocyte extends BaseHybrid {
         //Default settings override when new behavior is required
 
         // - GOALS
-        this.goalSelector.addGoal(0, new LungeGoal(this, 1.3f, 0.6f, 0, 8d, 1.5d, this::canLunge));
+        this.goalSelector.addGoal(0, new LungeGoal(this, 1.2f, 0.6f, 0, 9d, 3d, this::canLunge));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0f, true));
 
         //Avoid water (No float task cuz they are immune to water damage)

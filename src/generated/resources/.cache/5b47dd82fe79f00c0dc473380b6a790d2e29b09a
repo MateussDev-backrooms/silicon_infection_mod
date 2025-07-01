@@ -1,14 +1,20 @@
-// 1.20.1	2025-06-25T11:38:30.5117663	Block States: silicon_mod
+// 1.20.1	2025-06-30T15:12:22.3380778	Block States: silicon_mod
 c329acaf25df29f6e07242de4d94bc6e2ea712d2 assets/silicon_mod/blockstates/biomush.json
 87bc9f86d4283f92c2b6ae6f287c587d58131574 assets/silicon_mod/blockstates/cow_corpse.json
 4f4ed55ed18cb37e61a4b88fe31aada37b30588e assets/silicon_mod/blockstates/mushy_silicate_block.json
 ce3ecb187f50ea1cb466dfe70b8f8cc391129e68 assets/silicon_mod/blockstates/pig_corpse.json
 72f67455779b5c7d7bfef5fe1c5310edd1be58c7 assets/silicon_mod/blockstates/silicate_block.json
+b6ab4e13e6508f9347afd3b0d322c97228ef3d6c assets/silicon_mod/blockstates/sulfured_tendrils.json
+d35d161a4016c7bceb8ce434fb2dd148c1543b2c assets/silicon_mod/blockstates/tendrils.json
 0763796d95da4978994b3888c920391f67956a36 assets/silicon_mod/blockstates/vein_block.json
 5f903097d31e0e8f8965bf1d64c9b571e9a4f989 assets/silicon_mod/models/block/biomush.json
 fc28f399bad0eab05d68ad68ea6332c2256bcc32 assets/silicon_mod/models/block/mushy_silicate_block.json
 df194649cfabc0396617f7b98987dfad3b66929d assets/silicon_mod/models/block/silicate_block.json
+6811eddd9710daece96b084ba5d7179580655de1 assets/silicon_mod/models/block/sulfured_tendrils.json
+a8b53739a1c8e25e2cdba0cdd8df001fb377a69f assets/silicon_mod/models/block/tendrils.json
 94382aa23a2c298896c60cc51b5838d370877fa3 assets/silicon_mod/models/block/vein_block.json
 c32dfcae008a5bb0ce9a266ec731cfbbe7e018f6 assets/silicon_mod/models/item/mushy_silicate_block.json
 d0f29ffb469b332b5e1152f46c329481437fa2fd assets/silicon_mod/models/item/silicate_block.json
+519fdcf90298c5d0fe33a9c7aca1a8b4e6724671 assets/silicon_mod/models/item/sulfured_tendrils.json
+004f5cc5a46b204b8bf1da90c6a82aedc64e8c71 assets/silicon_mod/models/item/tendrils.json
 d261d40edaee8562cf0fc37f9e63929bbc949d9b assets/silicon_mod/models/item/vein_block.json
