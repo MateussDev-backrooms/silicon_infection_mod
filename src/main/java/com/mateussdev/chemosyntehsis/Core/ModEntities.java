@@ -88,7 +88,8 @@ public class ModEntities {
     //Block entities
 
     public static final RegistryObject<BlockEntityType<BEVeinBlock>> BE_VEIN_BLOCK =
-            BLOCK_ENTITIES.register("be_vein_block", () -> BlockEntityType.Builder.of(BEVeinBlock::new, ModBlocks.VEIN_BLOCK.get()).build(null));
+            BLOCK_ENTITIES.register("be_vein_block", () -> BlockEntityType.Builder.of(BEVeinBlock::new, ModBlocks.VEIN_BLOCK.get())
+                    .build(null));
 
 
     //===== DEFINE ENTITIES HERE =====//

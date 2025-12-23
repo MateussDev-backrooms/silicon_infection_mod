@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class VeinBlock extends Block implements EntityBlock {
+public class VeinBlock extends BaseEntityBlock implements EntityBlock {
     public VeinBlock(Properties pProperties) {
         super(pProperties);
     }
@@ -32,6 +32,6 @@ public class VeinBlock extends Block implements EntityBlock {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return type == ModEntities.BE_VEIN_BLOCK.get() ? BEVeinBlock::tick : null;
+        return createTickerHelper(type, ModEntities.BE_VEIN_BLOCK.get(), BEVeinBlock::tick);
     }
 }
