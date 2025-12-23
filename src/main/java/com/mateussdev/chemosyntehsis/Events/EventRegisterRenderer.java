@@ -13,6 +13,7 @@ import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.teth_zombie.TethZombie_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb_Renderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -45,6 +46,7 @@ public class EventRegisterRenderer {
         //Projectile
         EntityRenderers.register(ModEntities.BULB_PROJECTILE.get(), BulbProjectileEntity_Render::new);
 
-        event.registerBlockEntityRenderer(ModBlockEntities.VEIN_BLOCK.get(), BEVeinBlock_Renderer::new);
+        //Block entities
+        BlockEntityRenderers.register(ModBlockEntities.VEIN_BLOCK.get(), BEVeinBlock_Renderer::new);
     }
 }

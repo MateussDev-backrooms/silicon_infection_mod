@@ -101,10 +101,6 @@ public class VegetativeBulb extends BaseVegetated {
     @Override
     public void tick() {
         super.tick();
-        Vector3f vec = entityData.get(ALIGNMENT);
-        System.out.println(vec.x +" "+ vec.y +" "+ vec.z);
-        Vec3 rot = directionRotHashMap.get(vec);
-        System.out.println(rot.x +" "+ rot.y +" "+ rot.z);
         this.setYBodyRot(0);
     }
 

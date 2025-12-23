@@ -51,6 +51,7 @@ public class TendrilBlock extends MultifaceBlock {
 
                 var sulfurized = ModBlocks.SULFURED_TENDRILS.get();
                 pLevel.setBlock(pPos, sulfurized.defaultBlockState(), 3);
+                return;
             }
 
         }

@@ -1,5 +1,6 @@
 package com.mateussdev.chemosyntehsis.Core;
 
+import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
@@ -12,6 +13,7 @@ import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow;
 import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -20,6 +22,8 @@ import net.minecraftforge.registries.RegistryObject;
 public class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES =
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Chemosynthesis.MODID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
+            DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Chemosynthesis.MODID);
 
     //===== DEFINE ENTITIES HERE =====//
 
@@ -80,9 +84,17 @@ public class ModEntities {
                     .sized(0.33f, 0.33f)
                     .build("bulb_projectile"));
 
+
+    //Block entities
+
+    public static final RegistryObject<BlockEntityType<BEVeinBlock>> BE_VEIN_BLOCK =
+            BLOCK_ENTITIES.register("be_vein_block", () -> BlockEntityType.Builder.of(BEVeinBlock::new, ModBlocks.VEIN_BLOCK.get()).build(null));
+
+
     //===== DEFINE ENTITIES HERE =====//
 
     public static void register(IEventBus eventBus) {
         ENTITIES.register(eventBus);
+        BLOCK_ENTITIES.register(eventBus);
     }
 }
