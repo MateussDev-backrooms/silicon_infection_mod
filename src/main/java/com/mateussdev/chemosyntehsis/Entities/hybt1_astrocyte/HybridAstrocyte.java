@@ -1,10 +1,7 @@
-package com.mateussdev.chemosyntehsis.Entities.hybt1_thrombocyte;
+package com.mateussdev.chemosyntehsis.Entities.hybt1_astrocyte;
 
-import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.LungeGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseHybrid;
@@ -14,7 +11,6 @@ import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh;
 import mod.azure.azurelib.core.animation.AnimatableManager;
 import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.animation.RawAnimation;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -28,24 +24,22 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
-public class HybridThrombocyte extends BaseHybrid {
-    public HybridThrombocyte(EntityType<? extends Monster> p_33002_, Level p_33003_) {
+public class HybridAstrocyte extends BaseHybrid {
+    public HybridAstrocyte(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
     }
 
     //##### Entity setup and stats #####//
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 18D)
+                .add(Attributes.MAX_HEALTH, 8D)
                 .add(Attributes.MOVEMENT_SPEED, 0.44D)
                 .add(Attributes.FOLLOW_RANGE, 25D)
                 .add(Attributes.ARMOR_TOUGHNESS, 2D)
@@ -144,9 +138,10 @@ public class HybridThrombocyte extends BaseHybrid {
                             }
 
                             this.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                                    net.minecraft.sounds.SoundEvents.SHIELD_BREAK,
-                                    net.minecraft.sounds.SoundSource.PLAYERS,
+                                    SoundEvents.SHIELD_BREAK,
+                                    SoundSource.PLAYERS,
                                     1.0F, 1.0F);
+                            this.hurt(damageSources().playerAttack(player), 1f);
 
                             atk_cooldown = 20;
 

@@ -4,6 +4,9 @@ import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh;
+import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.hybt1_astrocyte.HybridAstrocyte;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_erythrocyte.HybridErythrocyte;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_thrombocyte.HybridThrombocyte;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
@@ -67,6 +70,10 @@ public class ModEntities {
             ENTITIES.register("hybt1_thrombocyte", () -> EntityType.Builder.of(HybridThrombocyte::new, MobCategory.MONSTER)
                     .sized(0.7f, 0.7f)
                     .build("hybt1_thrombocyte"));
+    public static final RegistryObject<EntityType<HybridAstrocyte>> ASTROCYTE =
+            ENTITIES.register("hybt1_astrocyte", () -> EntityType.Builder.of(HybridAstrocyte::new, MobCategory.MONSTER)
+                    .sized(0.7f, 0.7f)
+                    .build("hybt1_astrocyte"));
     public static final RegistryObject<EntityType<HybridErythrocyte>> ERYTHROCYTE =
             ENTITIES.register("hybt1_erythrocyte", () -> EntityType.Builder.of(HybridErythrocyte::new, MobCategory.MONSTER)
                     .sized(0.85f, 0.85f)
@@ -84,6 +91,11 @@ public class ModEntities {
                     .sized(0.33f, 0.33f)
                     .build("bulb_projectile"));
 
+    //Gibs
+    public static final RegistryObject<EntityType<GibFlesh>> GIB_FLESH =
+            ENTITIES.register("gib_flesh", () -> EntityType.Builder.of(GibFlesh::new, MobCategory.MISC)
+                    .sized(0.4f, 0.4f)
+                    .build("gib_flesh"));
 
     //Block entities
 

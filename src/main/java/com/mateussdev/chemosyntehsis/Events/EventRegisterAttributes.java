@@ -4,6 +4,8 @@ package com.mateussdev.chemosyntehsis.Events;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh;
+import com.mateussdev.chemosyntehsis.Entities.hybt1_astrocyte.HybridAstrocyte;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_erythrocyte.HybridErythrocyte;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_thrombocyte.HybridThrombocyte;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
@@ -34,5 +36,7 @@ public class EventRegisterAttributes {
         //Hybrids
         event.put(ModEntities.THROMBOCYTE.get(), HybridThrombocyte.createAttributes().build());
         event.put(ModEntities.ERYTHROCYTE.get(), HybridErythrocyte.createAttributes().build());
+        event.put(ModEntities.ASTROCYTE.get(), HybridAstrocyte.createAttributes().build());
+
     }
 }

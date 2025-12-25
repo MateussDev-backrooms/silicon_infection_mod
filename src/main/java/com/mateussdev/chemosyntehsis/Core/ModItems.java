@@ -56,6 +56,9 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_ERYTHROCYTE =
             ITEMS.register("spawn_erythrocyte",
                     () -> new ForgeSpawnEggItem(ModEntities.ERYTHROCYTE, 0xc66f5b, 0x7b4842, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_ASTROCYTE =
+            ITEMS.register("spawn_astrocyte",
+                    () -> new ForgeSpawnEggItem(ModEntities.ASTROCYTE, 0xc66f5b, 0x7b4842, new Item.Properties()));
 
     //===== DEFINE ITEMS HERE =====//
 

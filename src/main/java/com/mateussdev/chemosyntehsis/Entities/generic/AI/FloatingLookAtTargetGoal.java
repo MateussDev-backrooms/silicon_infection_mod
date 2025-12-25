@@ -31,7 +31,7 @@ public class FloatingLookAtTargetGoal extends Goal{
             this.siliconite.yBodyRot = this.siliconite.getYRot();
         } else {
             LivingEntity target = this.siliconite.getTarget();
-            double dst = 32.0;
+            double dst = 16.0;
             if (target.distanceToSqr(this.siliconite) < dst*dst) {
                 double dx = target.getX() - this.siliconite.getX();
                 double dz = target.getZ() - this.siliconite.getZ();

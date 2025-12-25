@@ -4,6 +4,7 @@ import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Core.ModParticles;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.GlobalWarming.GlobalWarmingCommand;
 import com.mateussdev.chemosyntehsis.GlobalWarming.GlobalWarmingData;
 import mod.azure.azurelib.core.animation.AnimatableManager;
@@ -28,7 +29,7 @@ public class BaseTethered extends BaseSiliconite {
     }
 
     protected int globalWarmingRate = 64;
-    protected int chunk_count = 3;
+    protected int chunk_count = 5;
 
     protected boolean explodeOnDeath() {
         return true;
@@ -89,11 +90,7 @@ public class BaseTethered extends BaseSiliconite {
 
 
             if (this.deathTime == 40 && !this.level().isClientSide) {
-                if(this.level().random.nextFloat() < 0.5f) {
-                    this.splitIntoChunks(3);
-                } else {
-                    this.turnIntoBiomush();
-                }
+                this.splitIntoChunks(5);
                 this.level().broadcastEntityEvent(this, (byte)60);
                 this.remove(RemovalReason.KILLED);
             }
@@ -134,10 +131,17 @@ public class BaseTethered extends BaseSiliconite {
 
             //Spawn chunks
             for (int i = 0; i < count; i++) {
-                ChunkOfFlesh chunkOfFlesh = ModEntities.CHUNK_OF_FLESH.get().create(slvl);
-                chunkOfFlesh.moveTo(blockPosition().getX(), blockPosition().getY(), blockPosition().getZ());
-                chunkOfFlesh.addDeltaMovement(new Vec3((slvl.random.nextDouble()*2f - 1f)*0.1f, (slvl.random.nextDouble())*0.5f, (slvl.random.nextDouble()*2f - 1f)*0.1f));
-                slvl.addFreshEntity(chunkOfFlesh);
+                if(slvl.random.nextFloat() < 0.33f) {
+                    ChunkOfFlesh chunkOfFlesh = ModEntities.CHUNK_OF_FLESH.get().create(slvl);
+                    chunkOfFlesh.moveTo(blockPosition().getX(), blockPosition().getY(), blockPosition().getZ());
+                    chunkOfFlesh.addDeltaMovement(new Vec3((slvl.random.nextDouble()*2f - 1f)*0.1f, (slvl.random.nextDouble())*0.8f, (slvl.random.nextDouble()*2f - 1f)*0.1f));
+                    slvl.addFreshEntity(chunkOfFlesh);
+                } else {
+                    GibFlesh gib = ModEntities.GIB_FLESH.get().create(slvl);
+                    gib.moveTo(blockPosition().getX(), blockPosition().getY(), blockPosition().getZ());
+                    gib.addDeltaMovement(new Vec3((slvl.random.nextDouble()*2f - 1f)*0.1f, (slvl.random.nextDouble())*0.5f, (slvl.random.nextDouble()*2f - 1f)*0.1f));
+                    slvl.addFreshEntity(gib);
+                }
             }
 
         }
