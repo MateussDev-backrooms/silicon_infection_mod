@@ -110,7 +110,8 @@ public class ChunkOfFlesh extends BaseSiliconite {
 
     private static final EntityType<? extends BaseHybrid>[] HYBRID_EVOLUTION_RESULTS = createHybridPool(
             ModEntities.THROMBOCYTE.get(),
-            ModEntities.ERYTHROCYTE.get()
+            ModEntities.ERYTHROCYTE.get(),
+            ModEntities.ASTROCYTE.get()
     );
     public void evolveIntoHybrid() {
         if(this.level() instanceof ServerLevel slvl) {

@@ -1,7 +1,9 @@
 package com.mateussdev.chemosyntehsis.Entities.hybt1_astrocyte;
 
+import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.LungeGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseHybrid;
@@ -15,6 +17,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,6 +34,8 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.apache.logging.log4j.core.jmx.Server;
+import org.jetbrains.annotations.Nullable;
 
 public class HybridAstrocyte extends BaseHybrid {
     public HybridAstrocyte(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -47,6 +53,8 @@ public class HybridAstrocyte extends BaseHybrid {
                 .add(Attributes.ATTACK_SPEED, 1D)
                 .add(Attributes.ATTACK_DAMAGE, 3D);
     }
+
+    protected int mode = 0; // 0 - Support, 1 - Attack
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
@@ -70,7 +78,7 @@ public class HybridAstrocyte extends BaseHybrid {
 
         // - GOALS
         this.goalSelector.addGoal(0, new LungeGoal(this, 1.2f, 0.6f, 0, 9d, 3d, this::canLunge));
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0f, true));
+        this.goalSelector.addGoal(1, new ConditionalAttackGoal(this, 1.2f, false, (i) -> mode == 1));
 
         //Avoid water (No float task cuz they are immune to water damage)
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.1D));
@@ -88,9 +96,26 @@ public class HybridAstrocyte extends BaseHybrid {
             this.targetSelector.addGoal(1, new HurtByNonSiliconiteGoal(this));
         }
 
-        //Seek out
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
+        //Seek out mobs to support
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false,
+                target -> (StaticSiliconiteMethods.ASTROCYTE_SUPPORT_TARGETS.containsKey(target.getType()) && target.getPassengers().isEmpty())));
+        //Seek out attack targets
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
+    }
+
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
+        if (target == null ||
+                StaticSiliconiteMethods.ASTROCYTE_SUPPORT_TARGETS.containsKey(target.getType())) {
+            mode = 0;
+        } else if((this.getVehicle() instanceof LivingEntity host) && StaticSiliconiteMethods.ASTROCYTE_SUPPORT_TARGETS.containsKey(host.getType())) {
+            mode = 0;
+        }
+        else {
+            mode = 1;
+        }
     }
 
     @Override
@@ -141,6 +166,7 @@ public class HybridAstrocyte extends BaseHybrid {
                                     SoundEvents.SHIELD_BREAK,
                                     SoundSource.PLAYERS,
                                     1.0F, 1.0F);
+                            //Hurt when blocked
                             this.hurt(damageSources().playerAttack(player), 1f);
 
                             atk_cooldown = 20;
@@ -153,8 +179,6 @@ public class HybridAstrocyte extends BaseHybrid {
                     }
                 }
             }
-
-
         }
 
         if (this.isPassenger()) {
@@ -162,26 +186,66 @@ public class HybridAstrocyte extends BaseHybrid {
         }
     }
 
+    //Tickering
     @Override
     public void tick() {
         super.tick();
 
-        if (this.isPassenger()) {
-            Entity vehicle = this.getVehicle();
-            if(this.level() instanceof ServerLevel slvl) {
-                if (vehicle instanceof LivingEntity victim) {
-                    if (this.tickCount % 20 == 0) {
-                        victim.hurt(damageSources().generic(), 1f);
-                        if(victim.getHealth() / victim.getMaxHealth() < 0.2f) {
-                            splitIntoChunks(5, victim);
-                            victim.discard();
-                            this.stopRiding();
-                            this.setTarget(null);
+        if(!this.isPassenger()) return;
+        if (!(this.level() instanceof ServerLevel slvl)) return;
 
-                        }
-                    }
-                }
-            }
+
+        Entity vehicle = this.getVehicle();
+        if (!(vehicle instanceof LivingEntity host)) return;
+        if(StaticSiliconiteMethods.ASTROCYTE_SUPPORT_TARGETS.containsKey(host.getType())) {
+            mode = 0;
+        }
+
+        if (mode == 0) {
+            handleSupportTick(host);
+        } else {
+            handleMeltingTick(host, slvl);
+        }
+
+    }
+
+    //Supporting tick
+    protected void handleSupportTick(LivingEntity host) {
+        if (this.tickCount % 100 != 0) return;
+
+        host.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 120, 0));
+
+        if (this.random.nextBoolean()) {
+            host.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 120, 0));
+        } else {
+            host.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 120, 0));
+        }
+    }
+
+
+    //Attacking tick
+    protected void handleMeltingTick(LivingEntity victim, ServerLevel slvl) {
+        if (this.tickCount % 20 != 0) return;
+
+        victim.hurt(damageSources().generic(), 1f);
+
+        if (victim.getHealth() / victim.getMaxHealth() < 0.2f) {
+            slvl.playSound(
+                    null,
+                    blockPosition(),
+                    SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR,
+                    SoundSource.HOSTILE,
+                    1f,
+                    1f);
+
+            //Particles
+            StaticSiliconiteMethods.spawnBloodBurst(slvl, blockPosition());
+
+            slvl.setBlock(victim.blockPosition(), ModBlocks.BIOMUSH.get().defaultBlockState(), 2);
+            victim.discard();
+
+            this.stopRiding();
+            this.setTarget(null);
         }
     }
 

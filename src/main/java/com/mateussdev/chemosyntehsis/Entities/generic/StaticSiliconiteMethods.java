@@ -31,6 +31,15 @@ public class StaticSiliconiteMethods {
 
     public static Map<EntityType<? extends BaseVegetated>, Integer> vegetatedRadiusMap = new HashMap<>();
 
+    public static final Map<EntityType<? extends LivingEntity>, SupportProfile> ASTROCYTE_SUPPORT_TARGETS =
+            Map.of(
+                    ModEntities.TETH_ZOMBIE.get(), new SupportProfile(),
+                    ModEntities.TETH_SKELETON.get(), new SupportProfile(),
+                    ModEntities.TETH_COW.get(), new SupportProfile()
+            );
+
+    public record SupportProfile() {}
+
     static {
         //Define all tether pairs here
         tetherHashMap.put(EntityType.ZOMBIE, ModEntities.TETH_ZOMBIE.get());
