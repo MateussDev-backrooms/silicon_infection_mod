@@ -2,6 +2,7 @@ package com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh;
 
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.SeekAndEatBiomushGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseHybrid;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
@@ -24,10 +25,15 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.BusBuilder;
 
 import java.sql.Array;
+import java.util.List;
 import java.util.Set;
+
+import static com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods.spawnBloodBurst;
 
 public class ChunkOfFlesh extends BaseSiliconite {
     public ChunkOfFlesh(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -39,6 +45,9 @@ public class ChunkOfFlesh extends BaseSiliconite {
     public boolean doBurrowAnim = false;
 
     public static final EntityDataAccessor<Integer> IS_BURROWING = SynchedEntityData.defineId(ChunkOfFlesh.class, EntityDataSerializers.INT);
+
+    private static final int MERGE_COUNT = 5;
+    private static final double MERGE_RADIUS = 3.5D;
 
     //##### Entity setup and stats #####//
     public static AttributeSupplier.Builder createAttributes() {
@@ -73,7 +82,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(-1, new SeekAndEatBiomushGoal(this, ModBlocks.BIOMUSH.get()));
+        this.goalSelector.addGoal(0, new SeekAndEatBiomushGoal(this, ModBlocks.BIOMUSH.get()));
     }
 
     @Override
@@ -97,10 +106,81 @@ public class ChunkOfFlesh extends BaseSiliconite {
     public void tick() {
         super.tick();
         if (entityData.get(IS_BURROWING) == 1 && _brw) {
-            level().playSound(this, this.blockPosition(), SoundEvents.ZOMBIE_VILLAGER_CURE, SoundSource.HOSTILE, 1f, 1f);
+            level().playSound(this, this.blockPosition(), SoundEvents.WARDEN_DIG, SoundSource.HOSTILE, 1f, 1f);
             _brw = false;
         }
+
+        if (mustEvolve && evolution_t++ > 20) {
+            mergeIntoCluster();
+        }
+
+        if(tickCount % 20 == 0) {
+            if (!level().isClientSide && !this.mustEvolve) {
+                List<ChunkOfFlesh> nearby = level().getEntitiesOfClass(
+                        ChunkOfFlesh.class,
+                        this.getBoundingBox().inflate(MERGE_RADIUS),
+                        c -> c != this && !c.mustEvolve
+                );
+
+                if (nearby.size() + 1 >= MERGE_COUNT) {
+                    initiateMerge(nearby);
+                }
+            }
+        }
     }
+
+    private void initiateMerge(List<ChunkOfFlesh> others) {
+        this.mustEvolve = true;
+
+        for (ChunkOfFlesh c : others) {
+            c.mustEvolve = true;
+        }
+
+        if (level() instanceof ServerLevel slvl) {
+            Vec3 center = this.position();
+
+            // Suck the others inward (visual feedback)
+            for (ChunkOfFlesh c : others) {
+                Vec3 dir = center.subtract(c.position()).normalize();
+                c.setDeltaMovement(dir.scale(0.25));
+                c.setBurrowAnimation(true);
+            }
+
+            spawnBloodBurst(slvl, blockPosition());
+
+            // Delay actual merge slightly for drama
+            slvl.scheduleTick(this.blockPosition(), Blocks.AIR, 20);
+        }
+    }
+
+    private void mergeIntoCluster() {
+        if (!(level() instanceof ServerLevel slvl)) return;
+
+        List<ChunkOfFlesh> all = slvl.getEntitiesOfClass(
+                ChunkOfFlesh.class,
+                this.getBoundingBox().inflate(MERGE_RADIUS),
+                c -> c.mustEvolve
+        );
+
+        // Only ONE chunk does the spawn
+        if (all.stream().anyMatch(c -> c.getId() < this.getId())) return;
+
+        // Effects
+        spawnBloodBurst(slvl, this.blockPosition());
+        slvl.playSound(null, blockPosition(), SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE, 1f, 3f);
+
+        // Spawn Cluster
+        ClusterOfFlesh cluster = ModEntities.CLUSTER_OF_FLESH.get().create(slvl);
+        cluster.moveTo(this.getX(), this.getY(), this.getZ());
+        slvl.addFreshEntity(cluster);
+
+        // Consume all chunks
+        for (ChunkOfFlesh c : all) {
+            c.discard();
+        }
+    }
+
+
 
     @SafeVarargs
     public static EntityType<? extends BaseHybrid>[] createHybridPool(EntityType<? extends BaseHybrid>... types) {
@@ -115,7 +195,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
     );
     public void evolveIntoHybrid() {
         if(this.level() instanceof ServerLevel slvl) {
-            StaticSiliconiteMethods.spawnBloodBurst(slvl, this.blockPosition());
+            spawnBloodBurst(slvl, this.blockPosition());
             slvl.playSound(null, this.blockPosition(), SoundEvents.ZOMBIE_INFECT, SoundSource.HOSTILE);
 
             BaseHybrid result = HYBRID_EVOLUTION_RESULTS[slvl.random.nextInt(HYBRID_EVOLUTION_RESULTS.length)].create(slvl);

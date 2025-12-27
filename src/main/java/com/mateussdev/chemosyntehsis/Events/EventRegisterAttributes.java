@@ -4,6 +4,7 @@ package com.mateussdev.chemosyntehsis.Events;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_astrocyte.HybridAstrocyte;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_erythrocyte.HybridErythrocyte;
@@ -24,6 +25,8 @@ public class EventRegisterAttributes {
         //Pure
         event.put(ModEntities.SILICON_ROLLER.get(), SiliconRoller.createAttributes().build());
         event.put(ModEntities.CHUNK_OF_FLESH.get(), ChunkOfFlesh.createAttributes().build());
+        event.put(ModEntities.CLUSTER_OF_FLESH.get(), ClusterOfFlesh.createAttributes().build());
+
 
         //Tethered mobs
         event.put(ModEntities.TETH_ZOMBIE.get(), TethZombie.createAttributes().build());

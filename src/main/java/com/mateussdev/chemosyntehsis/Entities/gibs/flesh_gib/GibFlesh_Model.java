@@ -1,12 +1,8 @@
 package com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
-import mod.azure.azurelib.cache.object.GeoBone;
-import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 
 public class GibFlesh_Model extends GeoModel<GibFlesh>  {
     //MODEL PATH

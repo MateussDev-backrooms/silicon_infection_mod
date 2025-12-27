@@ -1,20 +1,20 @@
 package com.mateussdev.chemosyntehsis.Entities.hybt1_thrombocyte;
 
-import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
+import com.mateussdev.chemosyntehsis.Entities.generic.AI.CollectGibGoal;
+import com.mateussdev.chemosyntehsis.Entities.generic.AI.DeliverGibToBulbGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.LungeGoal;
+import com.mateussdev.chemosyntehsis.Entities.generic.BaseGib;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseHybrid;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh;
+import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
 import mod.azure.azurelib.core.animation.AnimatableManager;
 import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.animation.RawAnimation;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -28,14 +28,15 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class HybridThrombocyte extends BaseHybrid {
     public HybridThrombocyte(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -70,6 +71,42 @@ public class HybridThrombocyte extends BaseHybrid {
         }));
     }
 
+    //===== Advanced AI stuffs =====//
+    @Nullable
+    private BaseGib carriedGib;
+
+    public boolean isCarryingGib() {
+        return carriedGib != null && carriedGib.isAlive();
+    }
+
+    public void pickUpGib(BaseGib gib) {
+        carriedGib = gib;
+        gib.startRiding(this, true);
+    }
+
+    public void dropGib() {
+        if (carriedGib != null) {
+            carriedGib.stopRiding();
+            carriedGib = null;
+        }
+    }
+
+    public void useUpGib() {
+        if (carriedGib != null) {
+            carriedGib.stopRiding();
+
+            //Particles
+            if(level() instanceof ServerLevel slvl) {
+                StaticSiliconiteMethods.spawnBloodBurst(slvl, carriedGib.blockPosition());
+                slvl.playSound(null, carriedGib.blockPosition(), SoundEvents.MUD_BREAK, SoundSource.HOSTILE);
+            }
+
+            carriedGib.discard();
+        }
+    }
+
+
+
     @Override
     protected void registerGoals() {
         //Default settings override when new behavior is required
@@ -81,9 +118,13 @@ public class HybridThrombocyte extends BaseHybrid {
         //Avoid water (No float task cuz they are immune to water damage)
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.1D));
 
+        //Ant behaviour
+        this.goalSelector.addGoal(3, new DeliverGibToBulbGoal(this));
+        this.goalSelector.addGoal(4, new CollectGibGoal(this));
+
         //Looking goals
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 3f));
-        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 3f));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
         // - TARGETS
         if(shouldAlertOthersOnHurt()) {
@@ -117,6 +158,7 @@ public class HybridThrombocyte extends BaseHybrid {
         super.aiStep();
 
         if (!this.level().isClientSide && this.getTarget() != null) {
+
             LivingEntity target = this.getTarget();
             if(cooldown > 0) cooldown--;
             if(atk_cooldown > 0) atk_cooldown--;
@@ -158,8 +200,6 @@ public class HybridThrombocyte extends BaseHybrid {
                     }
                 }
             }
-
-
         }
 
         if (this.isPassenger()) {
@@ -170,6 +210,7 @@ public class HybridThrombocyte extends BaseHybrid {
     @Override
     public void tick() {
         super.tick();
+
 
         if (this.isPassenger()) {
             Entity vehicle = this.getVehicle();
@@ -196,6 +237,9 @@ public class HybridThrombocyte extends BaseHybrid {
             this.stopRiding();
             this.setTarget(null);
         }
+
+        dropGib();
+
         return super.hurt(pSource, pAmount);
     }
 
@@ -234,3 +278,5 @@ public class HybridThrombocyte extends BaseHybrid {
         }
     }
 }
+
+

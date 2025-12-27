@@ -6,7 +6,9 @@ import mod.azure.azurelib.core.animation.AnimatableManager;
 import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.animation.RawAnimation;
 import mod.azure.azurelib.util.AzureLibUtil;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
@@ -17,11 +19,12 @@ public abstract class BaseGib extends Entity implements GeoEntity {
     protected int age;
     protected int lifetime = -1;
 
-    protected BaseGib(EntityType<?> type, Level level) {
-        super(type, level);
+    public BaseGib(EntityType<?> pEntityType, Level pLevel) {
+        super(pEntityType, pLevel);
     }
 
     private final AnimatableInstanceCache anim_cache = AzureLibUtil.createInstanceCache(this);
+
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return anim_cache;
@@ -48,22 +51,27 @@ public abstract class BaseGib extends Entity implements GeoEntity {
             this.setDeltaMovement(this.getDeltaMovement().add(0, -0.08, 0));
         }
 
+
+
         this.move(MoverType.SELF, this.getDeltaMovement());
         this.setDeltaMovement(this.getDeltaMovement().scale(0.8));
 
-        if (!this.level().isClientSide && lifetime > 0 && ++age > lifetime) {
-            this.discard();
+        if (this.level() instanceof ServerLevel slvl) {
+
+            if(lifetime > 0 && ++age > lifetime) {
+                this.discard();
+            }
         }
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(CompoundTag tag) {
         age = tag.getInt("Age");
         lifetime = tag.getInt("Lifetime");
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(CompoundTag tag) {
         tag.putInt("Age", age);
         tag.putInt("Lifetime", lifetime);
     }

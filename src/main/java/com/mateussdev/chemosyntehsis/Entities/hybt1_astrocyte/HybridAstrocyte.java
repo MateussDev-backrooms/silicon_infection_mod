@@ -29,6 +29,7 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -77,7 +78,7 @@ public class HybridAstrocyte extends BaseHybrid {
         //Default settings override when new behavior is required
 
         // - GOALS
-        this.goalSelector.addGoal(0, new LungeGoal(this, 1.2f, 0.6f, 0, 9d, 3d, this::canLunge));
+        this.goalSelector.addGoal(0, new LungeGoal(this, 1.2f, 0.4f, 0, 9d, 4d, this::canLunge));
         this.goalSelector.addGoal(1, new ConditionalAttackGoal(this, 1.2f, false, (i) -> mode == 1));
 
         //Avoid water (No float task cuz they are immune to water damage)
@@ -260,36 +261,5 @@ public class HybridAstrocyte extends BaseHybrid {
 
     public boolean canLunge(int _i) {
         return cooldown <= 0;
-    }
-
-    public void splitIntoChunks(int count, LivingEntity victim) {
-        if(level() instanceof ServerLevel slvl) {
-            slvl.playSound(
-                    null,
-                    victim.blockPosition(),
-                    SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR,
-                    SoundSource.HOSTILE,
-                    1f,
-                    1f);
-
-            //Particles
-            StaticSiliconiteMethods.spawnBloodBurst(slvl, victim.blockPosition());
-
-            //Spawn chunks
-            for (int i = 0; i < count; i++) {
-                if(slvl.random.nextFloat() < 0.33f) {
-                    ChunkOfFlesh chunkOfFlesh = ModEntities.CHUNK_OF_FLESH.get().create(slvl);
-                    chunkOfFlesh.moveTo(blockPosition().getX(), blockPosition().getY(), blockPosition().getZ());
-                    chunkOfFlesh.addDeltaMovement(new Vec3((slvl.random.nextDouble()*2f - 1f)*0.1f, (slvl.random.nextDouble())*0.8f, (slvl.random.nextDouble()*2f - 1f)*0.1f));
-                    slvl.addFreshEntity(chunkOfFlesh);
-                } else {
-                    GibFlesh gib = ModEntities.GIB_FLESH.get().create(slvl);
-                    gib.moveTo(blockPosition().getX(), blockPosition().getY(), blockPosition().getZ());
-                    gib.addDeltaMovement(new Vec3((slvl.random.nextDouble()*2f - 1f)*0.1f, (slvl.random.nextDouble())*0.5f, (slvl.random.nextDouble()*2f - 1f)*0.1f));
-                    slvl.addFreshEntity(gib);
-                }
-            }
-
-        }
     }
 }

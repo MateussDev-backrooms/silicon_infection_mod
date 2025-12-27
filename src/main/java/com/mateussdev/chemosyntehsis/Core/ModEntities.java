@@ -4,6 +4,7 @@ import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_astrocyte.HybridAstrocyte;
@@ -39,6 +40,10 @@ public class ModEntities {
             ENTITIES.register("chunk_of_flesh", () -> EntityType.Builder.of(ChunkOfFlesh::new, MobCategory.MONSTER)
                     .sized(0.7f, 0.7f)
                     .build("chunk_of_flesh"));
+    public static final RegistryObject<EntityType<ClusterOfFlesh>> CLUSTER_OF_FLESH =
+            ENTITIES.register("cluster_of_flesh", () -> EntityType.Builder.of(ClusterOfFlesh::new, MobCategory.MONSTER)
+                    .sized(1.4f, 1.4f)
+                    .build("cluster_of_flesh"));
 
     //Tethered mobs
 
