@@ -29,7 +29,10 @@ public class ModItems {
                     () -> new ForgeSpawnEggItem(ModEntities.SILICON_ROLLER, 0x967445, 0x7c4b45, new Item.Properties()));
     public static final RegistryObject<Item> SPAWN_CHUNK_OF_FLESH =
             ITEMS.register("spawn_chunk_of_flesh",
-                    () -> new ForgeSpawnEggItem(ModEntities.CHUNK_OF_FLESH, 0x967445, 0x7c4b45, new Item.Properties()));
+                    () -> new ForgeSpawnEggItem(ModEntities.CHUNK_OF_FLESH, 0x823431, 0x2e2b2a, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_CLUSTER_OF_FLESH =
+            ITEMS.register("spawn_cluster_of_flesh",
+                    () -> new ForgeSpawnEggItem(ModEntities.CLUSTER_OF_FLESH, 0x823431, 0x2e2b2a, new Item.Properties()));
 
     //Tethered mobs
     public static final RegistryObject<Item> SPAWN_TETH_ZOMBIE =
@@ -46,6 +49,9 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_VEG_BULB =
             ITEMS.register("spawn_veg_bulb",
                     () -> new ForgeSpawnEggItem(ModEntities.VEG_BULB, 0x22201f, 0x855d36, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_VEG_ROLLER =
+            ITEMS.register("spawn_veg_roller",
+                    () -> new ForgeSpawnEggItem(ModEntities.VEG_ROLLER, 0x22201f, 0x855d36, new Item.Properties()));
 
     //Hybrids
 

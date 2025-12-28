@@ -22,14 +22,20 @@ public class ModItemModelProvider extends ItemModelProvider {
 
         //Spawn eggs
         withExistingParent(ModItems.SPAWN_ROLLER.getId().getPath(), mcLoc("item/template_spawn_egg"));
+
         withExistingParent(ModItems.SPAWN_TETH_ZOMBIE.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SPAWN_TETH_SKELETON.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SPAWN_TETH_COW.getId().getPath(), mcLoc("item/template_spawn_egg"));
+
         withExistingParent(ModItems.SPAWN_CHUNK_OF_FLESH.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.SPAWN_CLUSTER_OF_FLESH.getId().getPath(), mcLoc("item/template_spawn_egg"));
+
         withExistingParent(ModItems.SPAWN_THROMBOCYTE.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SPAWN_ERYTHROCYTE.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SPAWN_ASTROCYTE.getId().getPath(), mcLoc("item/template_spawn_egg"));
+
         withExistingParent(ModItems.SPAWN_VEG_BULB.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.SPAWN_VEG_ROLLER.getId().getPath(), mcLoc("item/template_spawn_egg"));
     }
 
     private ItemModelBuilder simpleItem(RegistryObject<Item> item) {

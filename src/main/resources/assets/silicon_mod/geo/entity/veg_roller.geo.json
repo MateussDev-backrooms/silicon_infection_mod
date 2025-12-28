@@ -1,0 +1,205 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.veg_roller",
+				"texture_width": 32,
+				"texture_height": 32,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "root",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-3, 0, -3], "size": [6, 2, 6], "uv": [8, 24]}
+					]
+				},
+				{
+					"name": "bulb1",
+					"parent": "root",
+					"pivot": [2, -1, 0],
+					"rotation": [0, 0, -142.5],
+					"cubes": [
+						{"origin": [0.5, -10, -1.5], "size": [3, 3, 3], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "appendage_spike2",
+					"parent": "bulb1",
+					"pivot": [1.5, -10, -0.5],
+					"cubes": [
+						{"origin": [1.5, -7, -0.5], "size": [1, 6, 1], "uv": [0, 16]}
+					]
+				},
+				{
+					"name": "bulb2",
+					"parent": "root",
+					"pivot": [-2, -1, 0],
+					"rotation": [0, 0, 142.5],
+					"cubes": [
+						{"origin": [-3.5, -10, -1.5], "size": [3, 3, 3], "uv": [0, 0], "mirror": true}
+					]
+				},
+				{
+					"name": "appendage_spike3",
+					"parent": "bulb2",
+					"pivot": [-1.5, -10, -0.5],
+					"cubes": [
+						{"origin": [-2.5, -7, -0.5], "size": [1, 6, 1], "uv": [0, 16], "mirror": true}
+					]
+				},
+				{
+					"name": "bulb3",
+					"parent": "root",
+					"pivot": [0, -1, 2],
+					"rotation": [90, -52.5, 90],
+					"cubes": [
+						{"origin": [-1.5, -10, 0.5], "size": [3, 3, 3], "uv": [0, 0], "mirror": true}
+					]
+				},
+				{
+					"name": "appendage_spike4",
+					"parent": "bulb3",
+					"pivot": [0.5, -10, 1.5],
+					"cubes": [
+						{"origin": [-0.5, -7, 1.5], "size": [1, 6, 1], "uv": [0, 16], "mirror": true}
+					]
+				},
+				{
+					"name": "bulb4",
+					"parent": "root",
+					"pivot": [0, -1, -2],
+					"rotation": [-90, 52.5, 90],
+					"cubes": [
+						{"origin": [-1.5, -10, -3.5], "size": [3, 3, 3], "uv": [0, 0], "mirror": true}
+					]
+				},
+				{
+					"name": "appendage_spike5",
+					"parent": "bulb4",
+					"pivot": [0.5, -10, -1.5],
+					"cubes": [
+						{"origin": [-0.5, -7, -2.5], "size": [1, 6, 1], "uv": [0, 16], "mirror": true}
+					]
+				},
+				{
+					"name": "bulb5",
+					"parent": "root",
+					"pivot": [-1, -1, -1],
+					"rotation": [-40.144, 22.32924, 114.25045],
+					"cubes": [
+						{"origin": [-2.5, -10, -2.5], "size": [3, 3, 3], "uv": [0, 0], "mirror": true}
+					]
+				},
+				{
+					"name": "appendage_spike7",
+					"parent": "bulb5",
+					"pivot": [-0.5, -10, -0.5],
+					"cubes": [
+						{"origin": [-1.5, -7, -1.5], "size": [1, 6, 1], "uv": [0, 16], "mirror": true}
+					]
+				},
+				{
+					"name": "bulb6",
+					"parent": "root",
+					"pivot": [1, -1, -1],
+					"rotation": [-40.144, -22.32924, -114.25045],
+					"cubes": [
+						{"origin": [-0.5, -10, -2.5], "size": [3, 3, 3], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "appendage_spike6",
+					"parent": "bulb6",
+					"pivot": [0.5, -10, -0.5],
+					"cubes": [
+						{"origin": [0.5, -7, -1.5], "size": [1, 6, 1], "uv": [0, 16]}
+					]
+				},
+				{
+					"name": "bulb7",
+					"parent": "root",
+					"pivot": [1, -1, 1],
+					"rotation": [40.144, 22.32924, -114.25045],
+					"cubes": [
+						{"origin": [-0.5, -10, -0.5], "size": [3, 3, 3], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "appendage_spike8",
+					"parent": "bulb7",
+					"pivot": [0.5, -10, 0.5],
+					"cubes": [
+						{"origin": [0.5, -7, 0.5], "size": [1, 6, 1], "uv": [0, 16]}
+					]
+				},
+				{
+					"name": "bulb8",
+					"parent": "root",
+					"pivot": [-1, -1, 1],
+					"rotation": [40.144, -22.32924, 114.25045],
+					"cubes": [
+						{"origin": [-2.5, -10, -0.5], "size": [3, 3, 3], "uv": [0, 0], "mirror": true}
+					]
+				},
+				{
+					"name": "appendage_spike9",
+					"parent": "bulb8",
+					"pivot": [-0.5, -10, 0.5],
+					"cubes": [
+						{"origin": [-1.5, -7, 0.5], "size": [1, 6, 1], "uv": [0, 16], "mirror": true}
+					]
+				},
+				{
+					"name": "tendril1",
+					"parent": "root",
+					"pivot": [0, 1, 0],
+					"cubes": [
+						{"origin": [-3.5, 2, 0], "size": [7, 12, 0], "uv": [18, 0]},
+						{"origin": [-3, 2, 0.5], "size": [7, 12, 0], "pivot": [0, 4, 0.5], "rotation": [0, 90, 0], "uv": [18, 0]}
+					]
+				},
+				{
+					"name": "tendril2",
+					"parent": "root",
+					"pivot": [-2, 2, -2],
+					"rotation": [-73.26366, -42.406, -24.03208],
+					"cubes": [
+						{"origin": [-2, 0.5, -7], "size": [0, 3, 5], "uv": [22, 7]}
+					]
+				},
+				{
+					"name": "tendril4",
+					"parent": "root",
+					"pivot": [2, 2, -2],
+					"rotation": [-73.26366, 42.406, 24.03208],
+					"cubes": [
+						{"origin": [2, 0.5, -7], "size": [0, 3, 5], "uv": [22, 10], "mirror": true}
+					]
+				},
+				{
+					"name": "tendril3",
+					"parent": "root",
+					"pivot": [2, 2, 2],
+					"rotation": [73.26366, -42.406, 24.03208],
+					"cubes": [
+						{"origin": [2, 0.5, -3], "size": [0, 3, 5], "pivot": [2, 2, 2], "rotation": [180, 0, 0], "uv": [22, 7], "mirror": true}
+					]
+				},
+				{
+					"name": "tendril5",
+					"parent": "root",
+					"pivot": [-2, 2, 2],
+					"rotation": [73.26366, 42.406, -24.03208],
+					"cubes": [
+						{"origin": [-2, 0.5, -3], "size": [0, 3, 5], "pivot": [-2, 2, 2], "rotation": [180, 0, 0], "uv": [22, 10]}
+					]
+				}
+			]
+		}
+	]
+}

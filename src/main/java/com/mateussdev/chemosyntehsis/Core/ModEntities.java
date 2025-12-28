@@ -15,6 +15,7 @@ import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton;
 import com.mateussdev.chemosyntehsis.Entities.teth_zombie.TethZombie;
 import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow;
 import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
+import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -67,6 +68,10 @@ public class ModEntities {
             ENTITIES.register("veg_bulb", () -> EntityType.Builder.of(VegetativeBulb::new, MobCategory.MONSTER)
                     .sized(0.7f, 0.7f)
                     .build("veg_bulb"));
+    public static final RegistryObject<EntityType<VegetativeRoller>> VEG_ROLLER =
+            ENTITIES.register("veg_roller", () -> EntityType.Builder.of(VegetativeRoller::new, MobCategory.MONSTER)
+                    .sized(0.7f, 0.7f)
+                    .build("veg_roller"));
 
     //Hybrid mobs
 

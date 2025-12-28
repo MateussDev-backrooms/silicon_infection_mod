@@ -1,19 +1,11 @@
-package com.mateussdev.chemosyntehsis.Entities.veg_bulb;
+package com.mateussdev.chemosyntehsis.Entities.veg_roller;
 
-import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
-import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseVegetated;
-import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -27,23 +19,22 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class VegetativeBulb extends BaseVegetated {
-    public VegetativeBulb(EntityType<? extends Monster> p_33002_, Level p_33003_) {
+public class VegetativeRoller extends BaseVegetated {
+    public VegetativeRoller(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
         this.setNoGravity(true);
         this.setYBodyRot(0);
     }
 
-    public static final EntityDataAccessor<Vector3f> ALIGNMENT = SynchedEntityData.defineId(VegetativeBulb.class, EntityDataSerializers.VECTOR3);
+    public static final EntityDataAccessor<Vector3f> ALIGNMENT = SynchedEntityData.defineId(VegetativeRoller.class, EntityDataSerializers.VECTOR3);
     private boolean hasSettled = false;
 
     // ##### Entity setup and stats ##### //
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 8D)
+                .add(Attributes.MAX_HEALTH, 16D)
                 .add(Attributes.MOVEMENT_SPEED, 0.0D)
                 .add(Attributes.FOLLOW_RANGE, 6D)
                 .add(Attributes.ARMOR_TOUGHNESS, 3D)
@@ -170,30 +161,6 @@ public class VegetativeBulb extends BaseVegetated {
 
     @Override
     public void evolve() {
-        if(this.level() instanceof ServerLevel slvl) {
-            List<BaseVegetated> nearby_vegs = slvl.getEntitiesOfClass(
-                    BaseVegetated.class,
-                    this.getBoundingBox().inflate(1),
-                    c -> true
-            );
-            if(nearby_vegs.size() < 5) {
-                VegetativeRoller roller = ModEntities.VEG_ROLLER.get().create(slvl);
-                roller.moveTo(position());
-                slvl.addFreshEntity(roller);
-                slvl.sendParticles(
-                        ParticleTypes.EXPLOSION,
-                        this.getX() + 0.5,
-                        this.getY() + 0.5,
-                        this.getZ() + 0.5,
-                        1,
-                        0,
-                        0,
-                        0,
-                        0.1
-                );
-                this.discard();
-            }
-
-        }
+        
     }
 }

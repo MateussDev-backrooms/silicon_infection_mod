@@ -17,6 +17,7 @@ import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.teth_zombie.TethZombie_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller_Renderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
@@ -40,6 +41,7 @@ public class EventRegisterRenderer {
 
         //Vegetated mobs
         EntityRenderers.register(ModEntities.VEG_BULB.get(), VegetativeBulb_Renderer::new);
+        EntityRenderers.register(ModEntities.VEG_ROLLER.get(), VegetativeRoller_Renderer::new);
 
         //Hybrids
 

@@ -190,7 +190,6 @@ public class BaseSiliconite extends Monster implements GeoEntity {
             if(pEntity instanceof LivingEntity le) {
                 //Add energy on hurting target
                 //TODO add Tethered effect when hurt
-                //TODO ride/attach to entity that can be tethered
             }
         }
         return success;
