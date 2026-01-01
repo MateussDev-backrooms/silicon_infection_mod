@@ -10,8 +10,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.BaseGib;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseHybrid;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
-import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh;
-import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
+import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import mod.azure.azurelib.core.animation.AnimatableManager;
 import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.animation.RawAnimation;
@@ -36,7 +35,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class HybridThrombocyte extends BaseHybrid {
     public HybridThrombocyte(EntityType<? extends Monster> p_33002_, Level p_33003_) {

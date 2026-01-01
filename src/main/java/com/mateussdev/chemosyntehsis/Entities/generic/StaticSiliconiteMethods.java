@@ -29,7 +29,7 @@ public class StaticSiliconiteMethods {
 
     public static Map<Block, Block> infectionConversionMap = new HashMap<>();
 
-    public static Map<EntityType<? extends BaseVegetated>, Integer> vegetatedRadiusMap = new HashMap<>();
+    public static Map<EntityType<? extends BaseOrganelle>, Integer> vegetatedRadiusMap = new HashMap<>();
 
     public static final Map<EntityType<? extends LivingEntity>, SupportProfile> ASTROCYTE_SUPPORT_TARGETS =
             Map.of(

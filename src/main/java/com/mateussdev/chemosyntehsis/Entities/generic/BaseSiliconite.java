@@ -5,6 +5,7 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
+import com.mateussdev.chemosyntehsis.GlobalWarming.GlobalWarmingData;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.cache.object.GeoBone;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
@@ -18,6 +19,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -31,7 +34,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.*;
 
-public class BaseSiliconite extends Monster implements GeoEntity {
+public abstract class BaseSiliconite extends Monster implements GeoEntity {
     protected BaseSiliconite(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
     }
@@ -246,6 +249,13 @@ public class BaseSiliconite extends Monster implements GeoEntity {
     protected int getMetabolismGain() {
         //TODO implement different gain depending on biome temperature, time of day and Y level
         return 1;
+    }
+
+    //
+    protected void releaseGasIntoAtmosphere(ServerLevel pLevel, float amount) {
+        GlobalWarmingData globalWarmingData = GlobalWarmingData.get(pLevel);
+        globalWarmingData.addPoints(amount);
+        pLevel.playSound(null, this.blockPosition(), SoundEvents.CANDLE_EXTINGUISH, SoundSource.HOSTILE);
     }
 
     //Defines the chance between 0 and 1 for this siliconite to tether a mob that can be tethered

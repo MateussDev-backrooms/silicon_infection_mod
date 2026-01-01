@@ -1,6 +1,9 @@
 package com.mateussdev.chemosyntehsis.Entities.veg_roller;
 
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseVegetated;
+import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
+import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -21,7 +24,7 @@ import org.joml.Vector3f;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VegetativeRoller extends BaseVegetated {
+public class VegetativeRoller extends BaseOrganelle {
     public VegetativeRoller(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
         this.setNoGravity(true);
@@ -156,11 +159,27 @@ public class VegetativeRoller extends BaseVegetated {
 
     @Override
     protected int evolvesAtMetabolism() {
-        return 500;
+        return 20;
     }
 
     @Override
     public void evolve() {
-        
+        if(this.level() instanceof ServerLevel slvl) {
+            SiliconRoller roller = ModEntities.SILICON_ROLLER.get().create(slvl);
+            roller.moveTo(position());
+            slvl.addFreshEntity(roller);
+            slvl.sendParticles(
+                    ParticleTypes.EXPLOSION,
+                    this.getX() + 0.5,
+                    this.getY() + 0.5,
+                    this.getZ() + 0.5,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0.1
+            );
+            this.discard();
+        }
     }
 }

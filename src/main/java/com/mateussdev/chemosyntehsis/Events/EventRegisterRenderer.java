@@ -4,11 +4,10 @@ import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock_Render
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModBlockEntities;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_astrocyte.HybridAstrocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_erythrocyte.HybridErythrocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_thrombocyte.HybridThrombocyte_Renderer;
@@ -54,7 +53,7 @@ public class EventRegisterRenderer {
         //Projectile
         EntityRenderers.register(ModEntities.BULB_PROJECTILE.get(), BulbProjectileEntity_Render::new);
 
-        //Gibs
+        //GibEntities
         EntityRenderers.register(ModEntities.GIB_FLESH.get(), GibFlesh_Renderer::new);
 
         //Block entities

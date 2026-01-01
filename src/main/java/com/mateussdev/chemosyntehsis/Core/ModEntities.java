@@ -5,8 +5,7 @@ import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
-import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh;
-import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_astrocyte.HybridAstrocyte;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_erythrocyte.HybridErythrocyte;
 import com.mateussdev.chemosyntehsis.Entities.hybt1_thrombocyte.HybridThrombocyte;
@@ -101,7 +100,7 @@ public class ModEntities {
                     .sized(0.33f, 0.33f)
                     .build("bulb_projectile"));
 
-    //Gibs
+    //GibEntities
     public static final RegistryObject<EntityType<GibFlesh>> GIB_FLESH =
             ENTITIES.register("gib_flesh", () -> EntityType.Builder.of(GibFlesh::new, MobCategory.MISC)
                     .sized(0.4f, 0.4f)

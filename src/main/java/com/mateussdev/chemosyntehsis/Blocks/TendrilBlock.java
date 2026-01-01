@@ -1,10 +1,13 @@
 package com.mateussdev.chemosyntehsis.Blocks;
 
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseVegetated;
+import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -14,7 +17,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.MultifaceSpreader;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Map;
@@ -39,7 +45,7 @@ public class TendrilBlock extends MultifaceBlock {
         super.randomTick(pState, pLevel, pPos, pRandom);
 
         //Sulfurization if not close to a bulb
-        for (Map.Entry<EntityType<? extends BaseVegetated>, Integer> entry : StaticSiliconiteMethods.vegetatedRadiusMap.entrySet()) {
+        for (Map.Entry<EntityType<? extends BaseOrganelle>, Integer> entry : StaticSiliconiteMethods.vegetatedRadiusMap.entrySet()) {
             int radius = entry.getValue();
             AABB area = new AABB(
                     pPos.east(radius).south(radius).below(radius/2),
@@ -49,11 +55,19 @@ public class TendrilBlock extends MultifaceBlock {
 
             if(list.isEmpty()) {
 
-                var sulfurized = ModBlocks.SULFURED_TENDRILS.get();
-                pLevel.setBlock(pPos, sulfurized.defaultBlockState(), 3);
+                BlockState sulfurState = ModBlocks.SULFURED_TENDRILS.get().defaultBlockState();
+
+                //fix multi-face states
+                for (Direction dir : Direction.values()) {
+                    BooleanProperty prop = getFaceProperty(dir);
+                    if (pState.hasProperty(prop)) {
+                        sulfurState = sulfurState.setValue(prop, pState.getValue(prop));
+                    }
+                }
+
+                pLevel.setBlock(pPos, sulfurState, 3);
                 return;
             }
-
         }
 
         //Check and spread to nearby corpses and biomush
@@ -93,6 +107,32 @@ public class TendrilBlock extends MultifaceBlock {
                         pLevel.setBlockAndUpdate(adj, replacement.defaultBlockState());
                     }
                 }
+            }
+        }
+
+        //Have a chance to spawn a bulb randomly
+
+        if(pRandom.nextFloat() < 0.2) {
+            List<BaseOrganelle> nearby_vegs = pLevel.getEntitiesOfClass(
+                    BaseOrganelle.class,
+                    new AABB(pPos.getX(), pPos.getY(), pPos.getZ(), pPos.getX(), pPos.getY(), pPos.getZ()).inflate(0.75),
+                    c -> true
+            );
+            if(nearby_vegs.isEmpty()) {
+                VegetativeBulb bulb = ModEntities.VEG_BULB.get().create(pLevel);
+                bulb.moveTo(pPos.getCenter());
+                pLevel.sendParticles(
+                        ParticleTypes.POOF,
+                        pPos.getX() + 0.5,
+                        pPos.getY() + 0.5,
+                        pPos.getZ() + 0.5,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0.1
+                );
+                pLevel.addFreshEntity(bulb);
             }
         }
 

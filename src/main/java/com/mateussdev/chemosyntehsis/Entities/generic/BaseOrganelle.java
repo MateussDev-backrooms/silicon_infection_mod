@@ -1,25 +1,17 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fluids.FluidType;
 
-import javax.annotation.Nullable;
-import java.util.*;
-
-public class BaseVegetated extends BaseSiliconite {
-    protected BaseVegetated(EntityType<? extends Monster> pEntityType, Level pLevel) {
+public class BaseOrganelle extends BaseSiliconite {
+    protected BaseOrganelle(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         this.setPersistenceRequired();
     }
 
-    // ===== Vegetative overrides ===== //
+    // ===== Organelle overrides ===== //
 
     @Override
     protected void registerGoals() {

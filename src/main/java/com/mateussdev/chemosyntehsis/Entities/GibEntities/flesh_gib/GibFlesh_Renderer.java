@@ -1,6 +1,5 @@
-package com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib;
+package com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib;
 
-import mod.azure.azurelib.model.GeoModel;
 import mod.azure.azurelib.renderer.GeoEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 

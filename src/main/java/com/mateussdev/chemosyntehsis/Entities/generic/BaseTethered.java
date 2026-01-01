@@ -2,26 +2,20 @@ package com.mateussdev.chemosyntehsis.Entities.generic;
 
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import com.mateussdev.chemosyntehsis.Core.ModParticles;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
-import com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib.GibFlesh;
-import com.mateussdev.chemosyntehsis.GlobalWarming.GlobalWarmingCommand;
+import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.GlobalWarming.GlobalWarmingData;
 import mod.azure.azurelib.core.animation.AnimatableManager;
 import mod.azure.azurelib.core.animation.Animation;
 import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.animation.RawAnimation;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 public class BaseTethered extends BaseSiliconite {
     protected BaseTethered(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -88,12 +82,15 @@ public class BaseTethered extends BaseSiliconite {
         if(explodeOnDeath()) {
             ++this.deathTime;
 
-
-            if (this.deathTime == 40 && !this.level().isClientSide) {
-                this.splitIntoChunks(5);
-                this.level().broadcastEntityEvent(this, (byte)60);
-                this.remove(RemovalReason.KILLED);
+            if(this.level() instanceof ServerLevel slvl) {
+                if (this.deathTime == 40) {
+                    this.splitIntoChunks(5);
+                    this.releaseGasIntoAtmosphere(slvl, 1f);
+                    this.level().broadcastEntityEvent(this, (byte)60);
+                    this.remove(RemovalReason.KILLED);
+                }
             }
+
         } else {
             super.tickDeath();
         }

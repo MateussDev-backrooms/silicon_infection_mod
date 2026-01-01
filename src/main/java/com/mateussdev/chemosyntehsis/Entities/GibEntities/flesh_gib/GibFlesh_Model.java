@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.Entities.gibs.flesh_gib;
+package com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import mod.azure.azurelib.model.GeoModel;
