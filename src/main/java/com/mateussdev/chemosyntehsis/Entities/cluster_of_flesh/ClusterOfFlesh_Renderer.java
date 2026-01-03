@@ -1,6 +1,6 @@
 package com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh;
 
-import mod.azure.azurelib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 
 public class ClusterOfFlesh_Renderer extends GeoEntityRenderer<ClusterOfFlesh> {

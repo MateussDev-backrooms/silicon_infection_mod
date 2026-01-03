@@ -2,7 +2,9 @@ package com.mateussdev.chemosyntehsis.Entities.veg_roller;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
+import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
+import com.mateussdev.chemosyntehsis.Entities.vasc_roller.VascularRoller;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -22,6 +24,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class VegetativeRoller extends BaseOrganelle {
@@ -165,21 +168,25 @@ public class VegetativeRoller extends BaseOrganelle {
     @Override
     public void evolve() {
         if(this.level() instanceof ServerLevel slvl) {
-            SiliconRoller roller = ModEntities.SILICON_ROLLER.get().create(slvl);
-            roller.moveTo(position());
-            slvl.addFreshEntity(roller);
-            slvl.sendParticles(
-                    ParticleTypes.EXPLOSION,
-                    this.getX() + 0.5,
-                    this.getY() + 0.5,
-                    this.getZ() + 0.5,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0.1
+            List<VascularRoller> vasculars = slvl.getEntitiesOfClass(
+                    VascularRoller.class,
+                    this.getBoundingBox().inflate(2),
+                    c -> true
             );
-            this.discard();
+            if(random.nextBoolean() || vasculars.size() > 1) {
+                SiliconRoller roller = ModEntities.SILICON_ROLLER.get().create(slvl);
+                roller.moveTo(position());
+                slvl.addFreshEntity(roller);
+                StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
+                this.discard();
+            } else {
+
+                VascularRoller vascularRoller = ModEntities.VASC_ROLLER.get().create(slvl);
+                vascularRoller.moveTo(position());
+                slvl.addFreshEntity(vascularRoller);
+                StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
+                this.discard();
+            }
         }
     }
 }

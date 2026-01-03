@@ -1,7 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import mod.azure.azurelib.model.GeoModel;
+import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
 
 public class GibFlesh_Model extends GeoModel<GibFlesh>  {

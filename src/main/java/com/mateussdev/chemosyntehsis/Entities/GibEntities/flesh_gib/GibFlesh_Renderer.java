@@ -1,6 +1,6 @@
 package com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib;
 
-import mod.azure.azurelib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 
 public class GibFlesh_Renderer extends GeoEntityRenderer<GibFlesh> {

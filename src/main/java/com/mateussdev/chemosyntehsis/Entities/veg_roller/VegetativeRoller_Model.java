@@ -1,8 +1,8 @@
 package com.mateussdev.chemosyntehsis.Entities.veg_roller;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import mod.azure.azurelib.core.animation.AnimationState;
-import mod.azure.azurelib.model.GeoModel;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;

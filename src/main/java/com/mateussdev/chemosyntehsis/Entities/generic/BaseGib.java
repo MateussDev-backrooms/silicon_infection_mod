@@ -1,11 +1,6 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
-import mod.azure.azurelib.animatable.GeoEntity;
-import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
-import mod.azure.azurelib.core.animation.AnimatableManager;
-import mod.azure.azurelib.core.animation.AnimationController;
-import mod.azure.azurelib.core.animation.RawAnimation;
-import mod.azure.azurelib.util.AzureLibUtil;
+
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -13,6 +8,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 public abstract class BaseGib extends Entity implements GeoEntity {
 
@@ -23,7 +24,7 @@ public abstract class BaseGib extends Entity implements GeoEntity {
         super(pEntityType, pLevel);
     }
 
-    private final AnimatableInstanceCache anim_cache = AzureLibUtil.createInstanceCache(this);
+    private final AnimatableInstanceCache anim_cache = GeckoLibUtil.createInstanceCache(this);
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {

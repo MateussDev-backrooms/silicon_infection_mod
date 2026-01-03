@@ -6,13 +6,15 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
-import com.mateussdev.chemosyntehsis.Entities.hybt1_astrocyte.HybridAstrocyte;
-import com.mateussdev.chemosyntehsis.Entities.hybt1_erythrocyte.HybridErythrocyte;
-import com.mateussdev.chemosyntehsis.Entities.hybt1_thrombocyte.HybridThrombocyte;
+import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte;
+import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_erythrocyte.HybridErythrocyte;
+import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte.HybridThrombocyte;
+import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
-import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton;
-import com.mateussdev.chemosyntehsis.Entities.teth_zombie.TethZombie;
-import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_skeleton.TethSkeleton;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_zombie.TethZombie;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_cow.TethCow;
+import com.mateussdev.chemosyntehsis.Entities.vasc_roller.VascularRoller;
 import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
 import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller;
 import net.minecraft.world.entity.EntityType;
@@ -62,6 +64,12 @@ public class ModEntities {
                     .sized(0.7f, 1.8f)
                     .build("teth_cow"));
 
+    //Metabolized mobs
+    public static final RegistryObject<EntityType<MetZombie>> MET_ZOMBIE =
+            ENTITIES.register("met_zombie", () -> EntityType.Builder.of(MetZombie::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f)
+                    .build("met_zombie"));
+
     //Vegetated mobs
     public static final RegistryObject<EntityType<VegetativeBulb>> VEG_BULB =
             ENTITIES.register("veg_bulb", () -> EntityType.Builder.of(VegetativeBulb::new, MobCategory.MONSTER)
@@ -71,6 +79,10 @@ public class ModEntities {
             ENTITIES.register("veg_roller", () -> EntityType.Builder.of(VegetativeRoller::new, MobCategory.MONSTER)
                     .sized(0.7f, 0.7f)
                     .build("veg_roller"));
+    public static final RegistryObject<EntityType<VascularRoller>> VASC_ROLLER =
+            ENTITIES.register("vasc_roller", () -> EntityType.Builder.of(VascularRoller::new, MobCategory.MONSTER)
+                    .sized(0.7f, 0.7f)
+                    .build("vasc_roller"));
 
     //Hybrid mobs
 

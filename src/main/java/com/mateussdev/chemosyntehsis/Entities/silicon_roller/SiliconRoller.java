@@ -3,8 +3,8 @@ package com.mateussdev.chemosyntehsis.Entities.silicon_roller;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
-import mod.azure.azurelib.cache.object.GeoBone;
-import mod.azure.azurelib.model.GeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -42,20 +42,21 @@ public class SiliconRoller extends BaseSiliconite {
     public int deathTime = 0;
     @Override
     protected void tickDeath() {
-        ++deathTime;
-
-        if (deathTime == 20 && !level().isClientSide) {
-            explodeIntoBulbs();
-            spawnBloodBurst();
-            level().playSound(
-                    null,
-                    blockPosition(),
-                    SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR,
-                    SoundSource.HOSTILE,
-                    1f,
-                    1f);
-            this.level().broadcastEntityEvent(this, (byte)60);
-            this.remove(RemovalReason.KILLED);
+        if(this.level() instanceof ServerLevel slvl) {
+            ++deathTime;
+            if (deathTime == 20) {
+                explodeIntoBulbs();
+                StaticSiliconiteMethods.spawnBloodBurst(slvl, blockPosition());
+                level().playSound(
+                        null,
+                        blockPosition(),
+                        SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR,
+                        SoundSource.HOSTILE,
+                        1f,
+                        1f);
+                this.level().broadcastEntityEvent(this, (byte)60);
+                this.remove(RemovalReason.KILLED);
+            }
         }
     }
 
@@ -71,27 +72,6 @@ public class SiliconRoller extends BaseSiliconite {
             );
             level().addFreshEntity(shard);
         }
-    }
-
-    private void spawnBloodBurst() {
-        if (!(this.level() instanceof ServerLevel serverLevel)) return;
-
-        DustParticleOptions blood = new DustParticleOptions(
-                new Vector3f(0.8f, 0.2f, 0.0f),
-                3.0f
-        );
-
-        serverLevel.sendParticles(
-                blood,
-                this.getX(),
-                this.getY() + 1.0,
-                this.getZ(),
-                30,
-                0.3,
-                0.5,
-                0.3,
-                0.1
-        );
     }
 
     // ===== Bulb setup ===== //
@@ -128,6 +108,18 @@ public class SiliconRoller extends BaseSiliconite {
             scrambled_bulbs = StaticSiliconiteMethods.scrambleBones(bulbs);
             hasScrambled = true;
             return scrambled_bulbs;
+        }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        //kill if lost too many bulbs
+        if(entityData.get(BROKEN_OFF_BULBS_VALUE) >= getBulbCount() - 2) {
+            explodeIntoBulbs();
+            this.level().broadcastEntityEvent(this, (byte)60);
+            this.remove(RemovalReason.KILLED);
         }
     }
 

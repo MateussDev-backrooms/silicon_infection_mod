@@ -2,9 +2,9 @@ package com.mateussdev.chemosyntehsis.Entities.silicon_roller;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
-import mod.azure.azurelib.cache.object.GeoBone;
-import mod.azure.azurelib.core.animation.AnimationState;
-import mod.azure.azurelib.model.GeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 

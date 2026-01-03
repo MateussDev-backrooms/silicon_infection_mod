@@ -8,13 +8,15 @@ import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh_Ren
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.hybt1_astrocyte.HybridAstrocyte_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.hybt1_erythrocyte.HybridErythrocyte_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.hybt1_thrombocyte.HybridThrombocyte_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_erythrocyte.HybridErythrocyte_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte.HybridThrombocyte_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.teth_cow.TethCow_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.teth_skeleton.TethSkeleton_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.teth_zombie.TethZombie_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_cow.TethCow_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_skeleton.TethSkeleton_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_zombie.TethZombie_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.vasc_roller.VascularRoller_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller_Renderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -38,9 +40,14 @@ public class EventRegisterRenderer {
         EntityRenderers.register(ModEntities.TETH_SKELETON.get(), TethSkeleton_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_COW.get(), TethCow_Renderer::new);
 
+        //Metabolized mobs
+        EntityRenderers.register(ModEntities.MET_ZOMBIE.get(), MetZombie_Renderer::new);
+
+
         //Vegetated mobs
         EntityRenderers.register(ModEntities.VEG_BULB.get(), VegetativeBulb_Renderer::new);
         EntityRenderers.register(ModEntities.VEG_ROLLER.get(), VegetativeRoller_Renderer::new);
+        EntityRenderers.register(ModEntities.VASC_ROLLER.get(), VascularRoller_Renderer::new);
 
         //Hybrids
 

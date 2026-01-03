@@ -1,10 +1,9 @@
 package com.mateussdev.chemosyntehsis.Entities.generic.AI;
 
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseGib;
-import com.mateussdev.chemosyntehsis.Entities.hybt1_thrombocyte.HybridThrombocyte;
+import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte.HybridThrombocyte;
 import net.minecraft.world.entity.ai.goal.Goal;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 

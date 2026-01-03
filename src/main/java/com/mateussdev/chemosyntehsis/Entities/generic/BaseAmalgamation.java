@@ -8,6 +8,4 @@ public class BaseAmalgamation extends BaseOrganelle{
     protected BaseAmalgamation(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
-
-
 }

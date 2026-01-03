@@ -4,11 +4,9 @@ import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
+import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller;
 import com.mateussdev.chemosyntehsis.GlobalWarming.GlobalWarmingData;
-import mod.azure.azurelib.core.animation.AnimatableManager;
-import mod.azure.azurelib.core.animation.Animation;
-import mod.azure.azurelib.core.animation.AnimationController;
-import mod.azure.azurelib.core.animation.RawAnimation;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -16,6 +14,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.Animation;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+
+import java.util.List;
 
 public class BaseTethered extends BaseSiliconite {
     protected BaseTethered(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -76,7 +80,7 @@ public class BaseTethered extends BaseSiliconite {
         super.tick();
     }
 
-    private int deathTime = 0;
+    protected int deathTime = 0;
     @Override
     public void tickDeath() {
         if(explodeOnDeath()) {
@@ -98,14 +102,6 @@ public class BaseTethered extends BaseSiliconite {
 
     public void turnIntoBiomush() {
         if(level() instanceof ServerLevel slvl) {
-            slvl.playSound(
-                    null,
-                    blockPosition(),
-                    SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR,
-                    SoundSource.HOSTILE,
-                    1f,
-                    1f);
-
             //Particles
             StaticSiliconiteMethods.spawnBloodBurst(slvl, blockPosition());
 
@@ -142,5 +138,10 @@ public class BaseTethered extends BaseSiliconite {
             }
 
         }
+    }
+
+    @Override
+    protected int evolvesAtMetabolism() {
+        return 100;
     }
 }

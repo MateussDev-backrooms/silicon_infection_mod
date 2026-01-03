@@ -6,14 +6,6 @@ import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import com.mateussdev.chemosyntehsis.GlobalWarming.GlobalWarmingData;
-import mod.azure.azurelib.animatable.GeoEntity;
-import mod.azure.azurelib.cache.object.GeoBone;
-import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
-import mod.azure.azurelib.core.animation.AnimatableManager;
-import mod.azure.azurelib.core.animation.AnimationController;
-import mod.azure.azurelib.core.animation.RawAnimation;
-import mod.azure.azurelib.model.GeoModel;
-import mod.azure.azurelib.util.AzureLibUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -31,6 +23,14 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.*;
 
@@ -49,7 +49,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
 
     //##### ANIMATION STUFF #####//
 
-    private final AnimatableInstanceCache anim_cache = AzureLibUtil.createInstanceCache(this);
+    private final AnimatableInstanceCache anim_cache = GeckoLibUtil.createInstanceCache(this);
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return anim_cache;

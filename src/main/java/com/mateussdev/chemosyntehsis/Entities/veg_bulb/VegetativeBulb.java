@@ -3,7 +3,9 @@ package com.mateussdev.chemosyntehsis.Entities.veg_bulb;
 import com.mateussdev.chemosyntehsis.Blocks.TendrilBlock;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
+import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,6 +15,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -21,6 +25,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -34,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods.spawnBloodBurst;
 import static net.minecraft.world.level.block.MultifaceBlock.getFaceProperty;
 
 public class VegetativeBulb extends BaseOrganelle {
@@ -45,6 +51,9 @@ public class VegetativeBulb extends BaseOrganelle {
 
     public static final EntityDataAccessor<Vector3f> ALIGNMENT = SynchedEntityData.defineId(VegetativeBulb.class, EntityDataSerializers.VECTOR3);
     private boolean hasSettled = false;
+
+    public int evolution_t = 0;
+    public boolean mustEvolve = false;
 
     private BlockPos tendrilPos = blockPosition();
 
@@ -142,6 +151,65 @@ public class VegetativeBulb extends BaseOrganelle {
                 }
             }
         }
+
+        if (mustEvolve && evolution_t++ > 20) {
+            mergeIntoCluster();
+        }
+
+        if(tickCount % 20 == 0) {
+            if (!level().isClientSide && !this.mustEvolve) {
+                List<VegetativeBulb> nearby = level().getEntitiesOfClass(
+                        VegetativeBulb.class,
+                        this.getBoundingBox().inflate(1.2D),
+                        c -> c != this && !c.mustEvolve
+                );
+
+                if (nearby.size() + 1 >= 5) {
+                    initiateMerge(nearby);
+                }
+            }
+        }
+    }
+
+    private void mergeIntoCluster() {
+        if (!(level() instanceof ServerLevel slvl)) return;
+
+        List<VegetativeBulb> all = slvl.getEntitiesOfClass(
+                VegetativeBulb.class,
+                this.getBoundingBox().inflate(1.2D),
+                c -> c.mustEvolve
+        );
+
+        // Only ONE chunk does the spawn
+        if (all.stream().anyMatch(c -> c.getId() < this.getId())) return;
+
+        // Effects
+        spawnBloodBurst(slvl, this.blockPosition());
+        slvl.playSound(null, blockPosition(), SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE, 1f, 3f);
+
+        // Spawn Cluster
+        VegetativeRoller vegetativeRoller = ModEntities.VEG_ROLLER.get().create(slvl);
+        vegetativeRoller.moveTo(this.getX(), this.getY(), this.getZ());
+        slvl.addFreshEntity(vegetativeRoller);
+
+        // Consume all chunks
+        for (VegetativeBulb c : all) {
+            c.discard();
+        }
+    }
+
+    private void initiateMerge(List<VegetativeBulb> others) {
+        this.mustEvolve = true;
+
+        for (VegetativeBulb c : others) {
+            c.mustEvolve = true;
+        }
+
+        if (level() instanceof ServerLevel slvl) {
+            spawnBloodBurst(slvl, blockPosition());
+
+            slvl.scheduleTick(this.blockPosition(), Blocks.AIR, 20);
+        }
     }
 
     public void setAttachNormal(Vec3 normal) {
@@ -205,6 +273,8 @@ public class VegetativeBulb extends BaseOrganelle {
         return 20;
     }
 
+    
+
     @Override
     public void evolve() {
         if(this.level() instanceof ServerLevel slvl) {
@@ -217,17 +287,7 @@ public class VegetativeBulb extends BaseOrganelle {
                 VegetativeRoller roller = ModEntities.VEG_ROLLER.get().create(slvl);
                 roller.moveTo(blockPosition().getCenter());
                 slvl.addFreshEntity(roller);
-                slvl.sendParticles(
-                        ParticleTypes.EXPLOSION,
-                        this.getX() + 0.5,
-                        this.getY() + 0.5,
-                        this.getZ() + 0.5,
-                        1,
-                        0,
-                        0,
-                        0,
-                        0.1
-                );
+                StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
                 this.discard();
             }
 

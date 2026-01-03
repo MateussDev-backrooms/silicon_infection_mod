@@ -45,6 +45,11 @@ public class ModItems {
             ITEMS.register("spawn_teth_cow",
                     () -> new ForgeSpawnEggItem(ModEntities.TETH_COW, 0x967445, 0x7c4b45, new Item.Properties()));
 
+    //Metabolized mobs
+    public static final RegistryObject<Item> SPAWN_MET_ZOMBIE =
+            ITEMS.register("spawn_met_zombie",
+                    () -> new ForgeSpawnEggItem(ModEntities.MET_ZOMBIE, 0x3d1411, 0x7c4b45, new Item.Properties()));
+
     //Vegetated mobs
     public static final RegistryObject<Item> SPAWN_VEG_BULB =
             ITEMS.register("spawn_veg_bulb",
@@ -52,6 +57,9 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_VEG_ROLLER =
             ITEMS.register("spawn_veg_roller",
                     () -> new ForgeSpawnEggItem(ModEntities.VEG_ROLLER, 0x22201f, 0x855d36, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_VASC_ROLLER =
+            ITEMS.register("spawn_vasc_roller",
+                    () -> new ForgeSpawnEggItem(ModEntities.VASC_ROLLER, 0x22201f, 0x855d36, new Item.Properties()));
 
     //Hybrids
 

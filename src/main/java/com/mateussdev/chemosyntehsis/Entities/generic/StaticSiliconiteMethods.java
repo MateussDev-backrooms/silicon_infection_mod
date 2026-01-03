@@ -3,8 +3,6 @@ package com.mateussdev.chemosyntehsis.Entities.generic;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import mod.azure.azurelib.cache.object.GeoBone;
-import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -17,7 +15,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.model.GeoModel;
 
 import java.util.*;
 
@@ -139,6 +140,8 @@ public class StaticSiliconiteMethods {
         }
     }
 
+    // ===== Particles ===== //
+
     public static void spawnBloodBurst(ServerLevel slvl, BlockPos blockPos) {
         DustParticleOptions blood = new DustParticleOptions(
                 new Vector3f(0.8f, 0.0f, 0.0f),
@@ -158,6 +161,20 @@ public class StaticSiliconiteMethods {
         );
     }
 
+    public static void spawnTransformationParticle(ServerLevel slvl, BlockPos pos) {
+        slvl.sendParticles(
+                ParticleTypes.EXPLOSION,
+                pos.getX() + 0.5,
+                pos.getY() + 0.5,
+                pos.getZ() + 0.5,
+                1,
+                0,
+                0,
+                0,
+                0.1
+        );
+    }
+
     public static final Set<EntityType<? extends LivingEntity>> BLACKLISTED_MOBS = Set.of(
             EntityType.CREEPER,
             EntityType.BAT
@@ -168,4 +185,6 @@ public class StaticSiliconiteMethods {
         if(BLACKLISTED_MOBS.contains(entity.getType())) return false;
         return true;
     }
+
+
 }

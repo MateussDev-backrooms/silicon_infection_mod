@@ -4,10 +4,10 @@ import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
-import mod.azure.azurelib.core.animatable.GeoAnimatable;
-import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
-import mod.azure.azurelib.core.animation.AnimatableManager;
-import mod.azure.azurelib.util.AzureLibUtil;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.util.GeckoLibUtil;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -102,7 +102,7 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
 
     }
 
-    private final AnimatableInstanceCache anim_cache = AzureLibUtil.createInstanceCache(this);
+    private final AnimatableInstanceCache anim_cache = GeckoLibUtil.createInstanceCache(this);
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return anim_cache;
