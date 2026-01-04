@@ -3,6 +3,7 @@ package com.mateussdev.chemosyntehsis.Core;
 import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
+import com.mateussdev.chemosyntehsis.Entities.amal_zombie.AmalZombie;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
@@ -81,8 +82,14 @@ public class ModEntities {
                     .build("veg_roller"));
     public static final RegistryObject<EntityType<VascularRoller>> VASC_ROLLER =
             ENTITIES.register("vasc_roller", () -> EntityType.Builder.of(VascularRoller::new, MobCategory.MONSTER)
-                    .sized(0.7f, 0.7f)
+                    .sized(0.7f, 1.8f)
                     .build("vasc_roller"));
+
+    //Amalgamations
+    public static final RegistryObject<EntityType<AmalZombie>> AMAL_ZOMBIE =
+            ENTITIES.register("amal_zombie", () -> EntityType.Builder.of(AmalZombie::new, MobCategory.MONSTER)
+                    .sized(1.2f, 2.3f)
+                    .build("amal_zombie"));
 
     //Hybrid mobs
 

@@ -3,6 +3,7 @@ package com.mateussdev.chemosyntehsis.Events;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.amal_zombie.AmalZombie;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte;
@@ -42,6 +43,10 @@ public class EventRegisterAttributes {
         event.put(ModEntities.VEG_BULB.get(), VegetativeBulb.createAttributes().build());
         event.put(ModEntities.VEG_ROLLER.get(), VegetativeRoller.createAttributes().build());
         event.put(ModEntities.VASC_ROLLER.get(), VascularRoller.createAttributes().build());
+
+        //Amalgamations
+        event.put(ModEntities.AMAL_ZOMBIE.get(), AmalZombie.createAttributes().build());
+
 
         //Hybrids
         event.put(ModEntities.THROMBOCYTE.get(), HybridThrombocyte.createAttributes().build());

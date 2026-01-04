@@ -1,7 +1,10 @@
 package com.mateussdev.chemosyntehsis.Entities.vasc_roller;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_zombie.TethZombie;
+import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
+import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,29 +14,28 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.checkerframework.checker.units.qual.A;
 import org.joml.Vector3f;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class VascularRoller extends BaseOrganelle {
     public VascularRoller(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
-        this.setNoGravity(true);
-        this.setYBodyRot(0);
     }
-
-    public static final EntityDataAccessor<Vector3f> ALIGNMENT = SynchedEntityData.defineId(VascularRoller.class, EntityDataSerializers.VECTOR3);
-    private boolean hasSettled = false;
 
     // ##### Entity setup and stats ##### //
     public static AttributeSupplier.Builder createAttributes() {
@@ -48,118 +50,42 @@ public class VascularRoller extends BaseOrganelle {
     }
 
     @Override
-    public boolean isNoGravity() {
+    protected boolean shouldSpawnTendrils() {
         return true;
     }
 
-    public void calculateAttachOrientation() {
-        if(!hasSettled) {
-            Vec3 origin = this.position().add(0, this.getBbHeight() / 2f, 0);
-            if(this.level() instanceof ServerLevel slvl) {
-                Vec3[] dirs = {
-                        new Vec3(0, 1, 0), new Vec3(0, -1, 0),
-                        new Vec3(1, 0, 0), new Vec3(-1, 0, 0),
-                        new Vec3(0, 0, 1), new Vec3(0, 0, -1),
-                };
 
-                double dist = 1.2d;
-                Vec3 closestNormal = null;
-                double shortestDist = Double.MAX_VALUE;
-                Vec3 closestPosition = null;
-
-                for(Vec3 dir : dirs) {
-                    BlockHitResult hitResult = slvl.clip(new ClipContext(origin, dir.scale(dist).add(origin), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
-
-                    if(hitResult.getType() == HitResult.Type.BLOCK) {
-                        double raycastDist = origin.distanceTo(hitResult.getLocation());
-
-                        if(raycastDist < shortestDist) {
-                            shortestDist = raycastDist;
-                            closestNormal = new Vec3(
-                                    hitResult.getDirection().getNormal().getX(),
-                                    hitResult.getDirection().getNormal().getY(),
-                                    hitResult.getDirection().getNormal().getZ()
-                            );
-                            closestPosition = hitResult.getLocation();
-                        }
-                    }
-                }
-
-                if(closestNormal != null) {
-                    setAttachNormal(closestNormal);
-                    this.moveTo(closestPosition);
-                    hasSettled = true;
-                }
-
-            }
-        }
-    }
-
-    public Map<Vector3f, Vec3> directionRotHashMap =
-            new HashMap<>();
+    //Amalgamation
 
     @Override
     public void tick() {
         super.tick();
-        //setYBodyRot(0);
+        if(this.level() instanceof ServerLevel slvl) {
+            if(tickCount % 40 == 0) {
+                //Transform based on nearby
+                List<BaseTethered> nearby_tethered = slvl.getEntitiesOfClass(
+                        BaseTethered.class,
+                        new AABB(blockPosition()).inflate(4)
+                );
+                if(!nearby_tethered.isEmpty()) {
+
+                    BaseTethered converter = nearby_tethered.get(0);
+
+                    if(converter instanceof TethZombie) {
+                        createAmalgamation(ModEntities.AMAL_ZOMBIE.get(), slvl, converter);
+                    }
+
+                }
+            }
+        }
     }
 
-    public void setAttachNormal(Vec3 normal) {
-        entityData.set(ALIGNMENT, normal.normalize().toVector3f());
-    }
-
-    public Vector3f getAttachNormal() {
-        return entityData.get(ALIGNMENT);
-    }
-
-    public Vec3 getNormalRot() {
-        return directionRotHashMap.get(entityData.get(ALIGNMENT));
-    }
-
-    @Override
-    public void onAddedToWorld() {
-        super.onAddedToWorld();
-        calculateAttachOrientation();
-
-        directionRotHashMap.put(new Vector3f(1.0f, 0.0f, 0.0f), new Vec3(0, 0, 90));
-        directionRotHashMap.put(new Vector3f(-1.0f, 0.0f, 0.0f), new Vec3(0, 0, -90));
-        directionRotHashMap.put(new Vector3f(0.0f, 1.0f, 0.0f), new Vec3(0, 0, 0));
-        directionRotHashMap.put(new Vector3f(0.0f, -1.0f, 0.0f), new Vec3(0, 0, 180));
-        directionRotHashMap.put(new Vector3f(0.0f, 0.0f, 1.0f), new Vec3(-90, 0, 0));
-        directionRotHashMap.put(new Vector3f(0.0f, 0.0f, -1.0f), new Vec3(90, 0, 0));
-    }
-
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        entityData.define(ALIGNMENT, new Vector3f(0, 1, 0));
-    }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        tag.putFloat("alignment_x", entityData.get(ALIGNMENT).x);
-        tag.putFloat("alignment_y", entityData.get(ALIGNMENT).y);
-        tag.putFloat("alignment_z", entityData.get(ALIGNMENT).z);
-    }
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        entityData.set(ALIGNMENT, new Vector3f(
-                tag.getFloat("alignment_x"),
-                tag.getFloat("alignment_y"),
-                tag.getFloat("alignment_z")
-        ));
-    }
-
-    @Override
-    public boolean isInWall() {
-        return false;
-    }
-
-    @Override
-    protected int evolvesAtMetabolism() {
-        return 20;
+    protected void createAmalgamation(EntityType<? extends BaseAmalgamation> type, ServerLevel slvl, LivingEntity converter) {
+        BaseAmalgamation amal = type.create(slvl);
+        amal.moveTo(blockPosition().getCenter());
+        slvl.addFreshEntity(amal);
+        StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
+        converter.discard();
+        this.discard();
     }
 }

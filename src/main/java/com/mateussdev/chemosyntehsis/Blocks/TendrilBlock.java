@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.MultifaceSpreader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.material.LavaFluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -51,10 +52,12 @@ public class TendrilBlock extends MultifaceBlock {
                     pPos.east(radius).south(radius).below(radius/2),
                     pPos.west(radius).north(radius).above(radius/2)
             );
-            List<? extends Entity> list = pLevel.getEntitiesOfClass(entry.getKey().getBaseClass(), area, entity -> entity.getType() == entry.getKey() && entity.isAlive());
+            List<? extends Entity> list = pLevel.getEntitiesOfClass(
+                    entry.getKey().getBaseClass(),
+                    area,
+                    entity -> entity.isAlive());
 
             if(list.isEmpty()) {
-
                 BlockState sulfurState = ModBlocks.SULFURED_TENDRILS.get().defaultBlockState();
 
                 //fix multi-face states
@@ -70,23 +73,27 @@ public class TendrilBlock extends MultifaceBlock {
             }
         }
 
-        //Check and spread to nearby corpses and biomush
-        int diagonal = 5;
-        //check for biomush or corpse
+        //Tendril spreading
 
-        for (BlockPos pos : BlockPos.betweenClosed(pPos.offset(-diagonal, -diagonal/2, -diagonal), pPos.offset(diagonal, diagonal/2, diagonal))) {
-            if (pLevel.getBlockState(pos).getBlock() instanceof BiomushBlock
-            || pLevel.getBlockState(pos).getBlock() instanceof BaseCorpseBlock) {
-                double angle = Math.atan2(pos.getZ() - pPos.getZ(), pos.getX() - pPos.getX());
-                float angle_deg = (float) (angle * (180/Mth.PI));
-                Direction spreadDirection = Direction.fromYRot(angle_deg);
-                this.getSpreader().spreadFromFaceTowardDirection(
-                        pState, pLevel, pPos, spreadDirection, spreadDirection, false
-                );
+        if(pRandom.nextFloat() < 0.45) {
+            //Check and spread to nearby corpses and biomush
+            int diagonal = 5;
+            //check for biomush or corpse
+            for (BlockPos pos : BlockPos.betweenClosed(pPos.offset(-diagonal, -diagonal/2, -diagonal), pPos.offset(diagonal, diagonal/2, diagonal))) {
+                if (pLevel.getBlockState(pos).getBlock() instanceof BiomushBlock
+                || pLevel.getBlockState(pos).getBlock() instanceof BaseCorpseBlock || pLevel.getFluidState(pos).getType() instanceof LavaFluid) {
+                    double angle = Math.atan2(pos.getZ() - pPos.getZ(), pos.getX() - pPos.getX());
+                    float angle_deg = (float) (angle * (180/Mth.PI));
+                    Direction spreadDirection = Direction.fromYRot(angle_deg);
+                    this.getSpreader().spreadFromFaceTowardDirection(
+                            pState, pLevel, pPos, spreadDirection, spreadDirection, false
+                    );
+                }
             }
+            //Spread randomly if didn't spread to corpse
+            this.getSpreader().spreadFromRandomFaceTowardRandomDirection(pState, pLevel, pPos, pRandom);
         }
-        //Spread randomly if didn't spread to corpse
-        this.getSpreader().spreadFromRandomFaceTowardRandomDirection(pState, pLevel, pPos, pRandom);
+
 
         //Transform connected blocks
         if(pLevel.random.nextBoolean()) {
@@ -96,8 +103,7 @@ public class TendrilBlock extends MultifaceBlock {
                     BlockPos adj = pPos.relative(dir);
                     BlockState adj_state = pLevel.getBlockState(adj);
 
-                    if(adj_state.getBlock() instanceof BaseCorpseBlock
-                    || adj_state.getBlock() instanceof BiomushBlock) {
+                    if(adj_state.getBlock() instanceof BaseCorpseBlock) {
                         pLevel.destroyBlock(adj, false);
                         //TODO If block is a corpse or biomush break block and evolve the nearest bulb
                     }
@@ -124,7 +130,7 @@ public class TendrilBlock extends MultifaceBlock {
                 pLevel.sendParticles(
                         ParticleTypes.POOF,
                         pPos.getX() + 0.5,
-                        pPos.getY() + 0.5,
+                        pPos.getY(),
                         pPos.getZ() + 0.5,
                         1,
                         0,

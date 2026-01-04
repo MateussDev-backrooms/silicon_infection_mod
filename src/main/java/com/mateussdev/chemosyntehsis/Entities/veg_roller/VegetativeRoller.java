@@ -34,9 +34,6 @@ public class VegetativeRoller extends BaseOrganelle {
         this.setYBodyRot(0);
     }
 
-    public static final EntityDataAccessor<Vector3f> ALIGNMENT = SynchedEntityData.defineId(VegetativeRoller.class, EntityDataSerializers.VECTOR3);
-    private boolean hasSettled = false;
-
     // ##### Entity setup and stats ##### //
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
@@ -50,117 +47,6 @@ public class VegetativeRoller extends BaseOrganelle {
     }
 
     @Override
-    public boolean isNoGravity() {
-        return true;
-    }
-
-    public void calculateAttachOrientation() {
-        if(!hasSettled) {
-            Vec3 origin = this.position().add(0, this.getBbHeight() / 2f, 0);
-            if(this.level() instanceof ServerLevel slvl) {
-                Vec3[] dirs = {
-                        new Vec3(0, 1, 0), new Vec3(0, -1, 0),
-                        new Vec3(1, 0, 0), new Vec3(-1, 0, 0),
-                        new Vec3(0, 0, 1), new Vec3(0, 0, -1),
-                };
-
-                double dist = 1.2d;
-                Vec3 closestNormal = null;
-                double shortestDist = Double.MAX_VALUE;
-                Vec3 closestPosition = null;
-
-                for(Vec3 dir : dirs) {
-                    BlockHitResult hitResult = slvl.clip(new ClipContext(origin, dir.scale(dist).add(origin), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
-
-                    if(hitResult.getType() == HitResult.Type.BLOCK) {
-                        double raycastDist = origin.distanceTo(hitResult.getLocation());
-
-                        if(raycastDist < shortestDist) {
-                            shortestDist = raycastDist;
-                            closestNormal = new Vec3(
-                                    hitResult.getDirection().getNormal().getX(),
-                                    hitResult.getDirection().getNormal().getY(),
-                                    hitResult.getDirection().getNormal().getZ()
-                            );
-                            closestPosition = hitResult.getLocation();
-                        }
-                    }
-                }
-
-                if(closestNormal != null) {
-                    setAttachNormal(closestNormal);
-                    this.moveTo(closestPosition);
-                    hasSettled = true;
-                }
-
-            }
-        }
-    }
-
-    public Map<Vector3f, Vec3> directionRotHashMap =
-            new HashMap<>();
-
-    @Override
-    public void tick() {
-        super.tick();
-        this.setYBodyRot(0);
-    }
-
-    public void setAttachNormal(Vec3 normal) {
-        entityData.set(ALIGNMENT, normal.normalize().toVector3f());
-    }
-
-    public Vector3f getAttachNormal() {
-        return entityData.get(ALIGNMENT);
-    }
-
-    public Vec3 getNormalRot() {
-        return directionRotHashMap.get(entityData.get(ALIGNMENT));
-    }
-
-    @Override
-    public void onAddedToWorld() {
-        super.onAddedToWorld();
-        calculateAttachOrientation();
-
-        directionRotHashMap.put(new Vector3f(1.0f, 0.0f, 0.0f), new Vec3(0, 0, 90));
-        directionRotHashMap.put(new Vector3f(-1.0f, 0.0f, 0.0f), new Vec3(0, 0, -90));
-        directionRotHashMap.put(new Vector3f(0.0f, 1.0f, 0.0f), new Vec3(0, 0, 0));
-        directionRotHashMap.put(new Vector3f(0.0f, -1.0f, 0.0f), new Vec3(0, 0, 180));
-        directionRotHashMap.put(new Vector3f(0.0f, 0.0f, 1.0f), new Vec3(-90, 0, 0));
-        directionRotHashMap.put(new Vector3f(0.0f, 0.0f, -1.0f), new Vec3(90, 0, 0));
-    }
-
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        entityData.define(ALIGNMENT, new Vector3f(0, 1, 0));
-    }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        tag.putFloat("alignment_x", entityData.get(ALIGNMENT).x);
-        tag.putFloat("alignment_y", entityData.get(ALIGNMENT).y);
-        tag.putFloat("alignment_z", entityData.get(ALIGNMENT).z);
-    }
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        entityData.set(ALIGNMENT, new Vector3f(
-                tag.getFloat("alignment_x"),
-                tag.getFloat("alignment_y"),
-                tag.getFloat("alignment_z")
-        ));
-    }
-
-    @Override
-    public boolean isInWall() {
-        return false;
-    }
-
-    @Override
     protected int evolvesAtMetabolism() {
         return 20;
     }
@@ -170,7 +56,7 @@ public class VegetativeRoller extends BaseOrganelle {
         if(this.level() instanceof ServerLevel slvl) {
             List<VascularRoller> vasculars = slvl.getEntitiesOfClass(
                     VascularRoller.class,
-                    this.getBoundingBox().inflate(2),
+                    this.getBoundingBox().inflate(4),
                     c -> true
             );
             if(random.nextBoolean() || vasculars.size() > 1) {
@@ -180,7 +66,6 @@ public class VegetativeRoller extends BaseOrganelle {
                 StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
                 this.discard();
             } else {
-
                 VascularRoller vascularRoller = ModEntities.VASC_ROLLER.get().create(slvl);
                 vascularRoller.moveTo(position());
                 slvl.addFreshEntity(vascularRoller);
@@ -188,5 +73,10 @@ public class VegetativeRoller extends BaseOrganelle {
                 this.discard();
             }
         }
+    }
+
+    @Override
+    protected boolean shouldSpawnTendrils() {
+        return true;
     }
 }

@@ -70,7 +70,9 @@ public class StaticSiliconiteMethods {
         infectionConversionMap.put(Blocks.CALCITE, ModBlocks.SILICATE_BLOCK.get());
 
         //Define vegetated radiuses
-        vegetatedRadiusMap.put(ModEntities.VEG_BULB.get(), 8);
+        vegetatedRadiusMap.put(ModEntities.VEG_BULB.get(), 3);
+        vegetatedRadiusMap.put(ModEntities.VEG_ROLLER.get(), 5);
+        vegetatedRadiusMap.put(ModEntities.VASC_ROLLER.get(), 8);
     }
 
     public static void tetherMob(ServerLevel serverLevel, LivingEntity tetherTarget) {
@@ -177,7 +179,10 @@ public class StaticSiliconiteMethods {
 
     public static final Set<EntityType<? extends LivingEntity>> BLACKLISTED_MOBS = Set.of(
             EntityType.CREEPER,
-            EntityType.BAT
+            EntityType.BAT,
+            EntityType.COD,
+            EntityType.SALMON,
+            EntityType.TROPICAL_FISH
     );
     public static boolean shouldAttackMob(LivingEntity entity) {
         if(entity instanceof BaseSiliconite) return false;
