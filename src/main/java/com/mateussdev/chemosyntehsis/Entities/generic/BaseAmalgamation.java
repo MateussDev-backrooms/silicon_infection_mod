@@ -9,15 +9,4 @@ public class BaseAmalgamation extends BaseOrganelle{
     protected BaseAmalgamation(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if(level() instanceof ServerLevel slvl) {
-            if(tickCount % 40 == 0) {
-                StaticSiliconiteMethods.spawnBloodBurst(slvl, blockPosition());
-            }
-        }
-    }
 }

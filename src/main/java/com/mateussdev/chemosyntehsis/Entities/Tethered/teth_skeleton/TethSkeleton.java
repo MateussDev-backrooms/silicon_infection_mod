@@ -1,8 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.Tethered.teth_skeleton;
 
-import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -14,7 +13,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;

@@ -132,7 +132,7 @@ public class BaseTethered extends BaseSiliconite {
                 } else {
                     GibFlesh gib = ModEntities.GIB_FLESH.get().create(slvl);
                     gib.moveTo(blockPosition().getX(), blockPosition().getY(), blockPosition().getZ());
-                    gib.addDeltaMovement(new Vec3((slvl.random.nextDouble()*2f - 1f)*0.1f, (slvl.random.nextDouble())*0.5f, (slvl.random.nextDouble()*2f - 1f)*0.1f));
+                    gib.addDeltaMovement(new Vec3((slvl.random.nextDouble()*2f - 1f)*0.4f, (slvl.random.nextDouble())*0.5f, (slvl.random.nextDouble()*2f - 1f)*0.4f));
                     slvl.addFreshEntity(gib);
                 }
             }

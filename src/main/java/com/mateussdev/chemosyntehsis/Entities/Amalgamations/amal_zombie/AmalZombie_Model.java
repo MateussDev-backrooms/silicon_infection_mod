@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.Entities.amal_zombie;
+package com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import net.minecraft.resources.ResourceLocation;

@@ -1,9 +1,23 @@
 {
   "item.silicon_mod.silicon": "Silicon",
+  "item.silicon_mod.atmosphere_analyzer": "Atmospheric Analyzer",
 
   "item.silicon_mod.spawn_roller": "Roller Spawn Egg",
+  "item.silicon_mod.spawn_chunk_of_flesh": "Chunk of Flesh Spawn Egg",
+  "item.silicon_mod.spawn_cluster_of_flesh": "Cluster of Flesh Spawn Egg",
+
   "item.silicon_mod.spawn_teth_zombie": "Tethered Zombie Spawn Egg",
   "item.silicon_mod.spawn_teth_cow": "Tethered Cow Spawn Egg",
+  "item.silicon_mod.spawn_teth_skeleton": "Tethered Skeleton Spawn Egg",
+
+  "item.silicon_mod.spawn_met_zombie": "Metabolized Zombie Spawn Egg",
+
+  "item.silicon_mod.spawn_veg_bulb": "Vegetative Bulb Spawn Egg",
+  "item.silicon_mod.spawn_veg_roller": "Vegetative Roller Spawn Egg",
+  "item.silicon_mod.spawn_vasc_roller": "Vascular Roller Spawn Egg",
+
+  "item.silicon_mod.spawn_amal_zombie": "Zombie Amalgamation Egg",
+  "item.silicon_mod.spawn_amal_spawner": "Spawner Amalgamation Egg",
 
 
   "creativetab.silicon_tab": "Chemosynthesiss"

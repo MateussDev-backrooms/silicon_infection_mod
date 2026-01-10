@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.Entities.Projectiles;
+package com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs;
 
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

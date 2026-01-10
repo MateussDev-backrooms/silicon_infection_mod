@@ -24,6 +24,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
         this.dropSelf(ModBlocks.VEIN_BLOCK.get());
         this.dropWhenSilkTouch(ModBlocks.BIOMUSH.get());
+        this.dropWhenSilkTouch(ModBlocks.FLESH_PILE.get());
         this.dropWhenSilkTouch(ModBlocks.TENDRILS.get());
         this.dropWhenSilkTouch(ModBlocks.SULFURED_TENDRILS.get());
 

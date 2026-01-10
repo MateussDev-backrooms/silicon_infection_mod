@@ -1,12 +1,11 @@
-package com.mateussdev.chemosyntehsis.Entities.amal_zombie;
+package com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_zombie.TethZombie;
-import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassGenerator;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,15 +17,15 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class AmalZombie extends BaseAmalgamation implements IBiomassGenerator {
-    public AmalZombie(EntityType<? extends Monster> p_33002_, Level p_33003_) {
+public class AmalSpawner extends BaseAmalgamation implements IBiomassGenerator {
+    public AmalSpawner(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
     }
 
     // ##### Entity setup and stats ##### //
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 32D)
+                .add(Attributes.MAX_HEALTH, 30D)
                 .add(Attributes.MOVEMENT_SPEED, 0.0D)
                 .add(Attributes.FOLLOW_RANGE, 6D)
                 .add(Attributes.ARMOR_TOUGHNESS, 3D)
@@ -47,13 +46,14 @@ public class AmalZombie extends BaseAmalgamation implements IBiomassGenerator {
                     slvl.playSound(
                             null,
                             blockPosition(),
-                            SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR,
+                            SoundEvents.FIRE_EXTINGUISH,
                             SoundSource.HOSTILE,
                             1f,
                             1f);
 
                     //Particles
                     StaticSiliconiteMethods.spawnBloodBurst(slvl, blockPosition());
+                    slvl.sendParticles(ParticleTypes.FLAME, position().x, position().y, position().z, 5, 0.0f, 0.2f, 0.0f, 0.2f);
 
                     TethZombie tethZombie = ModEntities.TETH_ZOMBIE.get().create(slvl);
                     tethZombie.moveTo(blockPosition().getX(), blockPosition().getY(), blockPosition().getZ());

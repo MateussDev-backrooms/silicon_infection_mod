@@ -4,6 +4,7 @@ import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 
@@ -13,7 +14,7 @@ public class VascularRoller_Model extends GeoModel<VascularRoller> {
             "geo/entity/veg_vascular_bulb.geo.json");
     //TEXTURE PATH
     private static final ResourceLocation texture = new ResourceLocation(Chemosynthesis.MODID,
-            "textures/entity/veg_vascular_bulb.png");
+            "textures/entity/vasc_roller.png");
     //ANIMATIONS PATH
     private static final ResourceLocation animation = new ResourceLocation(Chemosynthesis.MODID,
             "animations/entity/veg_vascular_bulb.animation.json");
@@ -38,6 +39,11 @@ public class VascularRoller_Model extends GeoModel<VascularRoller> {
             root.get().setRotY((float) rot.y * Mth.PI / 180f);
             root.get().setRotZ((float) rot.z * Mth.PI / 180f);
         }
+
+        GeoBone biopile = this.getBone("biopile").get();
+        biopile.setScaleX(animatable.getBiomass()/20f);
+        biopile.setScaleY(animatable.getBiomass()/20f);
+        biopile.setScaleZ(animatable.getBiomass()/20f);
 
     }
 }

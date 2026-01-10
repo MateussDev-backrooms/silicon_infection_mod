@@ -49,6 +49,9 @@ public class ModBlocks {
     public static final RegistryObject<BiomushBlock> BIOMUSH = registerBlock("biomush",
             () -> new BiomushBlock(BlockBehaviour.Properties.copy(Blocks.MUD)
                     .noOcclusion()));
+    public static final RegistryObject<BiomushBlock> FLESH_PILE = registerBlock("flesh_pile",
+            () -> new BiomushBlock(BlockBehaviour.Properties.copy(Blocks.MUD)
+                    .noOcclusion()));
 
     public static final RegistryObject<CowCorpse> CORPSE_COW = registerBlock("cow_corpse",
             () -> new CowCorpse(BlockBehaviour.Properties.copy(Blocks.MUD)

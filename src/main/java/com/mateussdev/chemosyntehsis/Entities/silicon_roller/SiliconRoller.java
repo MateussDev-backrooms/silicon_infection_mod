@@ -1,11 +1,10 @@
 package com.mateussdev.chemosyntehsis.Entities.silicon_roller;
 
-import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -15,7 +14,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
-import org.joml.Vector3f;
 
 public class SiliconRoller extends BaseSiliconite {
     public SiliconRoller(EntityType<? extends Monster> p_33002_, Level p_33003_) {

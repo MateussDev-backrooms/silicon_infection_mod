@@ -110,15 +110,15 @@ public class HybridThrombocyte extends BaseHybrid {
         //Default settings override when new behavior is required
 
         // - GOALS
-        this.goalSelector.addGoal(0, new LungeGoal(this, 1.2f, 0.6f, 0, 9d, 3d, this::canLunge));
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0f, true));
+        this.goalSelector.addGoal(2, new LungeGoal(this, 1.2f, 0.6f, 0, 9d, 3d, this::canLunge));
+        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0f, true));
 
         //Avoid water (No float task cuz they are immune to water damage)
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.1D));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.1D));
 
         //Ant behaviour
-        this.goalSelector.addGoal(3, new DeliverGibToBulbGoal(this));
-        this.goalSelector.addGoal(4, new CollectGibGoal(this));
+        this.goalSelector.addGoal(0, new DeliverGibToBulbGoal(this));
+        this.goalSelector.addGoal(1, new CollectGibGoal(this));
 
         //Looking goals
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 3f));

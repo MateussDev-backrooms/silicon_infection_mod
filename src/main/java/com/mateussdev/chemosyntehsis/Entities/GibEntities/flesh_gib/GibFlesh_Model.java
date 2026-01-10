@@ -1,6 +1,8 @@
 package com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
 
@@ -23,4 +25,16 @@ public class GibFlesh_Model extends GeoModel<GibFlesh>  {
 
     @Override
     public ResourceLocation getAnimationResource(GibFlesh object) { return animation; }
+
+    @Override
+    public void setCustomAnimations(GibFlesh animatable, long instanceId, AnimationState<GibFlesh> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
+        GeoBone gibRoot = this.getBone("root").get();
+
+        gibRoot.setScaleX(animatable.getEntityData().get(animatable.SCALE));
+        gibRoot.setScaleY(animatable.getEntityData().get(animatable.SCALE));
+        gibRoot.setScaleZ(animatable.getEntityData().get(animatable.SCALE));
+
+        gibRoot.setRotY(animatable.getEntityData().get(animatable.ROTATION));
+    }
 }

@@ -2,6 +2,7 @@ package com.mateussdev.chemosyntehsis.Core;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Items.AtmosphereAnalyzer;
+import com.mateussdev.chemosyntehsis.Items.BulbHarpoonGun;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeSpawnEggItem;
@@ -21,6 +22,9 @@ public class ModItems {
 
     public static final RegistryObject<Item> ATMOSPHERE_ANALYZER =
             ITEMS.register("atmosphere_analyzer", () -> new AtmosphereAnalyzer(new Item.Properties()));
+
+    public static final RegistryObject<Item> BULB_HARPOON_GUN =
+            ITEMS.register("bulb_harpoon_gun", () -> new BulbHarpoonGun(new Item.Properties()));
 
     //Spawn eggs
     //Pure
@@ -60,6 +64,14 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_VASC_ROLLER =
             ITEMS.register("spawn_vasc_roller",
                     () -> new ForgeSpawnEggItem(ModEntities.VASC_ROLLER, 0x22201f, 0x855d36, new Item.Properties()));
+
+    //Amalgamations
+    public static final RegistryObject<Item> SPAWN_AMAL_ZOMBIE =
+            ITEMS.register("spawn_amal_zombie",
+                    () -> new ForgeSpawnEggItem(ModEntities.AMAL_ZOMBIE, 0x6b221c, 0x583451, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_AMAL_SPAWNER =
+            ITEMS.register("spawn_amal_spawner",
+                    () -> new ForgeSpawnEggItem(ModEntities.AMAL_SPAWNER, 0x6b221c, 0x583451, new Item.Properties()));
 
     //Hybrids
 

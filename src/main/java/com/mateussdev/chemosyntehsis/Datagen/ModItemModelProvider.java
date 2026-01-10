@@ -19,6 +19,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         simpleItem(ModItems.SILICON);
         simpleItem(ModItems.ATMOSPHERE_ANALYZER);
+        simpleItem(ModItems.BULB_HARPOON_GUN);
 
         //Spawn eggs
         withExistingParent(ModItems.SPAWN_ROLLER.getId().getPath(), mcLoc("item/template_spawn_egg"));
@@ -39,6 +40,9 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent(ModItems.SPAWN_VEG_BULB.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SPAWN_VEG_ROLLER.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SPAWN_VASC_ROLLER.getId().getPath(), mcLoc("item/template_spawn_egg"));
+
+        withExistingParent(ModItems.SPAWN_AMAL_SPAWNER.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.SPAWN_AMAL_ZOMBIE.getId().getPath(), mcLoc("item/template_spawn_egg"));
     }
 
     private ItemModelBuilder simpleItem(RegistryObject<Item> item) {

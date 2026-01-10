@@ -2,8 +2,11 @@ package com.mateussdev.chemosyntehsis.Core;
 
 import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
-import com.mateussdev.chemosyntehsis.Entities.amal_zombie.AmalZombie;
+import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner;
+import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner_Model;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
+import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
@@ -88,8 +91,12 @@ public class ModEntities {
     //Amalgamations
     public static final RegistryObject<EntityType<AmalZombie>> AMAL_ZOMBIE =
             ENTITIES.register("amal_zombie", () -> EntityType.Builder.of(AmalZombie::new, MobCategory.MONSTER)
-                    .sized(1.2f, 2.3f)
+                    .sized(1.2f, 3f)
                     .build("amal_zombie"));
+    public static final RegistryObject<EntityType<AmalSpawner>> AMAL_SPAWNER =
+            ENTITIES.register("amal_spawner", () -> EntityType.Builder.of(AmalSpawner::new, MobCategory.MONSTER)
+                    .sized(1.2f, 3f)
+                    .build("amal_spawner"));
 
     //Hybrid mobs
 
@@ -118,6 +125,10 @@ public class ModEntities {
             ENTITIES.register("bulb_projectile", () -> EntityType.Builder.<BulbProjectileEntity>of(BulbProjectileEntity::new, MobCategory.MISC)
                     .sized(0.33f, 0.33f)
                     .build("bulb_projectile"));
+    public static final RegistryObject<EntityType<BulbHarpoonEntity>> BULB_HARPOON_PROJECTILE =
+            ENTITIES.register("bulb_harpoon_projectile", () -> EntityType.Builder.<BulbHarpoonEntity>of(BulbHarpoonEntity::new, MobCategory.MISC)
+                    .sized(0.33f, 0.33f)
+                    .build("bulb_harpoon_projectile"));
 
     //GibEntities
     public static final RegistryObject<EntityType<GibFlesh>> GIB_FLESH =

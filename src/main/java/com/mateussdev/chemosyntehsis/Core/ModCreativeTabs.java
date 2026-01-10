@@ -21,6 +21,7 @@ public class ModCreativeTabs {
                         //Items
                         pOutput.accept(ModItems.SILICON.get());
                         pOutput.accept(ModItems.ATMOSPHERE_ANALYZER.get());
+                        pOutput.accept(ModItems.BULB_HARPOON_GUN.get());
 
                         //Mobs
                         pOutput.accept(ModItems.SPAWN_ROLLER.get());
@@ -37,6 +38,9 @@ public class ModCreativeTabs {
                         pOutput.accept(ModItems.SPAWN_VEG_ROLLER.get());
                         pOutput.accept(ModItems.SPAWN_VASC_ROLLER.get());
 
+                        pOutput.accept(ModItems.SPAWN_AMAL_ZOMBIE.get());
+                        pOutput.accept(ModItems.SPAWN_AMAL_SPAWNER.get());
+
                         pOutput.accept(ModItems.SPAWN_THROMBOCYTE.get());
                         pOutput.accept(ModItems.SPAWN_ERYTHROCYTE.get());
                         pOutput.accept(ModItems.SPAWN_ASTROCYTE.get());
@@ -50,6 +54,7 @@ public class ModCreativeTabs {
 
                         //Corpses
                         pOutput.accept(ModBlocks.BIOMUSH.get());
+                        pOutput.accept(ModBlocks.FLESH_PILE.get());
                         pOutput.accept(ModBlocks.CORPSE_COW.get());
                         pOutput.accept(ModBlocks.CORPSE_PIG.get());
                     })

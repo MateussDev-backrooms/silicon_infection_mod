@@ -1,7 +1,6 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
-import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
@@ -31,8 +30,6 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.*;
 
 public abstract class BaseSiliconite extends Monster implements GeoEntity {
     protected BaseSiliconite(EntityType<? extends Monster> p_33002_, Level p_33003_) {

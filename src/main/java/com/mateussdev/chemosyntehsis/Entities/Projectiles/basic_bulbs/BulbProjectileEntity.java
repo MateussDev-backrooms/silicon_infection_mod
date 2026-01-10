@@ -1,7 +1,6 @@
-package com.mateussdev.chemosyntehsis.Entities.Projectiles;
+package com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;

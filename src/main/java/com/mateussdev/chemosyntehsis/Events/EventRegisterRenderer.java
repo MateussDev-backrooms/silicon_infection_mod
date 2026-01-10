@@ -4,9 +4,11 @@ import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock_Render
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModBlockEntities;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.Projectiles.BulbProjectileEntity_Render;
-import com.mateussdev.chemosyntehsis.Entities.amal_zombie.AmalZombie_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity_Render;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity_Render;
+import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte_Renderer;
@@ -52,6 +54,7 @@ public class EventRegisterRenderer {
 
         //Amalgamations
         EntityRenderers.register(ModEntities.AMAL_ZOMBIE.get(), AmalZombie_Renderer::new);
+        EntityRenderers.register(ModEntities.AMAL_SPAWNER.get(), AmalSpawner_Renderer::new);
 
         //Hybrids
 
@@ -63,6 +66,7 @@ public class EventRegisterRenderer {
 
         //Projectile
         EntityRenderers.register(ModEntities.BULB_PROJECTILE.get(), BulbProjectileEntity_Render::new);
+        EntityRenderers.register(ModEntities.BULB_HARPOON_PROJECTILE.get(), BulbHarpoonEntity_Render::new);
 
         //GibEntities
         EntityRenderers.register(ModEntities.GIB_FLESH.get(), GibFlesh_Renderer::new);

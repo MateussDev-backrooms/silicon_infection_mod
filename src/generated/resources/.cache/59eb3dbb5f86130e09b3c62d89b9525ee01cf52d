@@ -1,6 +1,7 @@
-// 1.20.1	2025-06-30T15:12:22.3390755	Loot Tables
+// 1.20.1	2026-01-10T22:00:24.9852028	Loot Tables
 43a646026b9160c3b4688d8ee03a2389fc8800e7 data/silicon_mod/loot_tables/blocks/biomush.json
 7ca3bc52da7370a3b103736239777e490952a22d data/silicon_mod/loot_tables/blocks/cow_corpse.json
+eb70da2cc92891345cd40580760c633365d8fc27 data/silicon_mod/loot_tables/blocks/flesh_pile.json
 9c41aeee96b4aaf5b78351ee6e9c845ceee636e8 data/silicon_mod/loot_tables/blocks/mushy_silicate_block.json
 462aa72d65718841fd2c38c4ae3ce6a76524abe7 data/silicon_mod/loot_tables/blocks/pig_corpse.json
 7bd2f7d63101ab2de2e6c4d6b1f709037bff47b0 data/silicon_mod/loot_tables/blocks/silicate_block.json

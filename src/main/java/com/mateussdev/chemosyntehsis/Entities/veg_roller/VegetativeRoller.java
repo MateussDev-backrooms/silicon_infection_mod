@@ -56,19 +56,19 @@ public class VegetativeRoller extends BaseOrganelle {
         if(this.level() instanceof ServerLevel slvl) {
             List<VascularRoller> vasculars = slvl.getEntitiesOfClass(
                     VascularRoller.class,
-                    this.getBoundingBox().inflate(4),
+                    this.getBoundingBox().inflate(5),
                     c -> true
             );
-            if(random.nextBoolean() || vasculars.size() > 1) {
-                SiliconRoller roller = ModEntities.SILICON_ROLLER.get().create(slvl);
-                roller.moveTo(position());
-                slvl.addFreshEntity(roller);
-                StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
-                this.discard();
-            } else {
+            if(vasculars.isEmpty() && random.nextBoolean()) {
                 VascularRoller vascularRoller = ModEntities.VASC_ROLLER.get().create(slvl);
                 vascularRoller.moveTo(position());
                 slvl.addFreshEntity(vascularRoller);
+                StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
+                this.discard();
+            } else {
+                SiliconRoller roller = ModEntities.SILICON_ROLLER.get().create(slvl);
+                roller.moveTo(position());
+                slvl.addFreshEntity(roller);
                 StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
                 this.discard();
             }

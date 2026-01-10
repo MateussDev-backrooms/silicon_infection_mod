@@ -24,8 +24,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(ModBlocks.MUSHY_SILICON_BLOCK);
 
 
+        simpleBlock(ModBlocks.BIOMUSH.get(), new ModelFile.UncheckedModelFile(modLoc("block/biomush")));
+        simpleBlock(ModBlocks.FLESH_PILE.get(), new ModelFile.UncheckedModelFile(modLoc("block/flesh_pile")));
 
-        simpleBlock(ModBlocks.BIOMUSH.get());
         horizontalBlock(ModBlocks.CORPSE_COW.get(), new ModelFile.UncheckedModelFile(modLoc("block/cow_corpse")));
         horizontalBlock(ModBlocks.CORPSE_PIG.get(), new ModelFile.UncheckedModelFile(modLoc("block/pig_corpse")));
         //blockWithItem(ModBlocks.TENDRIL_BLOCK);

@@ -1,12 +1,12 @@
-package com.mateussdev.chemosyntehsis.Entities.Projectiles;
+package com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
 
-public class BulbProjectileEntity_Model extends GeoModel<BulbProjectileEntity> {
+public class BulbHarpoonEntity_Model extends GeoModel<BulbHarpoonEntity> {
     //MODEL PATH
     private static final ResourceLocation model = new ResourceLocation(Chemosynthesis.MODID,
             "geo/entity/bulb_projectile.geo.json");
@@ -18,16 +18,16 @@ public class BulbProjectileEntity_Model extends GeoModel<BulbProjectileEntity> {
             "animations/entity/bulb_projectile.animation.json");
 
     @Override
-    public ResourceLocation getModelResource(BulbProjectileEntity object) { return model; }
+    public ResourceLocation getModelResource(BulbHarpoonEntity object) { return model; }
 
     @Override
-    public ResourceLocation getTextureResource(BulbProjectileEntity object) { return texture; }
+    public ResourceLocation getTextureResource(BulbHarpoonEntity object) { return texture; }
 
     @Override
-    public ResourceLocation getAnimationResource(BulbProjectileEntity object) { return animation; }
+    public ResourceLocation getAnimationResource(BulbHarpoonEntity object) { return animation; }
 
     @Override
-    public void setCustomAnimations(BulbProjectileEntity animatable, long instanceId, AnimationState<BulbProjectileEntity> animationState) {
+    public void setCustomAnimations(BulbHarpoonEntity animatable, long instanceId, AnimationState<BulbHarpoonEntity> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
 
         var head = this.getBone("appendage9"); // Replace with your model bone name
