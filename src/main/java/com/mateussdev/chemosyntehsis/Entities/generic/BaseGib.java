@@ -1,17 +1,22 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
 
+import com.mateussdev.chemosyntehsis.Core.ModBlocks;
+import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -20,13 +25,24 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.List;
+
+import static com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods.spawnBloodBurst;
+
 public abstract class BaseGib extends Entity implements GeoEntity {
 
     protected int age;
     protected int lifetime = -1;
 
+    protected boolean mustMerge = false;
+
     public static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(BaseGib.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Float> ROTATION = SynchedEntityData.defineId(BaseGib.class, EntityDataSerializers.FLOAT);
+
+    private static final int MERGE_COUNT = 4;
+    private static final int MERGE_RADIUS = 3;
+
+    protected int evolution_t = 0;
 
     public BaseGib(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -61,6 +77,7 @@ public abstract class BaseGib extends Entity implements GeoEntity {
     public void tick() {
         super.tick();
 
+        //Gravity
         if (!this.isNoGravity()) {
             this.setDeltaMovement(this.getDeltaMovement().add(0, -0.08, 0));
         }
@@ -75,6 +92,7 @@ public abstract class BaseGib extends Entity implements GeoEntity {
                 this.discard();
             }
 
+            //Blood particles
             if(getDeltaMovement().length() > 0.01) {
                 DustParticleOptions blood = new DustParticleOptions(
                         new Vector3f(0.8f, 0.0f, 0.0f),
@@ -83,9 +101,9 @@ public abstract class BaseGib extends Entity implements GeoEntity {
 
                 slvl.sendParticles(
                         blood,
-                        position().x,
-                        position().y,
-                        position().z,
+                        position().x + this.getBbWidth()/2,
+                        position().y + this.getBbWidth()/2,
+                        position().z + this.getBbWidth()/2,
                         1,
                         0.0,
                         0.0,
@@ -93,21 +111,91 @@ public abstract class BaseGib extends Entity implements GeoEntity {
                         0.1
                 );
             }
+
+            //Merging
+            if(tickCount > 100 && !isPassenger()) {
+                //Don't turn into flesh pile instantly
+                if (mustMerge && evolution_t++ > 20) {
+                    mergeIntoFleshPile();
+                }
+                if(tickCount % 60 == 0) {
+                    List<BaseGib> nearby = level().getEntitiesOfClass(
+                            BaseGib.class,
+                            this.getBoundingBox().inflate(MERGE_RADIUS),
+                            c -> c != this && !c.mustMerge
+                    );
+
+                    if (nearby.size() + 1 >= MERGE_COUNT) {
+                        initiateMerge(nearby);
+                    }
+                }
+
+            }
         }
     }
 
+    // ===== Gib merging into flesh pile ===== //
+
+    private void initiateMerge(List<BaseGib> others) {
+        this.mustMerge = true;
+
+        for (BaseGib c : others) {
+            c.mustMerge = true;
+        }
+
+        if (level() instanceof ServerLevel slvl) {
+            Vec3 center = this.position();
+
+            // Suck the others inward (visual feedback)
+            for (BaseGib c : others) {
+                Vec3 dir = center.subtract(c.position()).normalize();
+                c.setDeltaMovement(dir.scale(0.33f));
+            }
+
+            spawnBloodBurst(slvl, blockPosition());
+
+            slvl.scheduleTick(this.blockPosition(), Blocks.AIR, 20);
+        }
+    }
+
+    private void mergeIntoFleshPile() {
+        if (!(level() instanceof ServerLevel slvl)) return;
+
+        List<BaseGib> all = slvl.getEntitiesOfClass(
+                BaseGib.class,
+                this.getBoundingBox().inflate(MERGE_RADIUS),
+                c -> c.mustMerge
+        );
+
+        // Only ONE gib does the spawn
+        if (all.stream().anyMatch(c -> c.getId() < this.getId())) return;
+
+        // Create flesh pile
+        slvl.setBlock(blockPosition(), ModBlocks.FLESH_PILE.get().defaultBlockState(), 3);
+
+
+        // Consume all chunks
+        for (BaseGib c : all) {
+            c.discard();
+        }
+    }
+
+    // ===== Overrides ===== //
+
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
-        age = tag.getInt("Age");
-        lifetime = tag.getInt("Lifetime");
+        age = tag.getInt("age");
+        lifetime = tag.getInt("lifetime");
+        mustMerge = tag.getBoolean("must_merge");
         entityData.set(SCALE, tag.getFloat("scale"));
         entityData.set(ROTATION, tag.getFloat("rotation"));
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
-        tag.putInt("Age", age);
-        tag.putInt("Lifetime", lifetime);
+        tag.putInt("age", age);
+        tag.putInt("lifetime", lifetime);
+        tag.putBoolean("must_merge", mustMerge);
         tag.putFloat("scale", entityData.get(SCALE));
         tag.putFloat("rotation", entityData.get(ROTATION));
     }

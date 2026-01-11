@@ -9,6 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -121,7 +123,7 @@ public class TendrilBlock extends MultifaceBlock {
         if(pRandom.nextFloat() < 0.2) {
             List<BaseOrganelle> nearby_vegs = pLevel.getEntitiesOfClass(
                     BaseOrganelle.class,
-                    new AABB(pPos.getX(), pPos.getY(), pPos.getZ(), pPos.getX(), pPos.getY(), pPos.getZ()).inflate(0.75),
+                    new AABB(pPos.getX(), pPos.getY(), pPos.getZ(), pPos.getX(), pPos.getY(), pPos.getZ()).inflate(1.5),
                     c -> true
             );
             if(nearby_vegs.isEmpty()) {
@@ -138,6 +140,7 @@ public class TendrilBlock extends MultifaceBlock {
                         0,
                         0.1
                 );
+                pLevel.playSound(null, pPos, SoundEvents.ITEM_PICKUP, SoundSource.HOSTILE, 1f, 1f);
                 pLevel.addFreshEntity(bulb);
             }
         }

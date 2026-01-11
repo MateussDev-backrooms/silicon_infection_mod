@@ -1,5 +1,6 @@
 package com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon;
 
+import com.mateussdev.chemosyntehsis.Blocks.FleshPileBlock;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.AbstractHarpoonProjectile;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassContainer;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -94,5 +96,25 @@ public class BulbHarpoonEntity extends AbstractHarpoonProjectile implements GeoA
     @Override
     public double getTick(Object o) {
         return 0;
+    }
+
+    @Override
+    protected void attachedToBlockTick() {
+        if(tickCount % 10 == 0) {
+            if(attachedBlockPos == null) {
+                super.attachedToBlockTick();
+                return;
+            }
+
+            BlockState state = level().getBlockState(attachedBlockPos);
+            if(state.getBlock() instanceof FleshPileBlock flesh) {
+                level().setBlockAndUpdate(attachedBlockPos, state.setValue(FleshPileBlock.BIOMUSHIFICATION, state.getValue(FleshPileBlock.BIOMUSHIFICATION) + 1));
+                if(getOwner() instanceof IBiomassContainer container) {
+                    container.addBiomass(1);
+                }
+            } else {
+                super.attachedToBlockTick();
+            }
+        }
     }
 }

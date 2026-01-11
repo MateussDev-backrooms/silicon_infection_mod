@@ -1,6 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.Projectiles;
 
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -45,6 +46,7 @@ public abstract class AbstractHarpoonProjectile extends AbstractArrow {
     public static final EntityDataAccessor<Integer> HarpoonLength = SynchedEntityData.defineId(AbstractHarpoonProjectile.class, EntityDataSerializers.INT);
 
     public final boolean dragItself;
+    public BlockPos attachedBlockPos;
 
     public boolean isAttached() {
         return entityData.get(Attached);
@@ -217,11 +219,12 @@ public abstract class AbstractHarpoonProjectile extends AbstractArrow {
         setAttached(true);
         setCurrentAttachType(AttachTypes.Block);
         setHarpoonPos(pResult.getLocation());
+        attachedBlockPos = pResult.getBlockPos();
     }
 
     @Override
     protected boolean canHitEntity(Entity p_36743_) {
-        return p_36743_ != getOwner();
+        return p_36743_ != getOwner() && !(p_36743_ instanceof AbstractHarpoonProjectile);
     }
 
     @Override
@@ -256,7 +259,7 @@ public abstract class AbstractHarpoonProjectile extends AbstractArrow {
                                 RetractHarpoon();
                             }
                         } else {
-                            RetractHarpoon();
+                            attachedToBlockTick();
                         }
                     } else {
                         this.discard();
@@ -271,6 +274,10 @@ public abstract class AbstractHarpoonProjectile extends AbstractArrow {
             this.discard();
         }
 
+    }
+
+    protected void attachedToBlockTick() {
+        RetractHarpoon();
     }
 
     protected void setPosToHarpoonPos() {

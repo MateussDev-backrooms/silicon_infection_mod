@@ -77,12 +77,14 @@ public class SeekAndEatBiomushGoal extends Goal {
         }
     }
 
+    private static final int SEEK_RADIUS = 8;
+
     private BlockPos findNearbyBiomush() {
         BlockPos mobPos = mob.blockPosition();
 
         for (BlockPos pos : BlockPos.betweenClosed(
-                mobPos.offset(-5, -2, -5),
-                mobPos.offset(5, 2, 5))) {
+                mobPos.offset(-SEEK_RADIUS, -2, -SEEK_RADIUS),
+                mobPos.offset(SEEK_RADIUS, 2, SEEK_RADIUS))) {
 
             BlockState state = mob.level().getBlockState(pos);
 

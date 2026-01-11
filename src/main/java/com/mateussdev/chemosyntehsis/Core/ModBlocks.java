@@ -1,9 +1,6 @@
 package com.mateussdev.chemosyntehsis.Core;
 
-import com.mateussdev.chemosyntehsis.Blocks.BiomushBlock;
-import com.mateussdev.chemosyntehsis.Blocks.SulfuredTendrilBlock;
-import com.mateussdev.chemosyntehsis.Blocks.TendrilBlock;
-import com.mateussdev.chemosyntehsis.Blocks.VeinBlock;
+import com.mateussdev.chemosyntehsis.Blocks.*;
 import com.mateussdev.chemosyntehsis.Blocks.corpses.CowCorpse;
 import com.mateussdev.chemosyntehsis.Blocks.corpses.PigCorpse;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
@@ -49,8 +46,8 @@ public class ModBlocks {
     public static final RegistryObject<BiomushBlock> BIOMUSH = registerBlock("biomush",
             () -> new BiomushBlock(BlockBehaviour.Properties.copy(Blocks.MUD)
                     .noOcclusion()));
-    public static final RegistryObject<BiomushBlock> FLESH_PILE = registerBlock("flesh_pile",
-            () -> new BiomushBlock(BlockBehaviour.Properties.copy(Blocks.MUD)
+    public static final RegistryObject<FleshPileBlock> FLESH_PILE = registerBlock("flesh_pile",
+            () -> new FleshPileBlock(BlockBehaviour.Properties.copy(Blocks.MUD)
                     .noOcclusion()));
 
     public static final RegistryObject<CowCorpse> CORPSE_COW = registerBlock("cow_corpse",

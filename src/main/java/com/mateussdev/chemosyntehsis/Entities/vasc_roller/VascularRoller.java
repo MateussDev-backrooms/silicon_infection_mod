@@ -1,5 +1,6 @@
 package com.mateussdev.chemosyntehsis.Entities.vasc_roller;
 
+import com.mateussdev.chemosyntehsis.Blocks.FleshPileBlock;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.AbstractHarpoonProjectile;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
@@ -7,6 +8,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassContainer;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -15,7 +17,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
@@ -49,9 +51,12 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
             TargetingConditions.forCombat()
                     .range(16.0);
 
+    private static final int FLESH_CHECK_RADIUS = 8;
+
     public BulbHarpoonEntity harpoon = null;
 
     public LivingEntity currentTarget;
+    public BlockPos currentBlock;
 
     private List<EntityType<? extends BaseAmalgamation>> default_amalgamations = List.of(
             ModEntities.AMAL_ZOMBIE.get(),
@@ -93,10 +98,9 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
     public void tick() {
         super.tick();
         if (this.level() instanceof ServerLevel slvl) {
-            if (harpoon_cooldown <= 0 && currentTarget == null) {
+            if (harpoon_cooldown <= 0 && !entityData.get(HARPOON_ATTACHED)) {
 
                 //Normal entities
-
                 LivingEntity target = level().getNearestEntity(
                         LivingEntity.class,
                         HARPOON_CONDITIONS,
@@ -106,22 +110,41 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
                 );
 
                 if (target != null) {
-                    acquireTarget(target);
+                    targetEntity(target);
+                    currentBlock = null;
                     entityData.set(HARPOON_ATTACHED, true);
+                } else {
+                    //Connect to flesh blocks
+                    BlockPos closestFlesh = findNearbyFlesh();
+                    if(closestFlesh != null) {
+                        targetBlock(closestFlesh);
+                        StaticSiliconiteMethods.spawnBloodBurst(slvl, closestFlesh);
+                        entityData.set(HARPOON_ATTACHED, true);
+                    } else {
+                        currentBlock = null;
+                        if(harpoon != null) {
+                            retractHarpoon();
+                        }
+                    }
                 }
 
-                //Singular gibs
 
-                //Connect to flesh blocks
             } else {
                 harpoon_cooldown--;
             }
 
             //Validate target
             if(entityData.get(HARPOON_ATTACHED)) {
-                if(currentTarget.isDeadOrDying() || currentTarget == null || harpoon == null
-                        || harpoon.getCurrentAttachType() == AbstractHarpoonProjectile.AttachTypes.Reeling.ordinal()) {
-                    retractHarpoon();
+                if(currentBlock == null) {
+                    if(currentTarget == null) retractHarpoon();
+                    else if(currentTarget.isDeadOrDying() || harpoon == null
+                            || harpoon.getCurrentAttachType() == AbstractHarpoonProjectile.AttachTypes.Reeling.ordinal()) {
+                        retractHarpoon();
+                    }
+                } else {
+                    if(harpoon == null || harpoon.getCurrentAttachType() == AbstractHarpoonProjectile.AttachTypes.Reeling.ordinal()) {
+                        retractHarpoon();
+                    }
                 }
             } else {
                 //Allow for amalgamation
@@ -146,7 +169,19 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
         return super.hurt(pSource, pAmount);
     }
 
-    private void acquireTarget(LivingEntity target) {
+    private void targetBlock(BlockPos target) {
+        currentBlock = target;
+        harpoon = new BulbHarpoonEntity(level(), this);
+        harpoon.setPos(getX(), getEyeY(), getZ());
+
+        Vec3 shootDir = target.getCenter().subtract(0, 0.5, 0).subtract(this.position());
+        level().playSound(null, blockPosition(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.HOSTILE, 1f, 1f);
+        harpoon.shoot(shootDir, 1.2f, 0f, this, 0.08f, 500);
+
+        level().addFreshEntity(harpoon);
+    }
+
+    private void targetEntity(LivingEntity target) {
         this.currentTarget = target;
 
         harpoon = new BulbHarpoonEntity(level(), this);
@@ -164,6 +199,23 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
         harpoon.RetractHarpoon();
         entityData.set(HARPOON_ATTACHED, false);
         harpoon_cooldown = random.nextInt(160);
+    }
+
+    private BlockPos findNearbyFlesh() {
+        BlockPos mobPos = this.blockPosition();
+
+        for (BlockPos pos : BlockPos.betweenClosed(
+                mobPos.offset(-FLESH_CHECK_RADIUS, -FLESH_CHECK_RADIUS/2, -FLESH_CHECK_RADIUS),
+                mobPos.offset(FLESH_CHECK_RADIUS, FLESH_CHECK_RADIUS/2, FLESH_CHECK_RADIUS))) {
+
+            BlockState state = this.level().getBlockState(pos);
+
+            if (state.getBlock() instanceof FleshPileBlock) {
+                return pos.immutable();
+            }
+        }
+
+        return null;
     }
 
 

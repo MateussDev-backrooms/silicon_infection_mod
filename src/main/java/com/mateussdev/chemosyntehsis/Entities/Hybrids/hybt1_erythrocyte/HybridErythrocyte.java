@@ -22,6 +22,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -70,6 +73,15 @@ public class HybridErythrocyte extends BaseHybrid {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.setNoGravity(true);
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        //Movement anim controller
+        controllers.add(new AnimationController<>(this, "movement", 5, event ->
+        {
+            return event.setAndContinue(RawAnimation.begin().thenLoop("idle"));
+        }));
     }
 
     @Override

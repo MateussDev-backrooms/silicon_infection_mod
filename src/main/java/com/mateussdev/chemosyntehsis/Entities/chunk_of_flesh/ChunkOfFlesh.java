@@ -38,14 +38,20 @@ public class ChunkOfFlesh extends BaseSiliconite {
         super(p_33002_, p_33003_);
     }
 
-    public int evolution_t = 0;
+    protected int evolution_t = 0;
     public boolean mustEvolve = false;
     public boolean doBurrowAnim = false;
 
-    public static final EntityDataAccessor<Integer> IS_BURROWING = SynchedEntityData.defineId(ChunkOfFlesh.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Boolean> IS_BURROWING = SynchedEntityData.defineId(ChunkOfFlesh.class, EntityDataSerializers.BOOLEAN);
 
     private static final int MERGE_COUNT = 5;
     private static final double MERGE_RADIUS = 3.5D;
+
+    private static final List<EntityType<? extends BaseHybrid>> HYBRID_EVOLUTION_RESULTS = List.of(
+            ModEntities.THROMBOCYTE.get(),
+            ModEntities.ERYTHROCYTE.get(),
+            ModEntities.ASTROCYTE.get()
+    );
 
     //##### Entity setup and stats #####//
     public static AttributeSupplier.Builder createAttributes() {
@@ -63,16 +69,12 @@ public class ChunkOfFlesh extends BaseSiliconite {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "movement", 5, event ->
         {
-            if (entityData.get(IS_BURROWING) == 1) {
+            if (entityData.get(IS_BURROWING)) {
                 return event.setAndContinue(RawAnimation.begin().thenPlayAndHold("burrow"));
             }
 
             return event.setAndContinue(
-                    // If moving, play the walking animation
-
-
                     event.isMoving() ? RawAnimation.begin().thenLoop("walk"):
-                            // If not moving, play the idle animation
                             RawAnimation.begin().thenLoop("idle"));
         }));
     }
@@ -103,7 +105,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
     @Override
     public void tick() {
         super.tick();
-        if (entityData.get(IS_BURROWING) == 1 && _brw) {
+        if (entityData.get(IS_BURROWING) && _brw) {
             level().playSound(this, this.blockPosition(), SoundEvents.WARDEN_DIG, SoundSource.HOSTILE, 1f, 1f);
             _brw = false;
         }
@@ -112,7 +114,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
             mergeIntoCluster();
         }
 
-        if(tickCount % 20 == 0) {
+        if(tickCount % 60 == 0) {
             if (!level().isClientSide && !this.mustEvolve) {
                 List<ChunkOfFlesh> nearby = level().getEntitiesOfClass(
                         ChunkOfFlesh.class,
@@ -140,13 +142,12 @@ public class ChunkOfFlesh extends BaseSiliconite {
             // Suck the others inward (visual feedback)
             for (ChunkOfFlesh c : others) {
                 Vec3 dir = center.subtract(c.position()).normalize();
-                c.setDeltaMovement(dir.scale(0.25));
+                c.setDeltaMovement(dir.scale(1));
                 c.setBurrowAnimation(true);
             }
 
             spawnBloodBurst(slvl, blockPosition());
 
-            // Delay actual merge slightly for drama
             slvl.scheduleTick(this.blockPosition(), Blocks.AIR, 20);
         }
     }
@@ -165,7 +166,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
 
         // Effects
         spawnBloodBurst(slvl, this.blockPosition());
-        slvl.playSound(null, blockPosition(), SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE, 1f, 3f);
+        slvl.playSound(null, blockPosition(), SoundEvents.MUD_FALL, SoundSource.HOSTILE, 1f, 3f);
 
         // Spawn Cluster
         ClusterOfFlesh cluster = ModEntities.CLUSTER_OF_FLESH.get().create(slvl);
@@ -180,23 +181,13 @@ public class ChunkOfFlesh extends BaseSiliconite {
 
 
 
-    @SafeVarargs
-    public static EntityType<? extends BaseHybrid>[] createHybridPool(EntityType<? extends BaseHybrid>... types) {
-        return types;
-    }
 
-
-    private static final EntityType<? extends BaseHybrid>[] HYBRID_EVOLUTION_RESULTS = createHybridPool(
-            ModEntities.THROMBOCYTE.get(),
-            ModEntities.ERYTHROCYTE.get(),
-            ModEntities.ASTROCYTE.get()
-    );
     public void evolveIntoHybrid() {
         if(this.level() instanceof ServerLevel slvl) {
             spawnBloodBurst(slvl, this.blockPosition());
             slvl.playSound(null, this.blockPosition(), SoundEvents.ZOMBIE_INFECT, SoundSource.HOSTILE);
 
-            BaseHybrid result = HYBRID_EVOLUTION_RESULTS[slvl.random.nextInt(HYBRID_EVOLUTION_RESULTS.length)].create(slvl);
+            BaseHybrid result = HYBRID_EVOLUTION_RESULTS.get(slvl.random.nextInt(HYBRID_EVOLUTION_RESULTS.size())).create(slvl);
             if(result == null) return;
 
             result.moveTo(this.getX(), this.getY(), this.getZ());
@@ -206,13 +197,13 @@ public class ChunkOfFlesh extends BaseSiliconite {
 
     public void setBurrowAnimation(boolean bool) {
         doBurrowAnim = bool;
-        entityData.set(IS_BURROWING, bool ? 1:0);
+        entityData.set(IS_BURROWING, bool);
         if(!bool) _brw = true;
     }
 
     @Override
     public void push(double pX, double pY, double pZ) {
-        if(entityData.get(IS_BURROWING) == 1) {
+        if(entityData.get(IS_BURROWING)) {
             super.push(0d, 0d, 0d);
         } else {
             super.push(pX, pY, pZ);
@@ -222,24 +213,24 @@ public class ChunkOfFlesh extends BaseSiliconite {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt("is_burrowing", entityData.get(IS_BURROWING));
+        tag.putBoolean("is_burrowing", entityData.get(IS_BURROWING));
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        entityData.set(IS_BURROWING, 0);
+        entityData.set(IS_BURROWING, false);
     }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        entityData.define(IS_BURROWING, 0);
+        entityData.define(IS_BURROWING, false);
     }
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        entityData.set(IS_BURROWING, 0);
+        entityData.set(IS_BURROWING, false);
         return super.hurt(pSource, pAmount);
     }
 }
