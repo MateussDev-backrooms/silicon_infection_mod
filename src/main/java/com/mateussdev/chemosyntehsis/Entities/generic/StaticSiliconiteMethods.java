@@ -3,6 +3,8 @@ package com.mateussdev.chemosyntehsis.Entities.generic;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
+import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -24,6 +26,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -92,6 +96,8 @@ public class StaticSiliconiteMethods {
     public static void tetherMob(ServerLevel serverLevel, LivingEntity tetherTarget) {
         EntityType<? extends LivingEntity> tethered_result_type = tetherHashMap.get(tetherTarget.getType());
         if(tethered_result_type==null) {
+            //Split into chunks depending on the bounding box size
+            splitIntoChunks(serverLevel, tetherTarget.blockPosition(), Mth.floor(boundingBoxVolume(tetherTarget.getBoundingBox())));
             return;
         }
         LivingEntity tethered_result = tethered_result_type.create(serverLevel);
@@ -121,6 +127,34 @@ public class StaticSiliconiteMethods {
         }
     }
 
+    public static void splitIntoChunks(ServerLevel slvl, BlockPos pos, int count) {
+            slvl.playSound(
+                    null,
+                    pos,
+                    SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR,
+                    SoundSource.HOSTILE,
+                    1f,
+                    1f);
+
+            //Particles
+            StaticSiliconiteMethods.spawnBloodBurst(slvl, pos);
+
+            //Spawn chunks
+            for (int i = 0; i < count; i++) {
+                if(slvl.random.nextFloat() < 0.33f) {
+                    ChunkOfFlesh chunkOfFlesh = ModEntities.CHUNK_OF_FLESH.get().create(slvl);
+                    chunkOfFlesh.moveTo(pos.getX(), pos.getY(), pos.getZ());
+                    chunkOfFlesh.addDeltaMovement(new Vec3((slvl.random.nextDouble()*2f - 1f)*0.1f, (slvl.random.nextDouble())*0.8f, (slvl.random.nextDouble()*2f - 1f)*0.1f));
+                    slvl.addFreshEntity(chunkOfFlesh);
+                } else {
+                    GibFlesh gib = ModEntities.GIB_FLESH.get().create(slvl);
+                    gib.moveTo(pos.getX(), pos.getY(), pos.getZ());
+                    gib.addDeltaMovement(new Vec3((slvl.random.nextDouble()*2f - 1f)*0.4f, (slvl.random.nextDouble())*0.5f, (slvl.random.nextDouble()*2f - 1f)*0.4f));
+                    slvl.addFreshEntity(gib);
+                }
+            }
+    }
+
     public static boolean isTetherable(LivingEntity entity) {
         return tetherHashMap.containsKey(entity.getType());
     }
@@ -137,6 +171,10 @@ public class StaticSiliconiteMethods {
 
     public static float flerp(float a, float b, float t) {
         return a * (1 - a) + b * a;
+    }
+
+    public static double boundingBoxVolume(AABB box) {
+        return box.getXsize() * box.getXsize() * box.getZsize();
     }
 
     // ===== Gecko Functions ===== //
@@ -158,7 +196,7 @@ public class StaticSiliconiteMethods {
     }
 
     public static void updateBulbVisuals(BaseSiliconite animatable, GeoModel<?> model) {
-        GeoBone[] bulbs = animatable.getBulbsArray(model).clone();
+        GeoBone[] bulbs = animatable.getBulbsArray(model);
         for (int i = 0; i < animatable.getBulbCount(); i++) {
             bulbs[i].setHidden(animatable.getBrokenOffBulbs() > i);
         }

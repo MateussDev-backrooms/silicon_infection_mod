@@ -1,6 +1,8 @@
 package com.mateussdev.chemosyntehsis.Entities.Projectiles;
 
+import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
+import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;

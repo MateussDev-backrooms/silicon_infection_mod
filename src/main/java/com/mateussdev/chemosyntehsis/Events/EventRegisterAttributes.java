@@ -10,6 +10,7 @@ import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_erythrocyte.HybridErythrocyte;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte.HybridThrombocyte;
+import com.mateussdev.chemosyntehsis.Entities.met_cow.MetCow;
 import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_cow.TethCow;
@@ -39,6 +40,7 @@ public class EventRegisterAttributes {
 
         //Metabolized mobs
         event.put(ModEntities.MET_ZOMBIE.get(), MetZombie.createAttributes().build());
+        event.put(ModEntities.MET_COW.get(), MetCow.createAttributes().build());
 
         //Vegatated mobs
         event.put(ModEntities.VEG_BULB.get(), VegetativeBulb.createAttributes().build());

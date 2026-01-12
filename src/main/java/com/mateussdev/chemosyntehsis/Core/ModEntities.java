@@ -13,6 +13,7 @@ import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_erythrocyte.HybridErythrocyte;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte.HybridThrombocyte;
+import com.mateussdev.chemosyntehsis.Entities.met_cow.MetCow;
 import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_skeleton.TethSkeleton;
@@ -65,7 +66,7 @@ public class ModEntities {
 
     public static final RegistryObject<EntityType<TethCow>> TETH_COW =
             ENTITIES.register("teth_cow", () -> EntityType.Builder.of(TethCow::new, MobCategory.MONSTER)
-                    .sized(0.7f, 1.8f)
+                    .sized(0.7f, 1.2f)
                     .build("teth_cow"));
 
     //Metabolized mobs
@@ -73,6 +74,10 @@ public class ModEntities {
             ENTITIES.register("met_zombie", () -> EntityType.Builder.of(MetZombie::new, MobCategory.MONSTER)
                     .sized(0.7f, 1.8f)
                     .build("met_zombie"));
+    public static final RegistryObject<EntityType<MetCow>> MET_COW =
+            ENTITIES.register("met_cow", () -> EntityType.Builder.of(MetCow::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.2f)
+                    .build("met_cow"));
 
     //Vegetated mobs
     public static final RegistryObject<EntityType<VegetativeBulb>> VEG_BULB =

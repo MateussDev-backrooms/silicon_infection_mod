@@ -58,7 +58,7 @@ public class VegetativeBulb extends BaseOrganelle {
             mergeIntoRoller();
         }
 
-        if(tickCount % 20 == 0) {
+        if(tickCount % 180 == 0) {
             if (!level().isClientSide && !this.mustEvolve) {
                 List<VegetativeBulb> nearby = level().getEntitiesOfClass(
                         VegetativeBulb.class,

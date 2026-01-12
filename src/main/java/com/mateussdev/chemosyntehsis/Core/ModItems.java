@@ -53,6 +53,9 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_MET_ZOMBIE =
             ITEMS.register("spawn_met_zombie",
                     () -> new ForgeSpawnEggItem(ModEntities.MET_ZOMBIE, 0x3d1411, 0x7c4b45, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_MET_COW =
+            ITEMS.register("spawn_met_cow",
+                    () -> new ForgeSpawnEggItem(ModEntities.MET_COW, 0x3d1411, 0x7c4b45, new Item.Properties()));
 
     //Vegetated mobs
     public static final RegistryObject<Item> SPAWN_VEG_BULB =

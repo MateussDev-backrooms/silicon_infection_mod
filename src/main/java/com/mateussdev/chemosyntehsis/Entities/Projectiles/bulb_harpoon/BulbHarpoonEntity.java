@@ -3,8 +3,10 @@ package com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon;
 import com.mateussdev.chemosyntehsis.Blocks.FleshPileBlock;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.AbstractHarpoonProjectile;
+import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassContainer;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -14,6 +16,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -108,7 +112,7 @@ public class BulbHarpoonEntity extends AbstractHarpoonProjectile implements GeoA
 
             BlockState state = level().getBlockState(attachedBlockPos);
             if(state.getBlock() instanceof FleshPileBlock flesh) {
-                level().setBlockAndUpdate(attachedBlockPos, state.setValue(FleshPileBlock.BIOMUSHIFICATION, state.getValue(FleshPileBlock.BIOMUSHIFICATION) + 1));
+                level().setBlockAndUpdate(attachedBlockPos, state.setValue(FleshPileBlock.BIOMUSHIFICATION, Mth.clamp(state.getValue(FleshPileBlock.BIOMUSHIFICATION) + 1, 0, 10)));
                 if(getOwner() instanceof IBiomassContainer container) {
                     container.addBiomass(1);
                 }
@@ -116,5 +120,10 @@ public class BulbHarpoonEntity extends AbstractHarpoonProjectile implements GeoA
                 super.attachedToBlockTick();
             }
         }
+    }
+
+    @Override
+    protected boolean canHitEntity(Entity p_36743_) {
+        return super.canHitEntity(p_36743_) && !(p_36743_ instanceof SiliconRoller) && !(p_36743_ instanceof ChunkOfFlesh);
     }
 }

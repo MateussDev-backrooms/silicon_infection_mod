@@ -289,6 +289,11 @@ public class BaseOrganelle extends BaseSiliconite {
     }
 
     @Override
+    protected boolean destructiveTether() {
+        return false;
+    }
+
+    @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         entityData.define(ALIGNMENT, Direction.UP);

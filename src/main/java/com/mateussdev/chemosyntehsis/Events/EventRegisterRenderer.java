@@ -14,6 +14,8 @@ import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh_Re
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_erythrocyte.HybridErythrocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte.HybridThrombocyte_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.met_cow.MetCow;
+import com.mateussdev.chemosyntehsis.Entities.met_cow.MetCow_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_cow.TethCow_Renderer;
@@ -45,6 +47,7 @@ public class EventRegisterRenderer {
 
         //Metabolized mobs
         EntityRenderers.register(ModEntities.MET_ZOMBIE.get(), MetZombie_Renderer::new);
+        EntityRenderers.register(ModEntities.MET_COW.get(), MetCow_Renderer::new);
 
 
         //Vegetated mobs

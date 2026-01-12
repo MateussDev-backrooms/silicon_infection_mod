@@ -201,13 +201,11 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
 
         if(level().random.nextFloat() < getTetherChance()) {
             if (!this.level().isClientSide && killed instanceof LivingEntity victim && source.getEntity() == this) {
-                if (StaticSiliconiteMethods.isTetherable(victim)) {
                     StaticSiliconiteMethods.tetherMob((ServerLevel) level(), victim);
 
                     if(destructiveTether()) {
                         this.remove(RemovalReason.DISCARDED);
                     }
-                }
             }
         }
     }

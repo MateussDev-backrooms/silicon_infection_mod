@@ -9,6 +9,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassContainer;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -16,6 +17,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,8 +26,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
@@ -117,9 +121,14 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
                     //Connect to flesh blocks
                     BlockPos closestFlesh = findNearbyFlesh();
                     if(closestFlesh != null) {
-                        targetBlock(closestFlesh);
-                        StaticSiliconiteMethods.spawnBloodBurst(slvl, closestFlesh);
-                        entityData.set(HARPOON_ATTACHED, true);
+                        HitResult hit = slvl.clip(new ClipContext(position(), closestFlesh.getCenter().subtract(0, 0.5, 0), ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, this));
+                        Vec3 shootDir = closestFlesh.getCenter().subtract(0, 0.5, 0).subtract(this.position());
+                        if(Direction.fromDelta(Mth.ceil(shootDir.x), Mth.ceil(shootDir.y), Mth.ceil(shootDir.z)) != entityData.get(ALIGNMENT).getOpposite()) {
+                            //prevent if block is behind wall
+                            targetBlock(closestFlesh);
+                            StaticSiliconiteMethods.spawnBloodBurst(slvl, closestFlesh);
+                            entityData.set(HARPOON_ATTACHED, true);
+                        }
                     } else {
                         currentBlock = null;
                         if(harpoon != null) {
