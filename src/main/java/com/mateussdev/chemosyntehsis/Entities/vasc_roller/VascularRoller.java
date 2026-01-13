@@ -23,9 +23,15 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,7 +43,7 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 
 import java.util.List;
 
-public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
+public class VascularRoller extends BaseOrganelle implements IBiomassContainer, RangedAttackMob {
     public VascularRoller(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
     }
@@ -64,7 +70,8 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
 
     private List<EntityType<? extends BaseAmalgamation>> default_amalgamations = List.of(
             ModEntities.AMAL_ZOMBIE.get(),
-            ModEntities.AMAL_SPAWNER.get()
+            ModEntities.AMAL_SPAWNER.get(),
+            ModEntities.AMAL_TURRET.get()
     );
 
     @Override
@@ -83,7 +90,7 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
         return Animal.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 20D)
                 .add(Attributes.MOVEMENT_SPEED, 0.0D)
-                .add(Attributes.FOLLOW_RANGE, 6D)
+                .add(Attributes.FOLLOW_RANGE, 16D)
                 .add(Attributes.ARMOR_TOUGHNESS, 3D)
                 .add(Attributes.ATTACK_KNOCKBACK, 0.5D)
                 .add(Attributes.ATTACK_SPEED, 2D)
@@ -95,6 +102,37 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
         return true;
     }
 
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(0, new RangedAttackGoal(this, 1.5f, 7, 16));
+
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 3f));
+        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+
+        //Seek out
+        this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity target, float v) {
+        if(harpoon_cooldown <= 0 && !entityData.get(HARPOON_ATTACHED)) {
+            this.currentTarget = target;
+
+            harpoon = new BulbHarpoonEntity(level(), this);
+            harpoon.setPos(getX(), getEyeY(), getZ());
+
+            Vec3 shootDir = target.getEyePosition().subtract(this.position());
+            level().playSound(null, blockPosition(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.HOSTILE, 1f, 1f);
+            harpoon.shoot(shootDir, 1.2f, 0f, this, 0.08f, 500);
+
+            level().addFreshEntity(harpoon);
+
+            currentBlock = null;
+            entityData.set(HARPOON_ATTACHED, true);
+        }
+    }
 
     //Amalgamation
 
@@ -103,21 +141,7 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
         super.tick();
         if (this.level() instanceof ServerLevel slvl) {
             if (harpoon_cooldown <= 0 && !entityData.get(HARPOON_ATTACHED)) {
-
-                //Normal entities
-                LivingEntity target = level().getNearestEntity(
-                        LivingEntity.class,
-                        HARPOON_CONDITIONS,
-                        this,
-                        getX(), getY(), getZ(),
-                        getBoundingBox().inflate(16)
-                );
-
-                if (target != null) {
-                    targetEntity(target);
-                    currentBlock = null;
-                    entityData.set(HARPOON_ATTACHED, true);
-                } else {
+                if (currentTarget == null) {
                     //Connect to flesh blocks
                     BlockPos closestFlesh = findNearbyFlesh();
                     if(closestFlesh != null) {
@@ -136,8 +160,6 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
                         }
                     }
                 }
-
-
             } else {
                 harpoon_cooldown--;
             }
@@ -184,19 +206,6 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
         harpoon.setPos(getX(), getEyeY(), getZ());
 
         Vec3 shootDir = target.getCenter().subtract(0, 0.5, 0).subtract(this.position());
-        level().playSound(null, blockPosition(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.HOSTILE, 1f, 1f);
-        harpoon.shoot(shootDir, 1.2f, 0f, this, 0.08f, 500);
-
-        level().addFreshEntity(harpoon);
-    }
-
-    private void targetEntity(LivingEntity target) {
-        this.currentTarget = target;
-
-        harpoon = new BulbHarpoonEntity(level(), this);
-        harpoon.setPos(getX(), getEyeY(), getZ());
-
-        Vec3 shootDir = target.getEyePosition().subtract(this.position());
         level().playSound(null, blockPosition(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.HOSTILE, 1f, 1f);
         harpoon.shoot(shootDir, 1.2f, 0f, this, 0.08f, 500);
 
@@ -279,4 +288,6 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer {
             entityData.set(COLLECTED_BIOMASS, entityData.get(COLLECTED_BIOMASS) + amount);
         }
     }
+
+
 }

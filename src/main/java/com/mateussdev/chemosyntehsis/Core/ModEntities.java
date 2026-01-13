@@ -4,6 +4,7 @@ import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner_Model;
+import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie;
@@ -102,6 +103,10 @@ public class ModEntities {
             ENTITIES.register("amal_spawner", () -> EntityType.Builder.of(AmalSpawner::new, MobCategory.MONSTER)
                     .sized(1.2f, 3f)
                     .build("amal_spawner"));
+    public static final RegistryObject<EntityType<AmalTurret>> AMAL_TURRET =
+            ENTITIES.register("amal_turret", () -> EntityType.Builder.of(AmalTurret::new, MobCategory.MONSTER)
+                    .sized(1.2f, 3f)
+                    .build("amal_turret"));
 
     //Hybrid mobs
 

@@ -1,8 +1,9 @@
-// 1.20.1	2026-01-12T22:09:53.6422759	Item Models: silicon_mod
+// 1.20.1	2026-01-13T15:58:54.6932726	Item Models: silicon_mod
 dcc706d77a44261c41a383792702d29b9e4e1629 assets/silicon_mod/models/item/atmosphere_analyzer.json
 19a8f97c10b9ef2126d6093370e8d41761486b48 assets/silicon_mod/models/item/bulb_harpoon_gun.json
 b811f8f64e82fa01831ab1a895ad81e7ed0abbb0 assets/silicon_mod/models/item/silicon.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_amal_spawner.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_amal_turret.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_amal_zombie.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_astrocyte.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/silicon_mod/models/item/spawn_chunk_of_flesh.json

@@ -1,8 +1,18 @@
 package com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.generic.BaseGib;
+import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
+import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller;
+import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -23,6 +33,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
+import java.util.List;
+
+import static com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods.spawnBloodBurst;
+
 public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable {
     public BulbProjectileEntity(EntityType<? extends AbstractArrow> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -37,6 +51,9 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
     public static final EntityDataAccessor<Integer> TRANSFORM_TIMER = SynchedEntityData.defineId(BulbProjectileEntity.class, EntityDataSerializers.INT);
     public final int TRANSFORM_IN_SECONDS = 30;
 
+    public boolean mustMerge = false;
+    public int evolution_t = 0;
+
     @Override
     protected ItemStack getPickupItem() {
         return ItemStack.EMPTY;
@@ -49,14 +66,72 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
             this.level().addParticle(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
         }
 
-        if(this.level() instanceof ServerLevel slvl) {
-            if(this.inGround) {
-                entityData.set(TRANSFORM_TIMER, entityData.get(TRANSFORM_TIMER)+1);
+        if (this.level() instanceof ServerLevel slvl) {
+            if (this.inGround) {
+                entityData.set(TRANSFORM_TIMER, entityData.get(TRANSFORM_TIMER) + 1);
 
-                if(entityData.get(TRANSFORM_TIMER) >= 20*TRANSFORM_IN_SECONDS) {
+                if (entityData.get(TRANSFORM_TIMER) >= 20 * TRANSFORM_IN_SECONDS) {
                     this.vegetate(slvl);
                 }
+
+                if (mustMerge && evolution_t++ > 20) {
+                    mergeIntoBulb();
+                }
+
+                if (tickCount % 60 == 0) {
+                    if (!this.mustMerge) {
+                        List<BulbProjectileEntity> nearby = level().getEntitiesOfClass(
+                                BulbProjectileEntity.class,
+                                this.getBoundingBox().inflate(1.2D),
+                                c -> c != this && !c.mustMerge
+                        );
+
+                        if (nearby.size() + 1 >= 5) {
+                            initiateMerge(nearby);
+                        }
+                    }
+                }
             }
+        }
+    }
+
+    private void mergeIntoBulb() {
+        if (!(level() instanceof ServerLevel slvl)) return;
+
+        List<BulbProjectileEntity> all = slvl.getEntitiesOfClass(
+                BulbProjectileEntity.class,
+                this.getBoundingBox().inflate(1.2D),
+                c -> c.mustMerge
+        );
+
+        if (all.stream().anyMatch(c -> c.getId() < this.getId())) return;
+
+        // Effects
+        spawnBloodBurst(slvl, this.blockPosition());
+
+        // Spawn Cluster
+        VegetativeBulb vegetativeBulb = ModEntities.VEG_BULB.get().create(slvl);
+
+        vegetativeBulb.moveTo(this.getX(), this.getY(), this.getZ());
+
+        slvl.addFreshEntity(vegetativeBulb);
+
+        for (BulbProjectileEntity c : all) {
+            c.discard();
+        }
+    }
+
+    private void initiateMerge(List<BulbProjectileEntity> others) {
+        this.mustMerge = true;
+
+        for (BulbProjectileEntity c : others) {
+            c.mustMerge = true;
+        }
+
+        if (level() instanceof ServerLevel slvl) {
+            spawnBloodBurst(slvl, blockPosition());
+
+            slvl.scheduleTick(this.blockPosition(), Blocks.AIR, 20);
         }
     }
 
@@ -81,15 +156,14 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
     @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
-        if (result.getEntity() instanceof LivingEntity target) {
-            target.hurt(damageSources().arrow(this, this.getOwner()), 4.0F);
-
-            if(target.getHealth() / target.getMaxHealth() < 0.33f) {
+        result.getEntity().invulnerableTime = 3;
+        if (result.getEntity() instanceof LivingEntity livingEntity) {
+            if (livingEntity.getHealth() / livingEntity.getMaxHealth() < 0.33f) {
                 //Only tether if the mob has under 1/3 HP
-                if(level() instanceof ServerLevel slvl) {
-                    if(StaticSiliconiteMethods.isTetherable(target)) {
-                        StaticSiliconiteMethods.tetherMob(slvl, target);
-                        target.discard();
+                if (level() instanceof ServerLevel slvl) {
+                    if (StaticSiliconiteMethods.isTetherable(livingEntity)) {
+                        StaticSiliconiteMethods.tetherMob(slvl, livingEntity);
+                        livingEntity.discard();
                     }
                 }
             }
@@ -101,7 +175,13 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
 
     }
 
+    @Override
+    protected boolean canHitEntity(Entity p_36743_) {
+        return p_36743_ != getOwner() && !(p_36743_ instanceof AbstractArrow) && !(p_36743_ instanceof BaseOrganelle) && !(p_36743_ instanceof BaseGib);
+    }
+
     private final AnimatableInstanceCache anim_cache = GeckoLibUtil.createInstanceCache(this);
+
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return anim_cache;
@@ -134,11 +214,11 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
     protected void onHitBlock(BlockHitResult pResult) {
         super.onHitBlock(pResult);
 
-        if(level().random.nextFloat() < 0.6f) {
-            if(level() instanceof ServerLevel slvl) {
+        if (level().random.nextFloat() < 0.6f) {
+            if (level() instanceof ServerLevel slvl) {
                 slvl.playSound(null, blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.AMBIENT);
                 slvl.sendParticles(
-                        ParticleTypes.POOF,
+                        ParticleTypes.CRIT,
                         this.getX() + 0.5,
                         this.getY() + 0.5,
                         this.getZ() + 0.5,

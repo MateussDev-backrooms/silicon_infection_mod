@@ -71,10 +71,13 @@ public class ModItems {
     //Amalgamations
     public static final RegistryObject<Item> SPAWN_AMAL_ZOMBIE =
             ITEMS.register("spawn_amal_zombie",
-                    () -> new ForgeSpawnEggItem(ModEntities.AMAL_ZOMBIE, 0x6b221c, 0x583451, new Item.Properties()));
+                    () -> new ForgeSpawnEggItem(ModEntities.AMAL_ZOMBIE, 0x933b3b, 0x614558, new Item.Properties()));
     public static final RegistryObject<Item> SPAWN_AMAL_SPAWNER =
             ITEMS.register("spawn_amal_spawner",
-                    () -> new ForgeSpawnEggItem(ModEntities.AMAL_SPAWNER, 0x6b221c, 0x583451, new Item.Properties()));
+                    () -> new ForgeSpawnEggItem(ModEntities.AMAL_SPAWNER, 0x933b3b, 0x614558, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_AMAL_TURRET =
+            ITEMS.register("spawn_amal_turret",
+                    () -> new ForgeSpawnEggItem(ModEntities.AMAL_TURRET, 0x933b3b, 0x614558, new Item.Properties()));
 
     //Hybrids
 

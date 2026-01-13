@@ -3,9 +3,17 @@ package com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
+import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
+import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.SeekAndEatBiomushGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseHybrid;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
+import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.player.Player;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
@@ -81,8 +89,23 @@ public class ChunkOfFlesh extends BaseSiliconite {
 
     @Override
     protected void registerGoals() {
-        super.registerGoals();
+        //Default settings override when new behavior is required
+
+        // - GOALS
         this.goalSelector.addGoal(0, new SeekAndEatBiomushGoal(this, ModBlocks.BIOMUSH.get()));
+        this.goalSelector.addGoal(1, new AvoidEntityGoal<Monster>(this, Monster.class, 16.0f, 1.2d, 1.3d, this::shouldFlee));
+
+        //Avoid water (No float task cuz they are immune to water damage)
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.1D));
+
+        //Looking goals
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 3f));
+        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+
+        //Seek out
+        this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
+        this.targetSelector.addGoal(1, new HurtByNonSiliconiteGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     @Override
@@ -119,7 +142,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
                 List<ChunkOfFlesh> nearby = level().getEntitiesOfClass(
                         ChunkOfFlesh.class,
                         this.getBoundingBox().inflate(MERGE_RADIUS),
-                        c -> c != this && !c.mustEvolve
+                        c -> c != this && !c.mustEvolve && !c.entityData.get(IS_BURROWING)
                 );
 
                 if (nearby.size() + 1 >= MERGE_COUNT) {

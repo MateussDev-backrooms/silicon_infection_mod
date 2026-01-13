@@ -48,6 +48,7 @@ public class TendrilBlock extends MultifaceBlock {
         super.randomTick(pState, pLevel, pPos, pRandom);
 
         //Sulfurization if not close to a bulb
+        //TODO OPTIMIZE THIS SHIT
         for (Map.Entry<EntityType<? extends BaseOrganelle>, Integer> entry : StaticSiliconiteMethods.vegetatedRadiusMap.entrySet()) {
             int radius = entry.getValue();
             AABB area = new AABB(
@@ -75,55 +76,26 @@ public class TendrilBlock extends MultifaceBlock {
             }
         }
 
+        //VERY EXPENSIVE DUE TO MANY ORGANELLES EXISTING
+
         //Tendril spreading
 
         if(pRandom.nextFloat() < 0.45) {
-            //Check and spread to nearby corpses and biomush
-            int diagonal = 5;
-            //check for biomush or corpse
-            for (BlockPos pos : BlockPos.betweenClosed(pPos.offset(-diagonal, -diagonal/2, -diagonal), pPos.offset(diagonal, diagonal/2, diagonal))) {
-                if (pLevel.getBlockState(pos).getBlock() instanceof BiomushBlock
-                || pLevel.getBlockState(pos).getBlock() instanceof BaseCorpseBlock || pLevel.getFluidState(pos).getType() instanceof LavaFluid) {
-                    double angle = Math.atan2(pos.getZ() - pPos.getZ(), pos.getX() - pPos.getX());
-                    float angle_deg = (float) (angle * (180/Mth.PI));
-                    Direction spreadDirection = Direction.fromYRot(angle_deg);
-                    this.getSpreader().spreadFromFaceTowardDirection(
-                            pState, pLevel, pPos, spreadDirection, spreadDirection, false
-                    );
-                }
-            }
             //Spread randomly if didn't spread to corpse
             this.getSpreader().spreadFromRandomFaceTowardRandomDirection(pState, pLevel, pPos, pRandom);
         }
 
 
         //Transform connected blocks
-        if(pLevel.random.nextBoolean()) {
-            for(Direction dir : Direction.values()) {
-                if(pState.getValue(getFaceProperty(dir))) {
 
-                    BlockPos adj = pPos.relative(dir);
-                    BlockState adj_state = pLevel.getBlockState(adj);
-
-                    if(adj_state.getBlock() instanceof BaseCorpseBlock) {
-                        pLevel.destroyBlock(adj, false);
-                        //TODO If block is a corpse or biomush break block and evolve the nearest bulb
-                    }
-
-                    Block replacement = StaticSiliconiteMethods.infectionConversionMap.get(adj_state.getBlock());
-                    if(replacement != null) {
-                        pLevel.setBlockAndUpdate(adj, replacement.defaultBlockState());
-                    }
-                }
-            }
-        }
+        ///TODO MAKE A BETTER SYSTEM
 
         //Have a chance to spawn a bulb randomly
 
         if(pRandom.nextFloat() < 0.2) {
             List<BaseOrganelle> nearby_vegs = pLevel.getEntitiesOfClass(
                     BaseOrganelle.class,
-                    new AABB(pPos.getX(), pPos.getY(), pPos.getZ(), pPos.getX(), pPos.getY(), pPos.getZ()).inflate(1.5),
+                    new AABB(pPos).inflate(1),
                     c -> true
             );
             if(nearby_vegs.isEmpty()) {

@@ -97,7 +97,7 @@ public class StaticSiliconiteMethods {
         EntityType<? extends LivingEntity> tethered_result_type = tetherHashMap.get(tetherTarget.getType());
         if(tethered_result_type==null) {
             //Split into chunks depending on the bounding box size
-            splitIntoChunks(serverLevel, tetherTarget.blockPosition(), Mth.floor(boundingBoxVolume(tetherTarget.getBoundingBox())));
+            splitIntoChunks(serverLevel, tetherTarget.blockPosition(), Mth.clamp(Mth.ceil(boundingBoxVolume(tetherTarget.getBoundingBox())), 2, 64));
             return;
         }
         LivingEntity tethered_result = tethered_result_type.create(serverLevel);

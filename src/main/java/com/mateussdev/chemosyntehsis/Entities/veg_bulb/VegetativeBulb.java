@@ -1,13 +1,11 @@
 package com.mateussdev.chemosyntehsis.Entities.veg_bulb;
 
-import com.mateussdev.chemosyntehsis.Blocks.TendrilBlock;
-import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,20 +16,17 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 import java.util.List;
 
 import static com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods.spawnBloodBurst;
-import static net.minecraft.world.level.block.MultifaceBlock.getFaceProperty;
 
 public class VegetativeBulb extends BaseOrganelle {
     public VegetativeBulb(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
     }
+
+    public boolean mustMerge = false;
 
     // ##### Entity setup and stats ##### //
     public static AttributeSupplier.Builder createAttributes() {
@@ -54,16 +49,16 @@ public class VegetativeBulb extends BaseOrganelle {
     public void tick() {
         super.tick();
 
-        if (mustEvolve && evolution_t++ > 20) {
+        if (mustMerge && evolution_t++ > 20) {
             mergeIntoRoller();
         }
 
         if(tickCount % 180 == 0) {
-            if (!level().isClientSide && !this.mustEvolve) {
+            if (!level().isClientSide && !this.mustMerge) {
                 List<VegetativeBulb> nearby = level().getEntitiesOfClass(
                         VegetativeBulb.class,
-                        this.getBoundingBox().inflate(1.2D),
-                        c -> c != this && !c.mustEvolve
+                        this.getBoundingBox().inflate(1D),
+                        c -> c != this && !c.mustMerge
                 );
 
                 if (nearby.size() + 1 >= 5) {
@@ -79,7 +74,7 @@ public class VegetativeBulb extends BaseOrganelle {
         List<VegetativeBulb> all = slvl.getEntitiesOfClass(
                 VegetativeBulb.class,
                 this.getBoundingBox().inflate(1.2D),
-                c -> c.mustEvolve
+                c -> c.mustMerge
         );
 
         // Only ONE chunk does the spawn
@@ -87,7 +82,7 @@ public class VegetativeBulb extends BaseOrganelle {
 
         // Effects
         spawnBloodBurst(slvl, this.blockPosition());
-        slvl.playSound(null, blockPosition(), SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE, 1f, 3f);
+        slvl.playSound(null, blockPosition(), SoundEvents.ZOMBIE_INFECT, SoundSource.HOSTILE, 1f, 3f);
 
         // Spawn Cluster
         VegetativeRoller vegetativeRoller = ModEntities.VEG_ROLLER.get().create(slvl);
@@ -101,15 +96,13 @@ public class VegetativeBulb extends BaseOrganelle {
     }
 
     private void initiateMerge(List<VegetativeBulb> others) {
-        this.mustEvolve = true;
+        this.mustMerge = true;
 
         for (VegetativeBulb c : others) {
-            c.mustEvolve = true;
+            c.mustMerge = true;
         }
 
         if (level() instanceof ServerLevel slvl) {
-            spawnBloodBurst(slvl, blockPosition());
-
             slvl.scheduleTick(this.blockPosition(), Blocks.AIR, 20);
         }
     }
@@ -121,7 +114,7 @@ public class VegetativeBulb extends BaseOrganelle {
 
     @Override
     protected int evolvesAtMetabolism() {
-        return 20;
+        return 50;
     }
 
     
@@ -139,6 +132,20 @@ public class VegetativeBulb extends BaseOrganelle {
                 roller.moveTo(blockPosition().getCenter());
                 slvl.addFreshEntity(roller);
                 StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
+                this.discard();
+            } else {
+                //Jump somewhere farther away
+                BulbProjectileEntity shard = new BulbProjectileEntity(level(),this);
+                Vec3i shootDir = getAttachDir().getOpposite().getNormal();
+                shard.shoot(
+                        shootDir.getX() * (random.nextFloat()/3),
+                        shootDir.getY() * (random.nextFloat()/3),
+                        shootDir.getZ() * (random.nextFloat()/3),
+                        1.2f, // speed
+                        10.0f // inaccuracy
+                );
+                slvl.playSound(null, blockPosition(), SoundEvents.ARROW_SHOOT, SoundSource.HOSTILE, 1f, 3f);
+                level().addFreshEntity(shard);
                 this.discard();
             }
 

@@ -4,6 +4,7 @@ package com.mateussdev.chemosyntehsis.Events;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner;
+import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
@@ -50,6 +51,7 @@ public class EventRegisterAttributes {
         //Amalgamations
         event.put(ModEntities.AMAL_ZOMBIE.get(), AmalZombie.createAttributes().build());
         event.put(ModEntities.AMAL_SPAWNER.get(), AmalSpawner.createAttributes().build());
+        event.put(ModEntities.AMAL_TURRET.get(), AmalTurret.createAttributes().build());
 
 
         //Hybrids

@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Pose;
@@ -42,9 +43,9 @@ public class BaseOrganelle extends BaseSiliconite {
 
     public static final EntityDataAccessor<Direction> ALIGNMENT = SynchedEntityData.defineId(BaseOrganelle.class, EntityDataSerializers.DIRECTION);
     protected boolean hasSettled = false;
+    protected boolean failedAttachment = false;
 
     public int evolution_t = 0;
-    public boolean mustEvolve = false;
 
     protected BlockPos tendrilPos = blockPosition();
 
@@ -64,12 +65,22 @@ public class BaseOrganelle extends BaseSiliconite {
     @Override
     public void tick() {
         super.tick();
-        this.setYBodyRot(0);
+        this.yBodyRot = this.yBodyRotO;
         if(this.level() instanceof ServerLevel slvl) {
-
-            if(tickCount % 80 == 0) {
+            if(tickCount % 20 == 0) {
                 this.reapplyPosition();
                 this.refreshDimensions();
+
+                if(slvl.getBlockState(blockPosition().relative(chosenDir.getOpposite())).isAir()) {
+                    hasSettled = false;
+                    calculateAttachOrientation();
+                    if(failedAttachment) {
+                        setNoGravity(false);
+                    }
+                }
+            }
+            if(tickCount % 80 == 0) {
+
                 if(slvl.getBlockState(blockPosition()).getBlock() instanceof TendrilBlock tendrilBlock) {
                     tendrilBlock.randomTick(slvl.getBlockState(blockPosition()), slvl, blockPosition(), random);
                 } else {
@@ -83,6 +94,7 @@ public class BaseOrganelle extends BaseSiliconite {
 
                     slvl.setBlock(this.blockPosition(), tendrils, 3);
                 }
+
             }
 
 //            if(tickCount % 500 == 0) {
@@ -103,9 +115,10 @@ public class BaseOrganelle extends BaseSiliconite {
 
     public void calculateAttachOrientation() {
         if(!hasSettled) {
-            Vec3 origin = this.position().add(0, this.getBbHeight() / 2f, 0);
+            failedAttachment = false;
             if(this.level() instanceof ServerLevel slvl) {
-
+                this.setYBodyRot(0);
+                this.yBodyRotO = 0;
                 double dist = 1.2d;
                 Vec3 closestNormal = null;
                 double shortestDist = Double.MAX_VALUE;
@@ -124,34 +137,51 @@ public class BaseOrganelle extends BaseSiliconite {
                 }
 
                 //Raycast
-//                for(Vec3 dir : dirs) {
-//                    i++;
-//                    BlockHitResult hitResult = slvl.clip(new ClipContext(origin, dir.scale(dist).add(origin), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
-//
-//                    if(hitResult.getType() == HitResult.Type.BLOCK) {
-//                        double raycastDist = origin.distanceTo(hitResult.getLocation());
-//
-//                        if(raycastDist < shortestDist) {
-//                            shortestDist = raycastDist;
-//                            closestNormal = new Vec3(
-//                                    hitResult.getDirection().getNormal().getX(),
-//                                    hitResult.getDirection().getNormal().getY(),
-//                                    hitResult.getDirection().getNormal().getZ()
-//                            );
-//                            closestPosition = hitResult.getLocation();
-//                            chosenDir = Direction.getNearest(closestNormal.x, closestNormal.y, closestNormal.z);
-//                            tendrilPos = blockPosition().relative(chosenDir.getOpposite());
-//                        }
-//                    }
-//                }
+                Vec3 origin = this.position();
+                for(Vec3 dir : dirs) {
+                    i++;
+                    BlockHitResult hitResult = slvl.clip(new ClipContext(origin, dir.scale(dist).add(origin), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+
+                    if(hitResult.getType() == HitResult.Type.BLOCK) {
+                        double raycastDist = origin.distanceTo(hitResult.getLocation());
+
+                        if(raycastDist < shortestDist) {
+                            shortestDist = raycastDist;
+                            closestNormal = new Vec3(
+                                    hitResult.getDirection().getNormal().getX(),
+                                    hitResult.getDirection().getNormal().getY(),
+                                    hitResult.getDirection().getNormal().getZ()
+                            );
+                            closestPosition = hitResult.getLocation();
+                            chosenDir = Direction.getNearest(closestNormal.x, closestNormal.y, closestNormal.z);
+                            tendrilPos = blockPosition().relative(chosenDir.getOpposite());
+                        }
+                    }
+                }
 
                 if(closestNormal != null) {
                     setAttachDir(chosenDir);
                     this.moveTo(closestPosition);
                     hasSettled = true;
+                    return;
                 }
-
+                failedAttachment = true;
+                return;
             }
+        }
+    }
+
+    @Override
+    protected float getStandingEyeHeight(Pose pPose, EntityDimensions pDimensions) {
+        return this.getType().getHeight()/2f;
+    }
+
+    public double getAttachedEyeY() {
+        Direction myDir = entityData.get(ALIGNMENT);
+        if(myDir == Direction.UP) return this.getEyeY();
+        else if(myDir == Direction.DOWN) return this.getY() - this.getEyeHeight();
+        else {
+            return this.getY() + this.getType().getHeight()/2;
         }
     }
 
@@ -231,6 +261,11 @@ public class BaseOrganelle extends BaseSiliconite {
 
     }
 
+    @Override
+    public float getEyeHeight(Pose pPose) {
+        return 0f;
+    }
+
     //Change hitbox
 
     // ===== Organelle overrides ===== //
@@ -242,11 +277,11 @@ public class BaseOrganelle extends BaseSiliconite {
 
     @Override
     protected boolean isImmobile() {
-        return true;
+        return false;
     }
 
     @Override
-    public boolean isNoGravity() { return true; }
+    public boolean isNoGravity() { return !failedAttachment; }
 
     @Override
     public boolean isInWall() {
@@ -283,6 +318,8 @@ public class BaseOrganelle extends BaseSiliconite {
         super.onAddedToWorld();
 
         this.setPos(new Vec3(blockPosition().getX()+0.5f, blockPosition().getY(), blockPosition().getZ()+0.5f));
+        this.setYBodyRot(0);
+        this.yBodyRotO = 0;
 
         calculateAttachOrientation();
 

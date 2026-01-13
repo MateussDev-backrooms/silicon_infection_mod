@@ -48,7 +48,7 @@ public class VegetativeRoller extends BaseOrganelle {
 
     @Override
     protected int evolvesAtMetabolism() {
-        return 20;
+        return 50;
     }
 
     @Override

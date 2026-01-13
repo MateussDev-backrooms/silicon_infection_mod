@@ -5,6 +5,7 @@ import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModBlockEntities;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity_Render;
@@ -58,6 +59,7 @@ public class EventRegisterRenderer {
         //Amalgamations
         EntityRenderers.register(ModEntities.AMAL_ZOMBIE.get(), AmalZombie_Renderer::new);
         EntityRenderers.register(ModEntities.AMAL_SPAWNER.get(), AmalSpawner_Renderer::new);
+        EntityRenderers.register(ModEntities.AMAL_TURRET.get(), AmalTurret_Renderer::new);
 
         //Hybrids
 
