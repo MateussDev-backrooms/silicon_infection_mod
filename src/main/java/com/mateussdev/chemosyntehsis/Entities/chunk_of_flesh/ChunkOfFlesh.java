@@ -165,7 +165,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
             // Suck the others inward (visual feedback)
             for (ChunkOfFlesh c : others) {
                 Vec3 dir = center.subtract(c.position()).normalize();
-                c.setDeltaMovement(dir.scale(1));
+                c.setDeltaMovement(dir.scale(0.5));
                 c.setBurrowAnimation(true);
             }
 

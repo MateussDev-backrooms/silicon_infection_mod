@@ -217,17 +217,7 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
         if (level().random.nextFloat() < 0.6f) {
             if (level() instanceof ServerLevel slvl) {
                 slvl.playSound(null, blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.AMBIENT);
-                slvl.sendParticles(
-                        ParticleTypes.CRIT,
-                        this.getX() + 0.5,
-                        this.getY() + 0.5,
-                        this.getZ() + 0.5,
-                        1,
-                        0,
-                        0,
-                        0,
-                        0.1
-                );
+                StaticSiliconiteMethods.spawnBloodHit(slvl, this.position());
                 this.discard();
             }
         }

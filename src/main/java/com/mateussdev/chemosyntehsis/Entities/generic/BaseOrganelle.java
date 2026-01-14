@@ -33,7 +33,7 @@ import java.util.Map;
 
 import static net.minecraft.world.level.block.MultifaceBlock.getFaceProperty;
 
-public class BaseOrganelle extends BaseSiliconite {
+public abstract class BaseOrganelle extends BaseSiliconite {
     protected BaseOrganelle(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         this.setPersistenceRequired();
@@ -43,6 +43,7 @@ public class BaseOrganelle extends BaseSiliconite {
 
     public static final EntityDataAccessor<Direction> ALIGNMENT = SynchedEntityData.defineId(BaseOrganelle.class, EntityDataSerializers.DIRECTION);
     protected boolean hasSettled = false;
+    protected boolean updatedHitbox = false;
     protected boolean failedAttachment = false;
 
     public int evolution_t = 0;
@@ -59,8 +60,14 @@ public class BaseOrganelle extends BaseSiliconite {
             Direction.EAST,  new Vec3(0, 0, 90),
             Direction.WEST,  new Vec3(0, 0, -90)
     );
+    protected Direction chosenDir = Direction.UP;
+    protected Vec3[] dirs = {
+            new Vec3(0, 1, 0), new Vec3(0, -1, 0),
+            new Vec3(1, 0, 0), new Vec3(-1, 0, 0),
+            new Vec3(0, 0, 1), new Vec3(0, 0, -1),
+    };
 
-    protected boolean shouldSpawnTendrils() { return false; }
+
 
     @Override
     public void tick() {
@@ -68,8 +75,6 @@ public class BaseOrganelle extends BaseSiliconite {
         this.yBodyRot = this.yBodyRotO;
         if(this.level() instanceof ServerLevel slvl) {
             if(tickCount % 20 == 0) {
-                this.reapplyPosition();
-                this.refreshDimensions();
 
                 if(slvl.getBlockState(blockPosition().relative(chosenDir.getOpposite())).isAir()) {
                     hasSettled = false;
@@ -79,41 +84,44 @@ public class BaseOrganelle extends BaseSiliconite {
                     }
                 }
             }
-            if(tickCount % 80 == 0) {
 
-                if(slvl.getBlockState(blockPosition()).getBlock() instanceof TendrilBlock tendrilBlock) {
-                    tendrilBlock.randomTick(slvl.getBlockState(blockPosition()), slvl, blockPosition(), random);
-                } else {
-                    BlockState tendrils = ModBlocks.TENDRILS.get().defaultBlockState();
+            if(shouldSpawnTendrils()) {
+                if(tickCount % 80 == 0) {
 
-                    //fix multi-face states
-                    for (Direction dir : Direction.values()) {
-                        BooleanProperty prop = getFaceProperty(dir);
-                        tendrils = tendrils.setValue(prop, dir == chosenDir.getOpposite());
+                    if(slvl.getBlockState(blockPosition()).getBlock() instanceof TendrilBlock tendrilBlock) {
+                        tendrilBlock.randomTick(slvl.getBlockState(blockPosition()), slvl, blockPosition(), random);
+                    } else {
+                        //Prevent tendrils spawning in the air or breaking blocks
+                        BlockState attachedBS = slvl.getBlockState(blockPosition().relative(chosenDir.getOpposite()));
+                        if(!attachedBS.isAir()) {
+                            BlockState currentBS = slvl.getBlockState(blockPosition());
+                            //if block is not too hard - break it
+                            float hardness = currentBS.getDestroySpeed(slvl, blockPosition());
+                            if(hardness > 0 && hardness < 15f) slvl.destroyBlock(blockPosition(), false);
+
+                            BlockState tendrils = ModBlocks.TENDRILS.get().defaultBlockState();
+
+                            //fix multi-face states
+                            for (Direction dir : Direction.values()) {
+                                BooleanProperty prop = getFaceProperty(dir);
+                                tendrils = tendrils.setValue(prop, dir == chosenDir.getOpposite());
+                            }
+
+                            slvl.setBlock(this.blockPosition(), tendrils, 3);
+                        } else {
+                            //Don't spawn in the air
+                        }
                     }
-
-                    slvl.setBlock(this.blockPosition(), tendrils, 3);
                 }
-
             }
-
-//            if(tickCount % 500 == 0) {
-//                hasSettled = false;
-//                calculateAttachOrientation();
-//            }
         }
     }
 
-    //directional stuffs
-    protected Direction chosenDir = Direction.UP;
-    protected Vec3[] dirs = {
-            new Vec3(0, 1, 0), new Vec3(0, -1, 0),
-            new Vec3(1, 0, 0), new Vec3(-1, 0, 0),
-            new Vec3(0, 0, 1), new Vec3(0, 0, -1),
-    };
+
 
 
     public void calculateAttachOrientation() {
+        updatedHitbox = false;
         if(!hasSettled) {
             failedAttachment = false;
             if(this.level() instanceof ServerLevel slvl) {
@@ -124,7 +132,6 @@ public class BaseOrganelle extends BaseSiliconite {
                 double shortestDist = Double.MAX_VALUE;
                 Vec3 closestPosition = null;
 
-                int i=0;
 
                 //Check adjacent blocks
                 for(Direction dir : Direction.values()) {
@@ -139,7 +146,6 @@ public class BaseOrganelle extends BaseSiliconite {
                 //Raycast
                 Vec3 origin = this.position();
                 for(Vec3 dir : dirs) {
-                    i++;
                     BlockHitResult hitResult = slvl.clip(new ClipContext(origin, dir.scale(dist).add(origin), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
 
                     if(hitResult.getType() == HitResult.Type.BLOCK) {
@@ -163,12 +169,18 @@ public class BaseOrganelle extends BaseSiliconite {
                     setAttachDir(chosenDir);
                     this.moveTo(closestPosition);
                     hasSettled = true;
+                    recalculateHitbox();
                     return;
                 }
                 failedAttachment = true;
-                return;
             }
         }
+    }
+
+    private void recalculateHitbox() {
+        this.reapplyPosition();
+        this.refreshDimensions();
+        updatedHitbox = true;
     }
 
     @Override
@@ -260,13 +272,10 @@ public class BaseOrganelle extends BaseSiliconite {
 
 
     }
+    // ===== Organelle properties ===== //
+    public boolean shouldSpawnTendrils() { return false; }
 
-    @Override
-    public float getEyeHeight(Pose pPose) {
-        return 0f;
-    }
-
-    //Change hitbox
+    public int tendrilSupportRadius() { return 5; }
 
     // ===== Organelle overrides ===== //
 

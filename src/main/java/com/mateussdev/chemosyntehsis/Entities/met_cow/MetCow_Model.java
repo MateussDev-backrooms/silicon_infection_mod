@@ -26,9 +26,18 @@ public class MetCow_Model extends GeoModel<MetCow> {
     @Override
     public ResourceLocation getAnimationResource(MetCow object) { return animation; }
 
+    private int t = 0;
     @Override
     public void setCustomAnimations(MetCow animatable, long instanceId, AnimationState<MetCow> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
         StaticSiliconiteMethods.updateBulbVisuals(animatable, this);
+        //Breathing
+        StaticSiliconiteMethods.updateBreathing(this, "body", 20, 0.02, animationState.getPartialTick(), t);
+        t++;
+
+        //Head movement
+        StaticSiliconiteMethods.updateHeadRotationAnimal(animatable, this, "head", (float) Math.PI/2, 0f);
+
+        StaticSiliconiteMethods.updateBoneWobble(animatable, this, animationState.getPartialTick());
     }
 }

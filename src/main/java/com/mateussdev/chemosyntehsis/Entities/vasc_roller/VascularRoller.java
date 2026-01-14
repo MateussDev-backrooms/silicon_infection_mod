@@ -9,7 +9,6 @@ import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassContainer;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -17,7 +16,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,6 +33,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -65,8 +64,8 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
 
     public BulbHarpoonEntity harpoon = null;
 
-    public LivingEntity currentTarget;
-    public BlockPos currentBlock;
+    public LivingEntity targetedEntity;
+    public BlockPos targetedBlock;
 
     private List<EntityType<? extends BaseAmalgamation>> default_amalgamations = List.of(
             ModEntities.AMAL_ZOMBIE.get(),
@@ -80,7 +79,7 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
         controllers.add(new AnimationController<>(this, "movement", 5, event ->
         {
             return event.setAndContinue(
-                    entityData.get(HARPOON_ATTACHED) ? RawAnimation.begin().thenLoop("idle_harpooned"):
+                    entityData.get(HARPOON_ATTACHED) ? RawAnimation.begin().thenLoop("idle_harpooned") :
                             RawAnimation.begin().thenLoop("idle"));
         }));
     }
@@ -98,7 +97,7 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
     }
 
     @Override
-    protected boolean shouldSpawnTendrils() {
+    public boolean shouldSpawnTendrils() {
         return true;
     }
 
@@ -117,11 +116,11 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
 
     @Override
     public void performRangedAttack(LivingEntity target, float v) {
-        if(harpoon_cooldown <= 0 && !entityData.get(HARPOON_ATTACHED)) {
-            this.currentTarget = target;
+        if (harpoon_cooldown <= 0 && !entityData.get(HARPOON_ATTACHED)) {
+            this.targetedEntity = target;
 
             harpoon = new BulbHarpoonEntity(level(), this);
-            harpoon.setPos(getX(), getEyeY(), getZ());
+            harpoon.setPos(getX(), getY(), getZ());
 
             Vec3 shootDir = target.getEyePosition().subtract(this.position());
             level().playSound(null, blockPosition(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.HOSTILE, 1f, 1f);
@@ -129,7 +128,7 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
 
             level().addFreshEntity(harpoon);
 
-            currentBlock = null;
+            targetedBlock = null;
             entityData.set(HARPOON_ATTACHED, true);
         }
     }
@@ -141,21 +140,15 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
         super.tick();
         if (this.level() instanceof ServerLevel slvl) {
             if (harpoon_cooldown <= 0 && !entityData.get(HARPOON_ATTACHED)) {
-                if (currentTarget == null) {
+                if (targetedEntity == null) {
                     //Connect to flesh blocks
-                    BlockPos closestFlesh = findNearbyFlesh();
-                    if(closestFlesh != null) {
-                        HitResult hit = slvl.clip(new ClipContext(position(), closestFlesh.getCenter().subtract(0, 0.5, 0), ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, this));
-                        Vec3 shootDir = closestFlesh.getCenter().subtract(0, 0.5, 0).subtract(this.position());
-                        if(Direction.fromDelta(Mth.ceil(shootDir.x), Mth.ceil(shootDir.y), Mth.ceil(shootDir.z)) != entityData.get(ALIGNMENT).getOpposite()) {
-                            //prevent if block is behind wall
-                            targetBlock(closestFlesh);
-                            StaticSiliconiteMethods.spawnBloodBurst(slvl, closestFlesh);
-                            entityData.set(HARPOON_ATTACHED, true);
-                        }
+                    BlockPos closestFleshBlock = findNearbyFlesh();
+                    if (closestFleshBlock != null) {
+                        StaticSiliconiteMethods.spawnBloodBurst(slvl, closestFleshBlock);
+                        targetBlock(closestFleshBlock);
                     } else {
-                        currentBlock = null;
-                        if(harpoon != null) {
+                        targetedBlock = null;
+                        if (harpoon != null) {
                             retractHarpoon();
                         }
                     }
@@ -165,22 +158,22 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
             }
 
             //Validate target
-            if(entityData.get(HARPOON_ATTACHED)) {
-                if(currentBlock == null) {
-                    if(currentTarget == null) retractHarpoon();
-                    else if(currentTarget.isDeadOrDying() || harpoon == null
+            if (entityData.get(HARPOON_ATTACHED)) {
+                if (targetedBlock == null) {
+                    if (targetedEntity == null) retractHarpoon();
+                    else if (targetedEntity.isDeadOrDying() || harpoon == null
                             || harpoon.getCurrentAttachType() == AbstractHarpoonProjectile.AttachTypes.Reeling.ordinal()) {
                         retractHarpoon();
                     }
                 } else {
-                    if(harpoon == null || harpoon.getCurrentAttachType() == AbstractHarpoonProjectile.AttachTypes.Reeling.ordinal()) {
+                    if (harpoon == null || harpoon.getCurrentAttachType() == AbstractHarpoonProjectile.AttachTypes.Reeling.ordinal()) {
                         retractHarpoon();
                     }
                 }
             } else {
                 //Allow for amalgamation
 
-                if(getBiomass() > 30) {
+                if (getBiomass() > 30) {
                     //choose random non-mob based amalgamation
                     BaseAmalgamation amalgamation = default_amalgamations.get(random.nextInt(default_amalgamations.size())).create(slvl);
                     amalgamation.moveTo(position());
@@ -194,26 +187,27 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if(entityData.get(HARPOON_ATTACHED) && harpoon != null) {
+        if (entityData.get(HARPOON_ATTACHED) && harpoon != null) {
             retractHarpoon();
         }
         return super.hurt(pSource, pAmount);
     }
 
     private void targetBlock(BlockPos target) {
-        currentBlock = target;
+        targetedBlock = target;
         harpoon = new BulbHarpoonEntity(level(), this);
-        harpoon.setPos(getX(), getEyeY(), getZ());
+        harpoon.setPos(getX(), getAttachedEyeY(), getZ());
 
-        Vec3 shootDir = target.getCenter().subtract(0, 0.5, 0).subtract(this.position());
+        Vec3 shootDir = target.getCenter().subtract(0, 0.7, 0).subtract(this.position());
         level().playSound(null, blockPosition(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.HOSTILE, 1f, 1f);
         harpoon.shoot(shootDir, 1.2f, 0f, this, 0.08f, 500);
 
         level().addFreshEntity(harpoon);
+        entityData.set(HARPOON_ATTACHED, true);
     }
 
     protected void retractHarpoon() {
-        currentTarget = null;
+        targetedEntity = null;
         harpoon.RetractHarpoon();
         entityData.set(HARPOON_ATTACHED, false);
         harpoon_cooldown = random.nextInt(160);
@@ -221,19 +215,33 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
 
     private BlockPos findNearbyFlesh() {
         BlockPos mobPos = this.blockPosition();
+        BlockPos bestTarget = null;
+        double closestDist = Double.MAX_VALUE;
 
         for (BlockPos pos : BlockPos.betweenClosed(
-                mobPos.offset(-FLESH_CHECK_RADIUS, -FLESH_CHECK_RADIUS/2, -FLESH_CHECK_RADIUS),
-                mobPos.offset(FLESH_CHECK_RADIUS, FLESH_CHECK_RADIUS/2, FLESH_CHECK_RADIUS))) {
+                mobPos.offset(-FLESH_CHECK_RADIUS, -FLESH_CHECK_RADIUS, -FLESH_CHECK_RADIUS),
+                mobPos.offset(FLESH_CHECK_RADIUS, FLESH_CHECK_RADIUS, FLESH_CHECK_RADIUS))) {
 
             BlockState state = this.level().getBlockState(pos);
 
             if (state.getBlock() instanceof FleshPileBlock) {
-                return pos.immutable();
+                Vec3 startVec = this.position();
+                Vec3 endVec = pos.getCenter();
+
+                ClipContext context = new ClipContext(startVec, endVec, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this);
+                BlockHitResult hit = this.level().clip(context);
+
+                if (hit.getType() == HitResult.Type.BLOCK && hit.getBlockPos().equals(pos)) {
+                    double dist = this.distanceToSqr(pos.getX(), pos.getY(), pos.getZ());
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        bestTarget = pos.immutable();
+                    }
+                }
             }
         }
 
-        return null;
+        return bestTarget;
     }
 
 

@@ -151,10 +151,10 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     private int brokenOffBulbs = 0;
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-
         //only get dealt 10% of fire damage
+        float damageMultiplier = 1f;
         if(pSource.is(DamageTypeTags.IS_FIRE) || pSource.is(DamageTypeTags.BURNS_ARMOR_STANDS) || pSource.is(DamageTypeTags.IGNITES_ARMOR_STANDS)) {
-            pAmount *= 0.1F;
+            damageMultiplier = 0.1F;
         }
 
         if(level () instanceof ServerLevel slvl ) {
@@ -178,7 +178,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
             }
         }
 
-        return super.hurt(pSource, pAmount);
+        return super.hurt(pSource, pAmount*damageMultiplier);
     }
 
     //On hurt others

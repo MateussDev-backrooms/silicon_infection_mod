@@ -26,9 +26,18 @@ public class TethSkeleton_Model extends GeoModel<TethSkeleton> {
     @Override
     public ResourceLocation getAnimationResource(TethSkeleton object) { return animation; }
 
+    private int t=0;
     @Override
     public void setCustomAnimations(TethSkeleton animatable, long instanceId, AnimationState<TethSkeleton> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
         StaticSiliconiteMethods.updateBulbVisuals(animatable, this);
+        //Breathing
+        StaticSiliconiteMethods.updateBreathing(this, "body", 20, 0.02, animationState.getPartialTick(), t);
+        t++;
+
+        //Head movement
+        StaticSiliconiteMethods.updateHeadRotationAnimal(animatable, this, "head", (float) Math.PI/2, 0f);
+
+        StaticSiliconiteMethods.updateBoneWobble(animatable, this, animationState.getPartialTick());
     }
 }

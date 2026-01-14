@@ -86,7 +86,7 @@ public class VegetativeRoller extends BaseOrganelle {
     }
 
     @Override
-    protected boolean shouldSpawnTendrils() {
+    public boolean shouldSpawnTendrils() {
         return true;
     }
 }

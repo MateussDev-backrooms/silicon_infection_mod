@@ -47,36 +47,24 @@ public class TendrilBlock extends MultifaceBlock {
     public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
         super.randomTick(pState, pLevel, pPos, pRandom);
 
-        //Sulfurization if not close to a bulb
-        //TODO OPTIMIZE THIS SHIT
-        for (Map.Entry<EntityType<? extends BaseOrganelle>, Integer> entry : StaticSiliconiteMethods.vegetatedRadiusMap.entrySet()) {
-            int radius = entry.getValue();
-            AABB area = new AABB(
-                    pPos.east(radius).south(radius).below(radius/2),
-                    pPos.west(radius).north(radius).above(radius/2)
-            );
-            List<? extends Entity> list = pLevel.getEntitiesOfClass(
-                    entry.getKey().getBaseClass(),
-                    area,
-                    entity -> entity.isAlive());
+        //Sulfurization if not close to an organelle
+        int radius = 8;
+        AABB area = new AABB(pPos.east(radius).south(radius).below(radius/2), pPos.west(radius).north(radius).above(radius/2));
+        List<? extends BaseOrganelle> potentialSupporters = pLevel.getEntitiesOfClass(BaseOrganelle.class, area, entity -> entity.isAlive());
+        boolean shouldSulfurize = true;
 
-            if(list.isEmpty()) {
-                BlockState sulfurState = ModBlocks.SULFURED_TENDRILS.get().defaultBlockState();
-
-                //fix multi-face states
-                for (Direction dir : Direction.values()) {
-                    BooleanProperty prop = getFaceProperty(dir);
-                    if (pState.hasProperty(prop)) {
-                        sulfurState = sulfurState.setValue(prop, pState.getValue(prop));
-                    }
+        if(potentialSupporters.isEmpty()) {
+            sulfurize(pPos, pState, pLevel);
+        } else {
+            //Check the candidates for distance
+            for(BaseOrganelle organelle : potentialSupporters) {
+                //check distance square
+                if(organelle.blockPosition().distSqr(pPos) <= organelle.tendrilSupportRadius()*organelle.tendrilSupportRadius()) {
+                    shouldSulfurize = false;
                 }
-
-                pLevel.setBlock(pPos, sulfurState, 3);
-                return;
             }
+            if(shouldSulfurize) sulfurize(pPos, pState, pLevel);
         }
-
-        //VERY EXPENSIVE DUE TO MANY ORGANELLES EXISTING
 
         //Tendril spreading
 
@@ -91,14 +79,16 @@ public class TendrilBlock extends MultifaceBlock {
         ///TODO MAKE A BETTER SYSTEM
 
         //Have a chance to spawn a bulb randomly
-
         if(pRandom.nextFloat() < 0.2) {
-            List<BaseOrganelle> nearby_vegs = pLevel.getEntitiesOfClass(
-                    BaseOrganelle.class,
-                    new AABB(pPos).inflate(1),
-                    c -> true
-            );
-            if(nearby_vegs.isEmpty()) {
+            boolean canSpawnBulb = true;
+            for(BaseOrganelle organelle : potentialSupporters) {
+                if(organelle.blockPosition().distSqr(pPos) < 1) {
+                    canSpawnBulb = false;
+                    break;
+                }
+            }
+
+            if(canSpawnBulb) {
                 VegetativeBulb bulb = ModEntities.VEG_BULB.get().create(pLevel);
                 bulb.moveTo(pPos.getCenter());
                 pLevel.sendParticles(
@@ -112,7 +102,7 @@ public class TendrilBlock extends MultifaceBlock {
                         0,
                         0.1
                 );
-                pLevel.playSound(null, pPos, SoundEvents.ITEM_PICKUP, SoundSource.HOSTILE, 1f, 1f);
+                pLevel.playSound(null, pPos, SoundEvents.CHORUS_FLOWER_GROW, SoundSource.HOSTILE, 1f, 1f);
                 pLevel.addFreshEntity(bulb);
             }
         }
@@ -120,6 +110,21 @@ public class TendrilBlock extends MultifaceBlock {
 
 
 
+    }
+
+    private void sulfurize(BlockPos pPos, BlockState pState, ServerLevel pLevel) {
+        BlockState sulfurState = ModBlocks.SULFURED_TENDRILS.get().defaultBlockState();
+
+        //fix multi-face states
+        for (Direction dir : Direction.values()) {
+            BooleanProperty prop = getFaceProperty(dir);
+            if (pState.hasProperty(prop)) {
+                sulfurState = sulfurState.setValue(prop, pState.getValue(prop));
+            }
+        }
+
+        pLevel.setBlock(pPos, sulfurState, 3);
+        pLevel.playSound(null, pPos, SoundEvents.CHORUS_FLOWER_DEATH, SoundSource.BLOCKS, 1f, 1f);
     }
 
     @Override

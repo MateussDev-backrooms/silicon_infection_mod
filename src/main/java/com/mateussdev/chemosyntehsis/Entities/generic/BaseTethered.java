@@ -10,16 +10,22 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BaseTethered extends BaseSiliconite {
     protected BaseTethered(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -39,15 +45,22 @@ public class BaseTethered extends BaseSiliconite {
         controllers.add(new AnimationController<>(this, "movement", 5, event ->
         {
             //death anim
-            if(this.isDeadOrDying()) {
+            if (this.isDeadOrDying()) {
                 return event.setAndContinue(RawAnimation.begin().then("death", Animation.LoopType.PLAY_ONCE));
             }
 
             return event.setAndContinue(
                     // If moving, play the walking animation
-                    event.isMoving() ? RawAnimation.begin().thenLoop("walk"):
+                    event.isMoving() ? RawAnimation.begin().thenLoop("walk") :
                             // If not moving, play the idle animation
                             RawAnimation.begin().thenLoop("idle"));
+        }));
+
+        //Bone wobbling
+        controllers.add(new AnimationController<>(this, "reaction_controller", 1, event -> {
+            // Get the current bone being processed
+
+            return PlayState.CONTINUE;
         }));
     }
 
@@ -67,13 +80,24 @@ public class BaseTethered extends BaseSiliconite {
     }
 
     private int t = 0;
+
     @Override
     public void tick() {
         t++;
-        if(t%globalWarmingRate==0) {
-            if(level() instanceof ServerLevel slvl) {
+        if (t % globalWarmingRate == 0) {
+            if (level() instanceof ServerLevel slvl) {
                 GlobalWarmingData data = GlobalWarmingData.get(slvl);
                 data.addPoints(0.1f);
+            }
+        }
+
+
+        Vector3f impulse = boneWobble.get(wobbleBoneName);
+        if (impulse != null) {
+            impulse.lerp(new Vector3f(0, 0, 0), 0.3f);
+
+            if (impulse.length() < 0.05f) {
+                boneWobble.remove(wobbleBoneName);
             }
         }
 
@@ -81,16 +105,18 @@ public class BaseTethered extends BaseSiliconite {
     }
 
     protected int deathTime = 0;
+
     @Override
     public void tickDeath() {
-        if(explodeOnDeath()) {
+        if (explodeOnDeath()) {
             ++this.deathTime;
+            this.hurtMarked = true;
 
-            if(this.level() instanceof ServerLevel slvl) {
+            if (this.level() instanceof ServerLevel slvl) {
                 if (this.deathTime == 40) {
                     this.splitIntoChunks(5);
                     this.releaseGasIntoAtmosphere(slvl, 1f);
-                    this.level().broadcastEntityEvent(this, (byte)60);
+                    this.level().broadcastEntityEvent(this, (byte) 60);
                     this.remove(RemovalReason.KILLED);
                 }
             }
@@ -101,7 +127,7 @@ public class BaseTethered extends BaseSiliconite {
     }
 
     public void turnIntoBiomush() {
-        if(level() instanceof ServerLevel slvl) {
+        if (level() instanceof ServerLevel slvl) {
             //Particles
             StaticSiliconiteMethods.spawnBloodBurst(slvl, blockPosition());
 
@@ -110,7 +136,7 @@ public class BaseTethered extends BaseSiliconite {
     }
 
     public void splitIntoChunks(int count) {
-        if(level() instanceof ServerLevel slvl) {
+        if (level() instanceof ServerLevel slvl) {
             slvl.playSound(
                     null,
                     blockPosition(),
@@ -124,15 +150,15 @@ public class BaseTethered extends BaseSiliconite {
 
             //Spawn chunks
             for (int i = 0; i < count; i++) {
-                if(slvl.random.nextFloat() < 0.33f) {
+                if (slvl.random.nextFloat() < 0.33f) {
                     ChunkOfFlesh chunkOfFlesh = ModEntities.CHUNK_OF_FLESH.get().create(slvl);
                     chunkOfFlesh.moveTo(blockPosition().getX(), blockPosition().getY(), blockPosition().getZ());
-                    chunkOfFlesh.addDeltaMovement(new Vec3((slvl.random.nextDouble()*2f - 1f)*0.1f, (slvl.random.nextDouble())*0.8f, (slvl.random.nextDouble()*2f - 1f)*0.1f));
+                    chunkOfFlesh.addDeltaMovement(new Vec3((slvl.random.nextDouble() * 2f - 1f) * 0.1f, (slvl.random.nextDouble()) * 0.8f, (slvl.random.nextDouble() * 2f - 1f) * 0.1f));
                     slvl.addFreshEntity(chunkOfFlesh);
                 } else {
                     GibFlesh gib = ModEntities.GIB_FLESH.get().create(slvl);
                     gib.moveTo(blockPosition().getX(), blockPosition().getY(), blockPosition().getZ());
-                    gib.addDeltaMovement(new Vec3((slvl.random.nextDouble()*2f - 1f)*0.4f, (slvl.random.nextDouble())*0.5f, (slvl.random.nextDouble()*2f - 1f)*0.4f));
+                    gib.addDeltaMovement(new Vec3((slvl.random.nextDouble() * 2f - 1f) * 0.4f, (slvl.random.nextDouble()) * 0.5f, (slvl.random.nextDouble() * 2f - 1f) * 0.4f));
                     slvl.addFreshEntity(gib);
                 }
             }
@@ -143,5 +169,47 @@ public class BaseTethered extends BaseSiliconite {
     @Override
     protected int evolvesAtMetabolism() {
         return 100;
+    }
+
+    public final Map<String, Vector3f> boneWobble = new HashMap<>();
+
+    //Use function so it can be overrided
+    public final List<String> wobblyBones() {
+        return List.of("body", "head");
+    }
+
+    public String wobbleBoneName = "";
+
+    @Override
+    public boolean hurt(DamageSource pSource, float pAmount) {
+        if(isDeadOrDying()) return false;
+
+        boolean hurtResult = super.hurt(pSource, pAmount);
+
+        triggerHitReaction(pSource, pAmount);
+        wobbleBoneName = wobblyBones().get(random.nextInt(wobblyBones().size()));
+
+        if (level() instanceof ServerLevel slvl) {
+            slvl.playSound(null, blockPosition(), SoundEvents.SLIME_SQUISH_SMALL, SoundSource.HOSTILE, 1f, 0.8f);
+            StaticSiliconiteMethods.spawnBloodHit(slvl, position());
+        }
+
+        return hurtResult;
+    }
+
+    public void triggerHitReaction(DamageSource source, float amount) {
+        if (level().isClientSide && source.getEntity() != null) {
+            // Calculate a simple direction vector here if you want directional rotation
+            // For now, let's just give it a generic kick
+            float impactStrength = 90f * amount; // Degrees to rotate
+            float x = (random.nextFloat() - 0.5f) * impactStrength;
+            float y = (random.nextFloat() - 0.5f) * impactStrength;
+            float z = (random.nextFloat() - 0.5f) * impactStrength;
+            Vector3f wobbleDir = new Vector3f(x, y, z);
+            for (String boneName : wobblyBones()) {
+                boneWobble.put(boneName, wobbleDir.mul(1 + random.nextFloat() * 0.33f));
+            }
+            setDeltaMovement(getDeltaMovement().add(wobbleDir.x, wobbleDir.y, wobbleDir.z));
+        }
     }
 }

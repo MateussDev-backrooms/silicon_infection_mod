@@ -7,9 +7,7 @@ import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -26,13 +24,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.GeoRenderer;
 
 import java.awt.*;
 import java.util.*;
@@ -202,24 +198,220 @@ public class StaticSiliconiteMethods {
         }
     }
 
+    public static void updateHeadRotationAnimal(BaseSiliconite animatable, GeoModel<?> model, String boneName, float offsetPitch, float offsetYaw) {
+        GeoBone head = model.getBone(boneName).get();
+
+        float yaw   = (float) Math.toRadians(animatable.yHeadRot);
+        float pitch = (float) Math.toRadians(animatable.xRotO);
+        head.setRotZ((float) (-yaw + Math.toRadians(animatable.yBodyRot) + offsetYaw));
+        head.setRotX((float) (-pitch + offsetPitch));
+    }
+
+    public static void updateHeadRotationUpright(BaseSiliconite animatable, GeoModel<?> model, String boneName, float offsetPitch, float offsetYaw) {
+        GeoBone head = model.getBone(boneName).get();
+
+        float yaw   = (float) Math.toRadians(animatable.yHeadRot);
+        float pitch = (float) Math.toRadians(animatable.xRotO);
+        head.setRotY((float) (-yaw + Math.toRadians(animatable.yBodyRot) + offsetYaw));
+        head.setRotX((float) (-pitch + offsetPitch));
+    }
+
+    public static void updateBreathing(GeoModel<?> model, String boneName, double frequency, double intensity, float partialTick, int t) {
+        GeoBone body = model.getBone(boneName).get();
+        float breatheFactorP = (float) (1 + Math.sin((double) t / frequency) * intensity);
+        float breatheFactorN = (float) (1 + Math.sin((double) (t+1) / frequency) * intensity);
+        float breatheFactor = Mth.lerp(partialTick, breatheFactorP, breatheFactorN);
+        body.setScaleX(breatheFactor);
+        body.setScaleY(breatheFactor);
+        body.setScaleZ(breatheFactor);
+    }
+
+    public static void updateBoneWobble(BaseTethered animatable, GeoModel<?> model, float partialTick) {
+        Map<String, Vector3f> boneWobble = animatable.boneWobble;
+        if(boneWobble.isEmpty()) return;
+
+        for(String boneName : boneWobble.keySet().stream().toList()) {
+            GeoBone bone = model.getBone(boneName).get();
+                Vector3f impulse = boneWobble.get(boneName);
+                Vector3f nextImpulse = new Vector3f(
+                        Mth.lerp(0.3f, impulse.x, 0),
+                        Mth.lerp(0.3f, impulse.y, 0),
+                        Mth.lerp(0.3f, impulse.z, 0)
+                );
+
+                // Apply the impulse to the bone's current rotation
+                // Note: This adds to the existing animation rotation
+                bone.setRotX((float) (bone.getRotX() + Math.toRadians(Mth.lerp(partialTick, impulse.x, nextImpulse.x))));
+                bone.setRotY((float) (bone.getRotY() + Math.toRadians(Mth.lerp(partialTick, impulse.y, nextImpulse.y))));
+                bone.setRotZ((float) (bone.getRotZ() + Math.toRadians(Mth.lerp(partialTick, impulse.z, nextImpulse.z))));
+        }
+    }
+
     // ===== Particles ===== //
 
     public static void spawnBloodBurst(ServerLevel slvl, BlockPos blockPos) {
+        // Main burst with varying sizes
         DustParticleOptions blood = new DustParticleOptions(
                 new Vector3f(0.8f, 0.0f, 0.0f),
                 3.0f
         );
 
+        DustParticleOptions smallBlood = new DustParticleOptions(
+                new Vector3f(0.7f, 0.1f, 0.1f), // Slight orange tint for variation
+                1.5f
+        );
+
+        DustParticleOptions sprayBlood = new DustParticleOptions(
+                new Vector3f(0.9f, 0.05f, 0.05f), // Bright red for spray
+                0.8f
+        );
+
+        // Main burst
         slvl.sendParticles(
                 blood,
                 blockPos.getX(),
                 blockPos.getY(),
                 blockPos.getZ(),
-                30,
+                15,
                 0.3,
                 0.5,
                 0.3,
                 0.1
+        );
+
+        // Smaller particles for spray effect
+        slvl.sendParticles(
+                smallBlood,
+                blockPos.getX(),
+                blockPos.getY(),
+                blockPos.getZ(),
+                25,
+                0.5,
+                0.7,
+                0.5,
+                0.15
+        );
+
+        // Fine spray mist
+        slvl.sendParticles(
+                sprayBlood,
+                blockPos.getX(),
+                blockPos.getY(),
+                blockPos.getZ(),
+                30,
+                0.7,
+                1.0,
+                0.7,
+                0.2
+        );
+
+        // Add dripping/splatter effect on surfaces
+        DustParticleOptions splatter = new DustParticleOptions(
+                new Vector3f(0.7f, 0.0f, 0.0f),
+                1.5f
+        );
+
+        // Create splatter in a wider area
+        for (int i = 0; i < 8; i++) {
+            double offsetX = (slvl.random.nextDouble() - 0.5) * 1.5;
+            double offsetZ = (slvl.random.nextDouble() - 0.5) * 1.5;
+
+            slvl.sendParticles(
+                    splatter,
+                    blockPos.getX() + offsetX,
+                    blockPos.getY() + 0.1,
+                    blockPos.getZ() + offsetZ,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0
+            );
+        }
+
+        // Optional: Add crit particles for sparkle effect (blood droplets catching light)
+        slvl.sendParticles(
+                ParticleTypes.CRIT,
+                blockPos.getX(),
+                blockPos.getY(),
+                blockPos.getZ(),
+                5,
+                0.2,
+                0.3,
+                0.2,
+                0.1
+        );
+    }
+
+    public static void spawnBloodHit(ServerLevel slvl, Vec3 blockPos) {
+        // Main blood splash
+        DustParticleOptions blood = new DustParticleOptions(
+                new Vector3f(0.8f, 0.0f, 0.0f),
+                1.3f
+        );
+
+        // Variant with darker red for depth
+        DustParticleOptions darkBlood = new DustParticleOptions(
+                new Vector3f(0.6f, 0.0f, 0.0f),
+                1.5f
+        );
+
+        slvl.sendParticles(
+                blood,
+                blockPos.x(),
+                blockPos.y(),
+                blockPos.z(),
+                5,
+                0.3,
+                -0.5,
+                0.3,
+                0.8
+        );
+
+        // Add some darker particles for variation
+        slvl.sendParticles(
+                darkBlood,
+                blockPos.x(),
+                blockPos.y(),
+                blockPos.z(),
+                3,
+                0.15,
+                -0.3,
+                0.15,
+                0.4
+        );
+
+        // Add dripping effect using falling dust (blood droplets)
+        DustParticleOptions drip = new DustParticleOptions(
+                new Vector3f(0.7f, 0.0f, 0.0f),
+                1.5f
+        );
+
+
+
+        slvl.sendParticles(
+                drip,
+                blockPos.x(),
+                blockPos.y(),
+                blockPos.z(),
+                3,
+                0.1,
+                -0.8,
+                0.1,
+                0.05
+        );
+
+        // Small smoke puff for impact effect
+        slvl.sendParticles(
+                ParticleTypes.SMOKE,
+                blockPos.x(),
+                blockPos.y(),
+                blockPos.z(),
+                2,
+                0.05,
+                0.05,
+                0.05,
+                0.01
         );
     }
 

@@ -26,9 +26,18 @@ public class TethZombie_Model extends GeoModel<TethZombie> {
     @Override
     public ResourceLocation getAnimationResource(TethZombie object) { return animation; }
 
+    private int t = 0;
     @Override
     public void setCustomAnimations(TethZombie animatable, long instanceId, AnimationState<TethZombie> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
         StaticSiliconiteMethods.updateBulbVisuals(animatable, this);
+        //Breathing
+        StaticSiliconiteMethods.updateBreathing(this, "body", 20, 0.02, animationState.getPartialTick(), t);
+        t++;
+
+        //Head movement
+        StaticSiliconiteMethods.updateHeadRotationUpright(animatable, this, "head", (float) 0f, 0f);
+
+        StaticSiliconiteMethods.updateBoneWobble(animatable, this, animationState.getPartialTick());
     }
 }

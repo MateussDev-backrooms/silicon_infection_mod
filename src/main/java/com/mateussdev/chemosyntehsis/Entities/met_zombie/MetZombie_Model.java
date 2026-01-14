@@ -26,9 +26,18 @@ public class MetZombie_Model extends GeoModel<MetZombie> {
     @Override
     public ResourceLocation getAnimationResource(MetZombie object) { return animation; }
 
+    private int t = 0;
     @Override
     public void setCustomAnimations(MetZombie animatable, long instanceId, AnimationState<MetZombie> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
         StaticSiliconiteMethods.updateBulbVisuals(animatable, this);
+        //Breathing
+        StaticSiliconiteMethods.updateBreathing(this, "body", 20, 0.02, animationState.getPartialTick(), t);
+        t++;
+
+        //Head movement
+        StaticSiliconiteMethods.updateHeadRotationUpright(animatable, this, "head", 0, 0f);
+
+        StaticSiliconiteMethods.updateBoneWobble(animatable, this, animationState.getPartialTick());
     }
 }

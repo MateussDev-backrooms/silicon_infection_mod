@@ -2,6 +2,7 @@ package com.mateussdev.chemosyntehsis.Entities.veg_bulb;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
+import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller;
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class VegetativeBulb extends BaseOrganelle {
     }
 
     @Override
-    protected boolean shouldSpawnTendrils() {
+    public boolean shouldSpawnTendrils() {
         return true;
     }
 
@@ -103,6 +105,12 @@ public class VegetativeBulb extends BaseOrganelle {
         }
 
         if (level() instanceof ServerLevel slvl) {
+            Vec3 center = this.position();
+            for (VegetativeBulb c : others) {
+                Vec3 dir = center.subtract(c.position()).normalize();
+                c.setDeltaMovement(dir.scale(0.5));
+            }
+
             slvl.scheduleTick(this.blockPosition(), Blocks.AIR, 20);
         }
     }
@@ -124,7 +132,7 @@ public class VegetativeBulb extends BaseOrganelle {
         if(this.level() instanceof ServerLevel slvl) {
             List<BaseOrganelle> nearby_vegs = slvl.getEntitiesOfClass(
                     BaseOrganelle.class,
-                    this.getBoundingBox().inflate(2),
+                    this.getBoundingBox().inflate(1.6),
                     c -> true
             );
             if(nearby_vegs.size() < 5) {
@@ -136,12 +144,12 @@ public class VegetativeBulb extends BaseOrganelle {
             } else {
                 //Jump somewhere farther away
                 BulbProjectileEntity shard = new BulbProjectileEntity(level(),this);
-                Vec3i shootDir = getAttachDir().getOpposite().getNormal();
+                Vec3i shootDir = getAttachDir().getNormal();
                 shard.shoot(
-                        shootDir.getX() * (random.nextFloat()/3),
-                        shootDir.getY() * (random.nextFloat()/3),
-                        shootDir.getZ() * (random.nextFloat()/3),
-                        1.2f, // speed
+                        (float) shootDir.getX() * (random.nextFloat()*6f),
+                        (float) shootDir.getY() * (random.nextFloat()*6f),
+                        (float) shootDir.getZ() * (random.nextFloat()*6f),
+                        0.8f, // speed
                         10.0f // inaccuracy
                 );
                 slvl.playSound(null, blockPosition(), SoundEvents.ARROW_SHOOT, SoundSource.HOSTILE, 1f, 3f);

@@ -44,7 +44,5 @@ public class SiliconRoller_Model extends GeoModel<SiliconRoller> {
         }
         //Broken off bulbs
         StaticSiliconiteMethods.updateBulbVisuals(animatable, this);
-
-
     }
 }
