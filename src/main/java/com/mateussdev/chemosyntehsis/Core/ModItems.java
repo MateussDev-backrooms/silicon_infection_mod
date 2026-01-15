@@ -31,6 +31,8 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_ROLLER =
             ITEMS.register("spawn_roller",
                     () -> new ForgeSpawnEggItem(ModEntities.SILICON_ROLLER, 0x967445, 0x7c4b45, new Item.Properties()));
+
+
     public static final RegistryObject<Item> SPAWN_CHUNK_OF_FLESH =
             ITEMS.register("spawn_chunk_of_flesh",
                     () -> new ForgeSpawnEggItem(ModEntities.CHUNK_OF_FLESH, 0x823431, 0x2e2b2a, new Item.Properties()));
@@ -52,10 +54,10 @@ public class ModItems {
     //Metabolized mobs
     public static final RegistryObject<Item> SPAWN_MET_ZOMBIE =
             ITEMS.register("spawn_met_zombie",
-                    () -> new ForgeSpawnEggItem(ModEntities.MET_ZOMBIE, 0x3d1411, 0x7c4b45, new Item.Properties()));
+                    () -> new ForgeSpawnEggItem(ModEntities.MET_ZOMBIE, 0x4e160d, 0x855421, new Item.Properties()));
     public static final RegistryObject<Item> SPAWN_MET_COW =
             ITEMS.register("spawn_met_cow",
-                    () -> new ForgeSpawnEggItem(ModEntities.MET_COW, 0x3d1411, 0x7c4b45, new Item.Properties()));
+                    () -> new ForgeSpawnEggItem(ModEntities.MET_COW, 0x4e160d, 0x855421, new Item.Properties()));
 
     //Vegetated mobs
     public static final RegistryObject<Item> SPAWN_VEG_BULB =
@@ -84,13 +86,18 @@ public class ModItems {
     //Tier 1
     public static final RegistryObject<Item> SPAWN_THROMBOCYTE =
             ITEMS.register("spawn_thrombocyte",
-                    () -> new ForgeSpawnEggItem(ModEntities.THROMBOCYTE, 0xc66f5b, 0x7b4842, new Item.Properties()));
+                    () -> new ForgeSpawnEggItem(ModEntities.THROMBOCYTE, 0xc16c26, 0x7b4842, new Item.Properties()));
     public static final RegistryObject<Item> SPAWN_ERYTHROCYTE =
             ITEMS.register("spawn_erythrocyte",
-                    () -> new ForgeSpawnEggItem(ModEntities.ERYTHROCYTE, 0xc66f5b, 0x7b4842, new Item.Properties()));
+                    () -> new ForgeSpawnEggItem(ModEntities.ERYTHROCYTE, 0xc16c26, 0x7b4842, new Item.Properties()));
     public static final RegistryObject<Item> SPAWN_ASTROCYTE =
             ITEMS.register("spawn_astrocyte",
-                    () -> new ForgeSpawnEggItem(ModEntities.ASTROCYTE, 0xc66f5b, 0x7b4842, new Item.Properties()));
+                    () -> new ForgeSpawnEggItem(ModEntities.ASTROCYTE, 0xc16c26, 0x7b4842, new Item.Properties()));
+
+    //Tier 2
+    public static final RegistryObject<Item> SPAWN_PERFOCYTE =
+            ITEMS.register("spawn_perfocyte",
+                    () -> new ForgeSpawnEggItem(ModEntities.PERFOCYTE, 0xc16c26, 0x745d70, new Item.Properties()));
 
     //===== DEFINE ITEMS HERE =====//
 

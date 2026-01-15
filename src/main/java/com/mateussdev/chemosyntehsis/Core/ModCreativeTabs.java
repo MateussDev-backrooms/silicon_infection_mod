@@ -47,6 +47,8 @@ public class ModCreativeTabs {
                         pOutput.accept(ModItems.SPAWN_ERYTHROCYTE.get());
                         pOutput.accept(ModItems.SPAWN_ASTROCYTE.get());
 
+                        pOutput.accept(ModItems.SPAWN_PERFOCYTE.get());
+
                         //Blocks
                         pOutput.accept(ModBlocks.SILICATE_BLOCK.get());
                         pOutput.accept(ModBlocks.MUSHY_SILICON_BLOCK.get());

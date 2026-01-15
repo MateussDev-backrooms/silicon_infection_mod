@@ -7,6 +7,7 @@ import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie_Renderer;
@@ -67,6 +68,9 @@ public class EventRegisterRenderer {
         EntityRenderers.register(ModEntities.THROMBOCYTE.get(), HybridThrombocyte_Renderer::new);
         EntityRenderers.register(ModEntities.ERYTHROCYTE.get(), HybridErythrocyte_Renderer::new);
         EntityRenderers.register(ModEntities.ASTROCYTE.get(), HybridAstrocyte_Renderer::new);
+
+        //Tier 2
+        EntityRenderers.register(ModEntities.PERFOCYTE.get(), HybridPerfocyte_Renderer::new);
 
 
         //Projectile

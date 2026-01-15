@@ -6,6 +6,7 @@ import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie;
+import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte;
@@ -58,6 +59,8 @@ public class EventRegisterAttributes {
         event.put(ModEntities.THROMBOCYTE.get(), HybridThrombocyte.createAttributes().build());
         event.put(ModEntities.ERYTHROCYTE.get(), HybridErythrocyte.createAttributes().build());
         event.put(ModEntities.ASTROCYTE.get(), HybridAstrocyte.createAttributes().build());
+
+        event.put(ModEntities.PERFOCYTE.get(), HybridPerfocyte.createAttributes().build());
 
     }
 }

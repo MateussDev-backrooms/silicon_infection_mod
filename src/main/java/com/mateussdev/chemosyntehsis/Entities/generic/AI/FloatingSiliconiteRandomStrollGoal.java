@@ -26,15 +26,7 @@ public class FloatingSiliconiteRandomStrollGoal extends Goal {
 
     public boolean canUse() {
         MoveControl moveControl = this.siliconite.getMoveControl();
-        if (!moveControl.hasWanted()) {
-            return true;
-        } else {
-            double dx = moveControl.getWantedX() - this.siliconite.getX();
-            double dy = moveControl.getWantedY() - this.siliconite.getY();
-            double dz = moveControl.getWantedZ() - this.siliconite.getZ();
-            double dst_squared = dx * dx + dy * dy + dz * dz;
-            return dst_squared < 1.0 || dst_squared > 3600.0;
-        }
+        return !moveControl.hasWanted();
     }
 
     public boolean canContinueToUse() {
