@@ -31,14 +31,6 @@ public class PerfocyteLookAtTargetGoal extends Goal {
         LivingEntity target = perfocyte.getTarget();
         if (target != null && target.isAlive()) {
             perfocyte.getLookControl().setLookAt(target, 30.0F, 30.0F);
-        } else {
-            // Look in movement direction
-            Vec3 motion = perfocyte.getDeltaMovement();
-            if (motion.lengthSqr() > 0.01) {
-                float yRot = (float)(Mth.atan2(motion.x, motion.z) * Mth.RAD_TO_DEG);
-                perfocyte.setYRot(yRot);
-                perfocyte.yBodyRot = perfocyte.getYRot();
-            }
         }
     }
 }

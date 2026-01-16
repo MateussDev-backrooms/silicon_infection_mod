@@ -1,7 +1,9 @@
 package com.mateussdev.chemosyntehsis.Entities.generic.AI;
 
+import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -16,6 +18,7 @@ public class FloatingSiliconiteRandomStrollGoal extends Goal {
     private final BaseSiliconite siliconite;
     private final float horizontal_range;
     private final float vertical_range;
+    private int cooldown = 0;
 
     public FloatingSiliconiteRandomStrollGoal(BaseSiliconite siliconite, float horizontal_range, float vertical_range) {
         this.siliconite = siliconite;
@@ -24,22 +27,50 @@ public class FloatingSiliconiteRandomStrollGoal extends Goal {
         this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
+    @Override
     public boolean canUse() {
-        MoveControl moveControl = this.siliconite.getMoveControl();
-        return !moveControl.hasWanted();
+        if (cooldown > 0) {
+            cooldown--;
+            return false;
+        }
+
+        // Don't wander when we have a target
+        if (siliconite.getTarget() != null) {
+            return false;
+        }
+
+        // Don't wander when dashing
+        if (siliconite instanceof HybridPerfocyte perfocyte && perfocyte.isDashing()) {
+            return false;
+        }
+
+        return siliconite.getRandom().nextInt(40) == 0;
     }
 
+    @Override
     public boolean canContinueToUse() {
-        return false;
+        return !siliconite.getMoveControl().hasWanted() &&
+                siliconite.getTarget() == null;
     }
 
+    @Override
     public void start() {
-        RandomSource rng = this.siliconite.getRandom();
-        float targeting_factor = 1.0f;
-        if(this.siliconite.getTarget() != null) targeting_factor = 0.4f;
-        double $$1 = this.siliconite.getX() + (double)((rng.nextFloat() * 2.0F - 1.0F) * (horizontal_range*targeting_factor));
-        double $$2 = this.siliconite.getY() + (double)((rng.nextFloat() * 2.0F - 1.0F) * (vertical_range*targeting_factor));
-        double $$3 = this.siliconite.getZ() + (double)((rng.nextFloat() * 2.0F - 1.0F) * (horizontal_range*targeting_factor));
-        this.siliconite.getMoveControl().setWantedPosition($$1, $$2, $$3, 1.0);
+        RandomSource rng = siliconite.getRandom();
+        double targetX = siliconite.getX() + (rng.nextDouble() - 0.5) * horizontal_range;
+        double targetY = siliconite.getY() + (rng.nextDouble() - 0.5) * vertical_range;
+        double targetZ = siliconite.getZ() + (rng.nextDouble() - 0.5) * horizontal_range;
+
+        // Clamp Y to reasonable bounds
+        targetY = Mth.clamp(targetY, siliconite.level().getMinBuildHeight() + 4,
+                siliconite.level().getMaxBuildHeight() - 4);
+
+        siliconite.getMoveControl().setWantedPosition(targetX, targetY, targetZ, 0.5);
+        cooldown = 100 + rng.nextInt(100); // Wait before next wander
+    }
+
+    @Override
+    public void stop() {
+        siliconite.getMoveControl().setWantedPosition(
+                siliconite.getX(), siliconite.getY(), siliconite.getZ(), 0);
     }
 }

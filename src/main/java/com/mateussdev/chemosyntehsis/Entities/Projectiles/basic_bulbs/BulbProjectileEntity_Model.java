@@ -30,7 +30,7 @@ public class BulbProjectileEntity_Model extends GeoModel<BulbProjectileEntity> {
     public void setCustomAnimations(BulbProjectileEntity animatable, long instanceId, AnimationState<BulbProjectileEntity> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
 
-        var head = this.getBone("appendage9"); // Replace with your model bone name
+        var head = this.getBone("appendage9");
 
         if (head != null) {
             float pitch = animatable.xRotO+90;

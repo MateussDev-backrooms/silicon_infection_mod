@@ -4,56 +4,42 @@ import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerf
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
+import net.minecraft.world.phys.Vec3;
 
 public class ImprovedFlyingMoveControl extends FlyingMoveControl {
     private final HybridPerfocyte perfocyte;
-    private float speedMultiplier;
+    private int floatDuration;
 
     public ImprovedFlyingMoveControl(HybridPerfocyte perfocyte, float speedMultiplier, boolean noGravity) {
-        super(perfocyte, 20, true);
+        super(perfocyte, 30, true);
         this.perfocyte = perfocyte;
-        this.speedMultiplier = speedMultiplier;
     }
 
     @Override
     public void tick() {
+        // Don't move if dashing
         if (perfocyte.isDashing()) {
-            // Dashing overrides normal movement
             return;
         }
 
         if (this.operation == Operation.MOVE_TO) {
-            this.operation = Operation.WAIT;
-            double dx = this.wantedX - perfocyte.getX();
-            double dy = this.wantedY - perfocyte.getY();
-            double dz = this.wantedZ - perfocyte.getZ();
-            double distSqr = dx * dx + dy * dy + dz * dz;
+            Vec3 target = new Vec3(this.wantedX, this.wantedY, this.wantedZ);
+            Vec3 direction = target.subtract(perfocyte.position()).normalize();
 
-            if (distSqr < 2.5000003E-7F) {
-                perfocyte.setYya(0.0F);
-                perfocyte.setZza(0.0F);
-                return;
+            // Move toward target
+            perfocyte.setDeltaMovement(perfocyte.getDeltaMovement().add(direction.scale(0.05)));
+
+            // Face movement direction
+            if (perfocyte.getDeltaMovement().lengthSqr() > 0.01) {
+                Vec3 motion = perfocyte.getDeltaMovement();
+                perfocyte.setYRot((float)(Mth.atan2(motion.x, motion.z) * Mth.RAD_TO_DEG));
+                perfocyte.yBodyRot = perfocyte.getYRot();
             }
 
-            float yRot = (float)(Mth.atan2(dz, dx) * Mth.RAD_TO_DEG) - 90.0F;
-            perfocyte.setYRot(this.rotlerp(perfocyte.getYRot(), yRot, 90.0F));
-
-            float speed = (float)(this.speedModifier * 0.5d * speedMultiplier);
-
-            if (perfocyte.isInWater()) {
-                speed *= 0.02F;
+            // Check if close enough to target
+            if (perfocyte.distanceToSqr(target) < 2.0) {
+                this.operation = Operation.WAIT;
             }
-
-            perfocyte.setSpeed(speed);
-
-            double horizontalDist = Math.sqrt(dx * dx + dz * dz);
-            float xRot = (float)(-(Mth.atan2(dy, horizontalDist) * Mth.RAD_TO_DEG));
-            perfocyte.setXRot(this.rotlerp(perfocyte.getXRot(), xRot, 5.0F));
-
-            perfocyte.setYya(dy > 0.0 ? speed : -speed);
-        } else {
-            perfocyte.setYya(0.0F);
-            perfocyte.setZza(0.0F);
         }
     }
 }

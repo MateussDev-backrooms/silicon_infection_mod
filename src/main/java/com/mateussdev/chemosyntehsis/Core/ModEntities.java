@@ -128,7 +128,7 @@ public class ModEntities {
     //Tier 2
     public static final RegistryObject<EntityType<HybridPerfocyte>> PERFOCYTE =
             ENTITIES.register("hybt1_perfocyte", () -> EntityType.Builder.of(HybridPerfocyte::new, MobCategory.MONSTER)
-                    .sized(2.2f, 1.2f)
+                    .sized(1.5f, 1.2f)
                     .build("hybt1_perfocyte"));
 
     //Tier 3
