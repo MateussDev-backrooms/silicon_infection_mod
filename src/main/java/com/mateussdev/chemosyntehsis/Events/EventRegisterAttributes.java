@@ -7,6 +7,7 @@ import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpa
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte;
@@ -39,6 +40,7 @@ public class EventRegisterAttributes {
         event.put(ModEntities.TETH_ZOMBIE.get(), TethZombie.createAttributes().build());
         event.put(ModEntities.TETH_SKELETON.get(), TethSkeleton.createAttributes().build());
         event.put(ModEntities.TETH_COW.get(), TethCow.createAttributes().build());
+        event.put(ModEntities.TETH_ENDERMAN.get(), TethEnderman.createAttributes().build());
 
         //Metabolized mobs
         event.put(ModEntities.MET_ZOMBIE.get(), MetZombie.createAttributes().build());

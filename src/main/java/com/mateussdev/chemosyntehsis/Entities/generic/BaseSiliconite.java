@@ -47,6 +47,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     //##### ANIMATION STUFF #####//
 
     private final AnimatableInstanceCache anim_cache = GeckoLibUtil.createInstanceCache(this);
+
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return anim_cache;
@@ -60,7 +61,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         {
             return event.setAndContinue(
                     // If moving, play the walking animation
-                    event.isMoving() ? RawAnimation.begin().thenLoop("walk"):
+                    event.isMoving() ? RawAnimation.begin().thenLoop("walk") :
                             // If not moving, play the idle animation
                             RawAnimation.begin().thenLoop("idle"));
         }));
@@ -78,7 +79,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         //Default settings override when new behavior is required
 
         // - GOALS
-        if(!isBrave()) {
+        if (!isBrave()) {
             //Attack targets (condition customizeable)
             this.goalSelector.addGoal(1, new ConditionalAttackGoal(this, 1.0f, true, this::shouldAttackTarget));
             //Flee players (condition customizeable)
@@ -96,7 +97,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
 
         // - TARGETS
-        if(shouldAlertOthersOnHurt()) {
+        if (shouldAlertOthersOnHurt()) {
             //get aggressive and alert
             this.targetSelector.addGoal(1, (new HurtByNonSiliconiteGoal(this, new Class[0])).setAlertOthers(new Class[]{BaseSiliconite.class}));
         } else {
@@ -112,6 +113,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     // - Entity base behavior
 
     private int t = 0;
+
     @Override
     public void baseTick() {
         super.baseTick();
@@ -129,7 +131,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
             }
             //increase metabolism every tick by a lot if on fire
             if (isOnFire()) {
-                entityData.set(METABOLISM_VALUE, entityData.get(METABOLISM_VALUE) + getMetabolismGain() * 5);
+                entityData.set(METABOLISM_VALUE, entityData.get(METABOLISM_VALUE) + getMetabolismGain() * 2);
 
             }
 
@@ -149,22 +151,20 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     //Custom hurt mechanics
 
     private int brokenOffBulbs = 0;
+
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
         //only get dealt 10% of fire damage
         float damageMultiplier = 1f;
-        if(pSource.is(DamageTypeTags.IS_FIRE) || pSource.is(DamageTypeTags.BURNS_ARMOR_STANDS) || pSource.is(DamageTypeTags.IGNITES_ARMOR_STANDS)) {
+        if (pSource.is(DamageTypeTags.IS_FIRE) || pSource.is(DamageTypeTags.BURNS_ARMOR_STANDS) || pSource.is(DamageTypeTags.IGNITES_ARMOR_STANDS)) {
             damageMultiplier = 0.1F;
         }
 
-        if(level () instanceof ServerLevel slvl ) {
-
+        if (level() instanceof ServerLevel slvl) {
             //Break off bulb
-            if(slvl.random.nextFloat() < getBulbBreakoffChance()) {
-
-
-                if(entityData.get(BROKEN_OFF_BULBS_VALUE) < getBulbCount()) {
-                    BulbProjectileEntity shard = new BulbProjectileEntity(level(),this);
+            if (slvl.random.nextFloat() < getBulbBreakoffChance()) {
+                if (entityData.get(BROKEN_OFF_BULBS_VALUE) < getBulbCount()) {
+                    BulbProjectileEntity shard = new BulbProjectileEntity(level(), this);
                     shard.shoot(
                             level().random.triangle(0, 1),
                             level().random.triangle(0.2, 1),
@@ -176,18 +176,21 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
                     entityData.set(BROKEN_OFF_BULBS_VALUE, entityData.get(BROKEN_OFF_BULBS_VALUE) + 1);
                 }
             }
+
+            //Blood effect
+            StaticSiliconiteMethods.spawnBloodHit(slvl, this.position());
         }
 
-        return super.hurt(pSource, pAmount*damageMultiplier);
+        return super.hurt(pSource, pAmount * damageMultiplier);
     }
 
     //On hurt others
     @Override
     public boolean doHurtTarget(Entity pEntity) {
         boolean success = super.doHurtTarget(pEntity);
-        if(success) {
+        if (success) {
             //Check if attacking entity
-            if(pEntity instanceof LivingEntity le) {
+            if (pEntity instanceof LivingEntity le) {
                 //Add energy on hurting target
                 //TODO add Tethered effect when hurt
             }
@@ -199,13 +202,13 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     public void awardKillScore(Entity killed, int score, DamageSource source) {
         super.awardKillScore(killed, score, source);
 
-        if(level().random.nextFloat() < getTetherChance()) {
+        if (level().random.nextFloat() < getTetherChance()) {
             if (!this.level().isClientSide && killed instanceof LivingEntity victim && source.getEntity() == this) {
-                    StaticSiliconiteMethods.tetherMob((ServerLevel) level(), victim);
+                StaticSiliconiteMethods.tetherMob((ServerLevel) level(), victim);
 
-                    if(destructiveTether()) {
-                        this.remove(RemovalReason.DISCARDED);
-                    }
+                if (destructiveTether()) {
+                    this.remove(RemovalReason.DISCARDED);
+                }
             }
         }
     }
@@ -224,18 +227,22 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     //should alert nearby siliconites when hurt
 
     //AI
-    protected boolean shouldAlertOthersOnHurt () { return false; }
+    protected boolean shouldAlertOthersOnHurt() {
+        return false;
+    }
 
     //Determines if the entity will run away for its life when at low health. Cannot and should not change in gameplay
-    protected boolean isBrave () { return false; }
+    protected boolean isBrave() {
+        return false;
+    }
 
-    protected boolean shouldAttackTarget ( boolean _idk){
+    protected boolean shouldAttackTarget(boolean _idk) {
         //Default behavior is to stop when health is below 30%
         //ignore the boolean arg it's always true. I just didn't figure predicates properly yet
         return getHealth() / getMaxHealth() > 0.4f;
     }
 
-    protected boolean shouldFlee ( Object _idk){
+    protected boolean shouldFlee(Object _idk) {
         //Default behavior is to flee when health is below 30% as well as requiring the target to not be null
         return getHealth() / getMaxHealth() < 0.4f && getTarget() != null;
     }
@@ -254,24 +261,36 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     }
 
     //Defines the chance between 0 and 1 for this siliconite to tether a mob that can be tethered
-    protected float getTetherChance() { return 1.0F; }
+    protected float getTetherChance() {
+        return 1.0F;
+    }
 
     //Defines the chance between 0 and 1 for a bulb to break off on attack
-    protected float getBulbBreakoffChance() { return 0.4F; }
+    protected float getBulbBreakoffChance() {
+        return 0.4F;
+    }
 
-    public int getBulbCount() { return 0; }
+    public int getBulbCount() {
+        return 0;
+    }
 
-    public int getBrokenOffBulbs() { return entityData.get(BROKEN_OFF_BULBS_VALUE); }
+    public int getBrokenOffBulbs() {
+        return entityData.get(BROKEN_OFF_BULBS_VALUE);
+    }
 
     public GeoBone[] getBulbsArray(GeoModel<?> model) {
-      GeoBone[] bulbs = {
+        GeoBone[] bulbs = {
 
-      };
-      return bulbs;
-    };
+        };
+        return bulbs;
+    }
+
+    ;
 
     //Defines whether the siliconite will destroy itself after tethering
-    protected boolean destructiveTether() { return true; }
+    protected boolean destructiveTether() {
+        return true;
+    }
 
     protected int evolvesAtMetabolism() {
         //Defines at what point the organism evolves
@@ -292,10 +311,10 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         //This runs when the siliconite wishes to tether a mob
         //Default functionality is to tether the mob and discard if destructiveTether is true
         //Override when necessary
-        if(level() instanceof ServerLevel slvl) {
+        if (level() instanceof ServerLevel slvl) {
             StaticSiliconiteMethods.tetherMob(slvl, target);
             //discard if destructive
-            if(destructiveTether()) {
+            if (destructiveTether()) {
                 this.discard();
             }
         }
@@ -307,21 +326,21 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
 
     //##### SAVING AND LOADING #####//
     @Override
-    public void addAdditionalSaveData (CompoundTag tag){
+    public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("metabolism_value", entityData.get(METABOLISM_VALUE));
         tag.putInt("broken_off_bulbs_value", entityData.get(BROKEN_OFF_BULBS_VALUE));
     }
 
     @Override
-    public void readAdditionalSaveData (CompoundTag tag){
+    public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         entityData.set(METABOLISM_VALUE, tag.getInt("metabolism_value"));
         entityData.set(BROKEN_OFF_BULBS_VALUE, tag.getInt("broken_off_bulbs_value"));
     }
 
     @Override
-    protected void defineSynchedData () {
+    protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(METABOLISM_VALUE, 0);
         this.entityData.define(BROKEN_OFF_BULBS_VALUE, 0);

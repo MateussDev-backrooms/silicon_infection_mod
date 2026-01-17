@@ -1,6 +1,7 @@
 {
   "ambientocclusion": false,
   "render_type": "cutout",
+
   "textures": {
     "particle": "silicon_mod:block/tendrils",
     "tendrils": "silicon_mod:block/tendrils"

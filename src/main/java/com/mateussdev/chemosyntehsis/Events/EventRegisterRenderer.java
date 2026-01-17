@@ -11,6 +11,7 @@ import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerf
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte_Renderer;
@@ -46,6 +47,7 @@ public class EventRegisterRenderer {
         EntityRenderers.register(ModEntities.TETH_ZOMBIE.get(), TethZombie_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_SKELETON.get(), TethSkeleton_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_COW.get(), TethCow_Renderer::new);
+        EntityRenderers.register(ModEntities.TETH_ENDERMAN.get(), TethEnderman_Renderer::new);
 
         //Metabolized mobs
         EntityRenderers.register(ModEntities.MET_ZOMBIE.get(), MetZombie_Renderer::new);

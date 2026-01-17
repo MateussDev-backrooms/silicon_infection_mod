@@ -22,6 +22,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
     protected void registerStatesAndModels() {
         blockWithItem(ModBlocks.SILICATE_BLOCK);
         blockWithItem(ModBlocks.MUSHY_SILICON_BLOCK);
+        blockWithItem(ModBlocks.AMALGAMATED_FLESH_BLOCK);
 
 
         simpleBlock(ModBlocks.BIOMUSH.get(), new ModelFile.UncheckedModelFile(modLoc("block/biomush")));

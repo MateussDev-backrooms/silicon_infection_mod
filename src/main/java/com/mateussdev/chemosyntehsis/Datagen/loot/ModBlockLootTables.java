@@ -21,6 +21,8 @@ public class ModBlockLootTables extends BlockLootSubProvider {
                 block -> createOreDrop(ModBlocks.SILICATE_BLOCK.get(), ModItems.SILICON.get()));
         this.add(ModBlocks.MUSHY_SILICON_BLOCK.get(),
                 block -> createOreDrop(ModBlocks.MUSHY_SILICON_BLOCK.get(), ModItems.SILICON.get()));
+        this.add(ModBlocks.AMALGAMATED_FLESH_BLOCK.get(),
+                block -> createOreDrop(ModBlocks.AMALGAMATED_FLESH_BLOCK.get(), Items.ROTTEN_FLESH));
 
         this.dropSelf(ModBlocks.VEIN_BLOCK.get());
         this.dropWhenSilkTouch(ModBlocks.BIOMUSH.get());

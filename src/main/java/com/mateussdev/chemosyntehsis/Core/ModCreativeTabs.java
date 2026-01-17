@@ -31,6 +31,7 @@ public class ModCreativeTabs {
                         pOutput.accept(ModItems.SPAWN_TETH_ZOMBIE.get());
                         pOutput.accept(ModItems.SPAWN_TETH_SKELETON.get());
                         pOutput.accept(ModItems.SPAWN_TETH_COW.get());
+                        pOutput.accept(ModItems.SPAWN_TETH_ENDERMAN.get());
 
                         pOutput.accept(ModItems.SPAWN_MET_ZOMBIE.get());
                         pOutput.accept(ModItems.SPAWN_MET_COW.get());
@@ -52,6 +53,7 @@ public class ModCreativeTabs {
                         //Blocks
                         pOutput.accept(ModBlocks.SILICATE_BLOCK.get());
                         pOutput.accept(ModBlocks.MUSHY_SILICON_BLOCK.get());
+                        pOutput.accept(ModBlocks.AMALGAMATED_FLESH_BLOCK.get());
                         pOutput.accept(ModBlocks.VEIN_BLOCK.get());
                         pOutput.accept(ModBlocks.TENDRILS.get());
                         pOutput.accept(ModBlocks.SULFURED_TENDRILS.get());

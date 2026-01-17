@@ -7,12 +7,14 @@ import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -87,6 +89,10 @@ public class StaticSiliconiteMethods {
         vegetatedRadiusMap.put(ModEntities.VEG_BULB.get(), 3);
         vegetatedRadiusMap.put(ModEntities.VEG_ROLLER.get(), 5);
         vegetatedRadiusMap.put(ModEntities.VASC_ROLLER.get(), 8);
+    }
+
+    public static void debugLog(String text) {
+        Minecraft.getInstance().player.sendSystemMessage(Component.literal(text));
     }
 
     public static void tetherMob(ServerLevel serverLevel, LivingEntity tetherTarget) {

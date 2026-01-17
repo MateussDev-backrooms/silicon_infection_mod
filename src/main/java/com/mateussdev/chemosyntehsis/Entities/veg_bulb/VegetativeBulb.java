@@ -17,8 +17,10 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods.spawnBloodBurst;
@@ -46,7 +48,7 @@ public class VegetativeBulb extends BaseOrganelle {
     public boolean shouldSpawnTendrils() {
         return true;
     }
-
+    List<VegetativeBulb> nearby = new ArrayList<>();
     @Override
     public void tick() {
         super.tick();
@@ -57,9 +59,9 @@ public class VegetativeBulb extends BaseOrganelle {
 
         if(tickCount % 180 == 0) {
             if (!level().isClientSide && !this.mustMerge) {
-                List<VegetativeBulb> nearby = level().getEntitiesOfClass(
+                nearby = level().getEntitiesOfClass(
                         VegetativeBulb.class,
-                        this.getBoundingBox().inflate(1D),
+                        new AABB(blockPosition()).inflate(1D),
                         c -> c != this && !c.mustMerge
                 );
 

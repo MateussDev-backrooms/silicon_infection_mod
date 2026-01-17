@@ -326,7 +326,7 @@ public class HybridPerfocyte extends BaseHybrid {
     private void damageBlock(BlockPos pos, BlockState state, ServerLevel slvl) {
 
         //Figure out how much damage to give to the block
-        float damage = BLOCK_DAMAGE;
+        float damage = BLOCK_DAMAGE / state.getDestroySpeed(slvl, pos);
 
         //Check if we already interacted with the block
         if(trackedDestructionBlocks.containsKey(pos)) {

@@ -50,6 +50,9 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_TETH_COW =
             ITEMS.register("spawn_teth_cow",
                     () -> new ForgeSpawnEggItem(ModEntities.TETH_COW, 0x967445, 0x7c4b45, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_TETH_ENDERMAN =
+            ITEMS.register("spawn_teth_enderman",
+                    () -> new ForgeSpawnEggItem(ModEntities.TETH_ENDERMAN, 0x967445, 0x7c4b45, new Item.Properties()));
 
     //Metabolized mobs
     public static final RegistryObject<Item> SPAWN_MET_ZOMBIE =

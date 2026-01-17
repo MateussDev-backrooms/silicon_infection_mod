@@ -34,6 +34,9 @@ public class TendrilBlock extends MultifaceBlock {
         super(pProperties
                 .speedFactor(0.7f)
                 .strength(0.2f)
+                .instabreak()
+                .jumpFactor(0.3f)
+                .noCollission()
         );
         spreader = new MultifaceSpreader(this);
     }
@@ -56,6 +59,7 @@ public class TendrilBlock extends MultifaceBlock {
         if(potentialSupporters.isEmpty()) {
             sulfurize(pPos, pState, pLevel);
         } else {
+
             //Check the candidates for distance
             for(BaseOrganelle organelle : potentialSupporters) {
                 //check distance square
@@ -63,6 +67,7 @@ public class TendrilBlock extends MultifaceBlock {
                     shouldSulfurize = false;
                 }
             }
+
             if(shouldSulfurize) sulfurize(pPos, pState, pLevel);
         }
 
@@ -79,7 +84,7 @@ public class TendrilBlock extends MultifaceBlock {
         ///TODO MAKE A BETTER SYSTEM
 
         //Have a chance to spawn a bulb randomly
-        if(pRandom.nextFloat() < 0.2) {
+        if(pRandom.nextFloat() < 0.1) {
             boolean canSpawnBulb = true;
             for(BaseOrganelle organelle : potentialSupporters) {
                 if(organelle.blockPosition().distSqr(pPos) < 1) {

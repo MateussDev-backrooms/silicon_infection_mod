@@ -8,8 +8,10 @@ import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassContainer;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -110,8 +112,8 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
         this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
 
         //Seek out
-        this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
+        this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, Player.class, false));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, false, false, StaticSiliconiteMethods::shouldAttackMob));
     }
 
     @Override
@@ -154,7 +156,7 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
                     }
                 }
             } else {
-                harpoon_cooldown--;
+                --harpoon_cooldown;
             }
 
             //Validate target

@@ -9,6 +9,8 @@ import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerf
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman_Model;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
@@ -70,6 +72,10 @@ public class ModEntities {
             ENTITIES.register("teth_cow", () -> EntityType.Builder.of(TethCow::new, MobCategory.MONSTER)
                     .sized(0.7f, 1.2f)
                     .build("teth_cow"));
+    public static final RegistryObject<EntityType<TethEnderman>> TETH_ENDERMAN =
+            ENTITIES.register("teth_enderman", () -> EntityType.Builder.of(TethEnderman::new, MobCategory.MONSTER)
+                    .sized(0.7f, 3f)
+                    .build("teth_enderman"));
 
     //Metabolized mobs
     public static final RegistryObject<EntityType<MetZombie>> MET_ZOMBIE =

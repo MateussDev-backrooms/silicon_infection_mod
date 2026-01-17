@@ -30,6 +30,9 @@ public class ModBlocks {
     public static final RegistryObject<Block> MUSHY_SILICON_BLOCK = registerBlock("mushy_silicate_block",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)
                     .requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> AMALGAMATED_FLESH_BLOCK = registerBlock("amalgamated_flesh_block",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)
+                    .requiresCorrectToolForDrops()));
 
     public static final RegistryObject<VeinBlock> VEIN_BLOCK = registerBlock("vein_block",
             () -> new VeinBlock(BlockBehaviour.Properties.copy(Blocks.MUD)

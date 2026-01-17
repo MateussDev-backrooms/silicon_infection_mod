@@ -27,6 +27,9 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fluids.FluidType;
 import org.joml.Vector3f;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,21 +64,15 @@ public abstract class BaseOrganelle extends BaseSiliconite {
             Direction.WEST,  new Vec3(0, 0, -90)
     );
     protected Direction chosenDir = Direction.UP;
-    protected Vec3[] dirs = {
-            new Vec3(0, 1, 0), new Vec3(0, -1, 0),
-            new Vec3(1, 0, 0), new Vec3(-1, 0, 0),
-            new Vec3(0, 0, 1), new Vec3(0, 0, -1),
-    };
-
-
 
     @Override
     public void tick() {
         super.tick();
         this.yBodyRot = this.yBodyRotO;
         if(this.level() instanceof ServerLevel slvl) {
-            if(tickCount % 20 == 0) {
 
+            if(tickCount % 20 == 0) {
+                //Check if attached
                 if(slvl.getBlockState(blockPosition().relative(chosenDir.getOpposite())).isAir()) {
                     hasSettled = false;
                     calculateAttachOrientation();
@@ -88,16 +85,15 @@ public abstract class BaseOrganelle extends BaseSiliconite {
             if(shouldSpawnTendrils()) {
                 if(tickCount % 80 == 0) {
 
-                    if(slvl.getBlockState(blockPosition()).getBlock() instanceof TendrilBlock tendrilBlock) {
-                        tendrilBlock.randomTick(slvl.getBlockState(blockPosition()), slvl, blockPosition(), random);
-                    } else {
-                        //Prevent tendrils spawning in the air or breaking blocks
+                    if(!(slvl.getBlockState(blockPosition()).getBlock() instanceof TendrilBlock)) {
                         BlockState attachedBS = slvl.getBlockState(blockPosition().relative(chosenDir.getOpposite()));
+
+                        //Prevent tendrils spawning in the air or breaking blocks
                         if(!attachedBS.isAir()) {
                             BlockState currentBS = slvl.getBlockState(blockPosition());
                             //if block is not too hard - break it
                             float hardness = currentBS.getDestroySpeed(slvl, blockPosition());
-                            if(hardness > 0 && hardness < 15f) slvl.destroyBlock(blockPosition(), false);
+                            if (hardness > 0 && hardness < 15f) slvl.destroyBlock(blockPosition(), false);
 
                             BlockState tendrils = ModBlocks.TENDRILS.get().defaultBlockState();
 
@@ -108,8 +104,6 @@ public abstract class BaseOrganelle extends BaseSiliconite {
                             }
 
                             slvl.setBlock(this.blockPosition(), tendrils, 3);
-                        } else {
-                            //Don't spawn in the air
                         }
                     }
                 }
@@ -127,10 +121,6 @@ public abstract class BaseOrganelle extends BaseSiliconite {
             if(this.level() instanceof ServerLevel slvl) {
                 this.setYBodyRot(0);
                 this.yBodyRotO = 0;
-                double dist = 1.2d;
-                Vec3 closestNormal = null;
-                double shortestDist = Double.MAX_VALUE;
-                Vec3 closestPosition = null;
 
 
                 //Check adjacent blocks
@@ -142,45 +132,9 @@ public abstract class BaseOrganelle extends BaseSiliconite {
                         return;
                     }
                 }
-
-                //Raycast
-                Vec3 origin = this.position();
-                for(Vec3 dir : dirs) {
-                    BlockHitResult hitResult = slvl.clip(new ClipContext(origin, dir.scale(dist).add(origin), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
-
-                    if(hitResult.getType() == HitResult.Type.BLOCK) {
-                        double raycastDist = origin.distanceTo(hitResult.getLocation());
-
-                        if(raycastDist < shortestDist) {
-                            shortestDist = raycastDist;
-                            closestNormal = new Vec3(
-                                    hitResult.getDirection().getNormal().getX(),
-                                    hitResult.getDirection().getNormal().getY(),
-                                    hitResult.getDirection().getNormal().getZ()
-                            );
-                            closestPosition = hitResult.getLocation();
-                            chosenDir = Direction.getNearest(closestNormal.x, closestNormal.y, closestNormal.z);
-                            tendrilPos = blockPosition().relative(chosenDir.getOpposite());
-                        }
-                    }
-                }
-
-                if(closestNormal != null) {
-                    setAttachDir(chosenDir);
-                    this.moveTo(closestPosition);
-                    hasSettled = true;
-                    recalculateHitbox();
-                    return;
-                }
                 failedAttachment = true;
             }
         }
-    }
-
-    private void recalculateHitbox() {
-        this.reapplyPosition();
-        this.refreshDimensions();
-        updatedHitbox = true;
     }
 
     @Override
@@ -357,5 +311,13 @@ public abstract class BaseOrganelle extends BaseSiliconite {
         Direction d = Direction.from3DDataValue(tag.getInt("alignment_dir"));
         this.chosenDir = d;
         this.entityData.set(ALIGNMENT, d);
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "movement", 5, event ->
+        {
+            return event.setAndContinue(RawAnimation.begin().thenLoop("idle"));
+        }));
     }
 }
