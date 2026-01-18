@@ -56,7 +56,7 @@ public class VegetativeRoller extends BaseOrganelle {
         if(this.level() instanceof ServerLevel slvl) {
             List<VascularRoller> vasculars = slvl.getEntitiesOfClass(
                     VascularRoller.class,
-                    this.getBoundingBox().inflate(3),
+                    this.getBoundingBox().inflate(5),
                     c -> true
             );
             if(vasculars.isEmpty() && random.nextFloat() < 0.7f) {

@@ -35,7 +35,6 @@ public class TendrilBlock extends MultifaceBlock {
                 .speedFactor(0.7f)
                 .strength(0.2f)
                 .instabreak()
-                .jumpFactor(0.3f)
                 .noCollission()
         );
         spreader = new MultifaceSpreader(this);
@@ -87,7 +86,7 @@ public class TendrilBlock extends MultifaceBlock {
         if(pRandom.nextFloat() < 0.1) {
             boolean canSpawnBulb = true;
             for(BaseOrganelle organelle : potentialSupporters) {
-                if(organelle.blockPosition().distSqr(pPos) < 1) {
+                if(organelle.blockPosition().distSqr(pPos) < 2) {
                     canSpawnBulb = false;
                     break;
                 }

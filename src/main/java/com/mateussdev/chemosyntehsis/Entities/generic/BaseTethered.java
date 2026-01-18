@@ -46,7 +46,7 @@ public class BaseTethered extends BaseSiliconite {
         {
             //death anim
             if (this.isDeadOrDying()) {
-                return event.setAndContinue(RawAnimation.begin().then("death", Animation.LoopType.PLAY_ONCE));
+                return event.setAndContinue(RawAnimation.begin().then("death", Animation.LoopType.HOLD_ON_LAST_FRAME));
             }
 
             return event.setAndContinue(
@@ -186,12 +186,14 @@ public class BaseTethered extends BaseSiliconite {
 
         boolean hurtResult = super.hurt(pSource, pAmount);
 
-        triggerHitReaction(pSource, pAmount);
-        wobbleBoneName = wobblyBones().get(random.nextInt(wobblyBones().size()));
+        if(hurtResult) {
+            triggerHitReaction(pSource, pAmount);
+            wobbleBoneName = wobblyBones().get(random.nextInt(wobblyBones().size()));
 
-        if (level() instanceof ServerLevel slvl) {
-            slvl.playSound(null, blockPosition(), SoundEvents.SLIME_SQUISH_SMALL, SoundSource.HOSTILE, 1f, 0.8f);
-            StaticSiliconiteMethods.spawnBloodHit(slvl, position());
+            if (level() instanceof ServerLevel slvl) {
+                slvl.playSound(null, blockPosition(), SoundEvents.SLIME_SQUISH_SMALL, SoundSource.HOSTILE, 1f, 0.8f);
+                StaticSiliconiteMethods.spawnBloodHit(slvl, position());
+            }
         }
 
         return hurtResult;

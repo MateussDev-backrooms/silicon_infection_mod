@@ -154,34 +154,39 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
+
         //only get dealt 10% of fire damage
         float damageMultiplier = 1f;
         if (pSource.is(DamageTypeTags.IS_FIRE) || pSource.is(DamageTypeTags.BURNS_ARMOR_STANDS) || pSource.is(DamageTypeTags.IGNITES_ARMOR_STANDS)) {
             damageMultiplier = 0.1F;
         }
 
-        if (level() instanceof ServerLevel slvl) {
-            //Break off bulb
-            if (slvl.random.nextFloat() < getBulbBreakoffChance()) {
-                if (entityData.get(BROKEN_OFF_BULBS_VALUE) < getBulbCount()) {
-                    BulbProjectileEntity shard = new BulbProjectileEntity(level(), this);
-                    shard.shoot(
-                            level().random.triangle(0, 1),
-                            level().random.triangle(0.2, 1),
-                            level().random.triangle(0, 1),
-                            0.4f,
-                            10.0f
-                    );
-                    level().addFreshEntity(shard);
-                    entityData.set(BROKEN_OFF_BULBS_VALUE, entityData.get(BROKEN_OFF_BULBS_VALUE) + 1);
-                }
-            }
+        boolean wasHurt = super.hurt(pSource, pAmount * damageMultiplier);
 
-            //Blood effect
-            StaticSiliconiteMethods.spawnBloodHit(slvl, this.position());
+        if(wasHurt) {
+            if (level() instanceof ServerLevel slvl) {
+                //Break off bulb
+                if (slvl.random.nextFloat() < getBulbBreakoffChance()) {
+                    if (entityData.get(BROKEN_OFF_BULBS_VALUE) < getBulbCount()) {
+                        BulbProjectileEntity shard = new BulbProjectileEntity(level(), this);
+                        shard.shoot(
+                                level().random.triangle(0, 1),
+                                level().random.triangle(0.2, 1),
+                                level().random.triangle(0, 1),
+                                0.4f,
+                                10.0f
+                        );
+                        level().addFreshEntity(shard);
+                        entityData.set(BROKEN_OFF_BULBS_VALUE, entityData.get(BROKEN_OFF_BULBS_VALUE) + 1);
+                    }
+                }
+
+                //Blood effect
+                StaticSiliconiteMethods.spawnBloodHit(slvl, this.position());
+            }
         }
 
-        return super.hurt(pSource, pAmount * damageMultiplier);
+        return wasHurt;
     }
 
     //On hurt others

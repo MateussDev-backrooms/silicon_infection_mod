@@ -3,6 +3,7 @@ package com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import net.minecraft.resources.ResourceLocation;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 
@@ -39,5 +40,8 @@ public class TethEnderman_Model extends GeoModel<TethEnderman> {
         StaticSiliconiteMethods.updateHeadRotationUpright(animatable, this, "head", (float) 0f, 0f);
 
         StaticSiliconiteMethods.updateBoneWobble(animatable, this, animationState.getPartialTick());
+
+        GeoBone root = this.getBone("body").get();
+        root.setPosX(animatable.getRandom().nextFloat());
     }
 }

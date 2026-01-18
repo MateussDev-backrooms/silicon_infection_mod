@@ -38,28 +38,18 @@ public class BaseAmalgamation extends BaseOrganelle{
                     BlockPos p1, p2;
 
                     if (attachDir.getAxis() == Direction.Axis.Y) {
-                        // Standing on floor or hanging from ceiling
-                        // Vary X and Z, Y is fixed
                         p1 = centerOrigin.offset(-1, 0, -1);
                         p2 = centerOrigin.offset(1, 0, 1);
                     } else if (attachDir == Direction.NORTH || attachDir == Direction.SOUTH) {
-                        // On North or South wall
-                        // Vary X and Y, Z is fixed
                         p1 = centerOrigin.offset(-1, -1, 0);
                         p2 = centerOrigin.offset(1, 1, 0);
                     } else {
-                        // On East or West wall
-                        // Vary Z and Y, X is fixed
                         p1 = centerOrigin.offset(0, -1, -1);
                         p2 = centerOrigin.offset(0, 1, 1);
                     }
 
                     int count = 0;
-                    // Iterate through the platform area
                     for (BlockPos pos : BlockPos.betweenClosed(p1, p2)) {
-                        // Skip the center if it's where the mob is (optional, depending on hitbox)
-                        // Usually we want the platform AROUND the mob, not UNDER it blocking movement
-                        if (pos.equals(centerOrigin)) continue;
 
                         if (count == blocksPlaced) {
                             slvl.setBlock(pos, ModBlocks.AMALGAMATED_FLESH_BLOCK.get().defaultBlockState(), 3);

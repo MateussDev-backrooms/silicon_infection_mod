@@ -65,6 +65,7 @@ public class StaticSiliconiteMethods {
         tetherHashMap.put(EntityType.COW, ModEntities.TETH_COW.get());
         tetherHashMap.put(EntityType.SKELETON, ModEntities.TETH_SKELETON.get());
         tetherHashMap.put(EntityType.STRAY, ModEntities.TETH_SKELETON.get());
+        tetherHashMap.put(EntityType.ENDERMAN, ModEntities.TETH_ENDERMAN.get());
 
         //Define all block infection pairs
 

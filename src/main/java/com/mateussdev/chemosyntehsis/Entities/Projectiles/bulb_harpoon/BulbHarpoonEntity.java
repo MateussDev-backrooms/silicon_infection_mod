@@ -4,6 +4,7 @@ import com.mateussdev.chemosyntehsis.Blocks.FleshPileBlock;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.AbstractHarpoonProjectile;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassContainer;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
@@ -124,6 +125,6 @@ public class BulbHarpoonEntity extends AbstractHarpoonProjectile implements GeoA
 
     @Override
     protected boolean canHitEntity(Entity p_36743_) {
-        return super.canHitEntity(p_36743_) && !(p_36743_ instanceof SiliconRoller) && !(p_36743_ instanceof ChunkOfFlesh);
+        return super.canHitEntity(p_36743_) && !(p_36743_ instanceof ChunkOfFlesh) && !(p_36743_ instanceof BaseOrganelle);
     }
 }

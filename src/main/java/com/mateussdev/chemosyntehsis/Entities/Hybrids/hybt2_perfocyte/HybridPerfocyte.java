@@ -35,14 +35,13 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.lwjgl.system.linux.Stat;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HybridPerfocyte extends BaseHybrid {
     public HybridPerfocyte(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -169,39 +168,24 @@ public class HybridPerfocyte extends BaseHybrid {
                 lookAt(getTarget(), 30, 30);
             }
 
-            double $$0 = this.position().add(getDeltaMovement()).x - this.getX();
-            double $$1 = this.position().add(getDeltaMovement()).y - this.getY();
-            double $$2 = this.position().add(getDeltaMovement()).z - this.getZ();
-            double $$3 = Math.sqrt($$0 * $$0 + $$2 * $$2);
-            float $$10 = (float)(-(Mth.atan2(-$$1, $$3) * 57.2957763671875));
-            this.setXRot($$10);
+//            double $$0 = this.position().add(getDeltaMovement()).x - this.getX();
+//            double $$1 = this.position().add(getDeltaMovement()).y - this.getY();
+//            double $$2 = this.position().add(getDeltaMovement()).z - this.getZ();
+//            double $$3 = Math.sqrt($$0 * $$0 + $$2 * $$2);
+//            float $$10 = (float)(-(Mth.atan2(-$$1, $$3) * 57.2957763671875));
+//            this.setXRot($$10);
 
             //Block destruction tracking
-            for(BlockPos pos : trackedDestructionBlocks.keySet()) {
-                BlockDamageTracker trackedBlock = trackedDestructionBlocks.get(pos);
-
-                if(trackedBlock != null) {
-                    trackedBlock.update();
-                    if(trackedBlock.isGarbage) addCleanerJob(pos);
-                } else {
-                    addCleanerJob(pos);
-                }
-            }
-
-            //garbage cleaner
-            if(tickCount % 10 == 0) {
-                for(BlockPos pos : cleanerJobs) {
-                    trackedDestructionBlocks.remove(pos);
-                }
-                cleanerJobs.clear();
-            }
+            updateTrackedBlocks();
 
             //Dash logic
             if(isDashing) {
                 dashDuration++;
 
-                blockDestructionCheck(slvl);
-                areaDamageEntities(slvl);
+                if(tickCount % 2 == 0) {
+                    blockDestructionCheck(slvl);
+                    areaDamageEntities(slvl);
+                }
 
                 // Apply air resistance
                 Vec3 currentMotion = this.getDeltaMovement();
@@ -235,6 +219,27 @@ public class HybridPerfocyte extends BaseHybrid {
         }
     }
 
+    private void updateTrackedBlocks() {
+        // Only update every 5 ticks
+        if (tickCount % 5 != 0) return;
+
+        Iterator<Map.Entry<BlockPos, BlockDamageTracker>> iterator =
+                trackedDestructionBlocks.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry<BlockPos, BlockDamageTracker> entry = iterator.next();
+            BlockDamageTracker tracker = entry.getValue();
+
+            tracker.update();
+//            StaticSiliconiteMethods.debugLog(trackedDestructionBlocks.size()+" - tracked destruction of blocks");
+
+            if (tracker.isGarbage) {
+                iterator.remove(); // Remove directly
+                // Clean up any remaining particles or effects
+            }
+        }
+    }
+
     @Override
     public void aiStep() {
         super.aiStep();
@@ -257,11 +262,13 @@ public class HybridPerfocyte extends BaseHybrid {
         Vec3 dashVelocity = dashDelta.normalize().scale(INITIAL_DASH_SPEED);
 
         setDeltaMovement(dashVelocity);
+        this.getAnimatableInstanceCache().getManagerForId(this.getId()).getAnimationControllers().get("dash_controller").stop();
+        triggerAnim("dash_controller", "dash");
 
         playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1.0f, 0.3f);
         playSound(SoundEvents.BAT_TAKEOFF, 0.8f, 0.5f);
 
-        dashCooldown = Math.max(10, 50 - (int)(angerLevel * 10));
+        dashCooldown = Math.max(10, 50 - (int)(angerLevel * 5));
     }
 
     public void endDash() {
@@ -278,11 +285,12 @@ public class HybridPerfocyte extends BaseHybrid {
 
         //Single hit logic
 //        if(!slvl.getBlockStatesIfLoaded(destructionHitbox).toList().isEmpty())
-
+        int amount_checked = 0;
         for(BlockPos pos : BlockPos.betweenClosed(
                 BlockPos.containing(destructionHitbox.minX - 0.5, destructionHitbox.minY - 0.5, destructionHitbox.minZ - 0.5),
                 BlockPos.containing(destructionHitbox.maxX + 0.5, destructionHitbox.maxY + 0.5, destructionHitbox.maxZ + 0.5)
         )) {
+            amount_checked++;
             //TEMP - destroy every block in the hitbox
             BlockState state = slvl.getBlockState(pos);
 
@@ -300,11 +308,13 @@ public class HybridPerfocyte extends BaseHybrid {
             hasCollided = true;
 
         }
-            //Calculate normal vector
-            BlockHitResult raycast = slvl.clip(new ClipContext(this.position(), this.position().add(getDeltaMovement()).scale(10f), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
 
-            Vec3i normal = raycast.getDirection().getNormal();
-            collisionNormal = new Vec3(normal.getX(), normal.getY(), normal.getZ());
+        StaticSiliconiteMethods.debugLog(amount_checked+" - amount of blocks iterated to see for collisions");
+        //Calculate normal vector
+        BlockHitResult raycast = slvl.clip(new ClipContext(this.position(), this.position().add(getDeltaMovement()).scale(10f), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+
+        Vec3i normal = raycast.getDirection().getNormal();
+        collisionNormal = new Vec3(normal.getX(), normal.getY(), normal.getZ());
 
         if(hasCollided) {
             if(raycast.getType() == HitResult.Type.MISS) collisionNormal = new Vec3(0, 1, 0);
@@ -458,6 +468,7 @@ public class HybridPerfocyte extends BaseHybrid {
         {
             return event.setAndContinue(RawAnimation.begin().thenLoop("idle"));
         }));
+        controllers.add(new AnimationController<>(this, "dash_controller", 5, event -> PlayState.STOP).triggerableAnim("dash", RawAnimation.begin().thenPlay("dash")).setAnimationSpeed(1.7f));
     }
 
     @Override

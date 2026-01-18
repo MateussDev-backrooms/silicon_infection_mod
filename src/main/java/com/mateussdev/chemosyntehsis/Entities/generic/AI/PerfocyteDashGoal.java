@@ -25,6 +25,7 @@ public class PerfocyteDashGoal extends Goal {
     public boolean canUse() {
         LivingEntity target = perfocyte.getTarget();
         if (target == null || !target.isAlive()) return false;
+        if (perfocyte.isDashing()) return false;
 
         // Check if we should dash (not on cooldown, and target is reasonably close)
         return perfocyte.getDashCooldown() <= 0;
@@ -32,22 +33,12 @@ public class PerfocyteDashGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return true;
+        return perfocyte.isDashing();
     }
 
     @Override
     public void start() {
         perfocyte.getNavigation().stop();
-    }
-
-
-    @Override
-    public boolean requiresUpdateEveryTick() {
-        return true;
-    }
-
-    @Override
-    public void tick() {
         LivingEntity target = perfocyte.getTarget();
         if (target == null || !target.isAlive()) {
             return;
@@ -56,5 +47,11 @@ public class PerfocyteDashGoal extends Goal {
         perfocyte.getLookControl().setLookAt(target);
 
         perfocyte.startDash(target);
+    }
+
+
+    @Override
+    public boolean requiresUpdateEveryTick() {
+        return false;
     }
 }

@@ -8,6 +8,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassContainer;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -114,6 +115,7 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
         //Seek out
         this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, Player.class, false));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, false, false, StaticSiliconiteMethods::shouldAttackMob));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, SiliconRoller.class, false));
     }
 
     @Override
