@@ -73,7 +73,8 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
     private List<EntityType<? extends BaseAmalgamation>> default_amalgamations = List.of(
             ModEntities.AMAL_ZOMBIE.get(),
             ModEntities.AMAL_SPAWNER.get(),
-            ModEntities.AMAL_TURRET.get()
+            ModEntities.AMAL_TURRET.get(),
+            ModEntities.AMAL_RADAR.get()
     );
 
     @Override

@@ -129,7 +129,7 @@ public class TethEnderman extends BaseTethered {
                 model.getBone("appendage8").get(),
         };
 
-        if(hasScrambled) {
+        if (hasScrambled) {
             return scrambled_bulbs;
         } else {
             scrambled_bulbs = StaticSiliconiteMethods.scrambleBones(bulbs);
@@ -160,17 +160,21 @@ public class TethEnderman extends BaseTethered {
         super.tick();
 
         // Handle cooldowns
-        if (screamCooldown > 0) { screamCooldown--; }
-        if (quickstepCooldown > 0) { quickstepCooldown--; }
+        if (screamCooldown > 0) {
+            screamCooldown--;
+        }
+        if (quickstepCooldown > 0) {
+            quickstepCooldown--;
+        }
 
-        if(stunT > 0) {
+        if (stunT > 0) {
             stunT--;
             getNavigation().stop();
         }
 
-        if(getTarget() instanceof Player) {
+        if (getTarget() instanceof Player) {
             if (!this.isSilent()) {
-                if(angerSoundT % 400 == 0) {
+                if (angerSoundT % 400 == 0) {
                     this.level().playLocalSound(this.getX(), this.getEyeY(), this.getZ(), SoundEvents.ENDERMAN_STARE, this.getSoundSource(), 2.5F, 1.0F, false);
                     angerSoundT = 0;
                 }
@@ -178,8 +182,8 @@ public class TethEnderman extends BaseTethered {
             }
         }
 
-        if(level().isClientSide) {
-            if(tickCount % 2 == 0) {
+        if (level().isClientSide) {
+            if (tickCount % 2 == 0) {
                 this.level().addParticle(ParticleTypes.PORTAL, this.getRandomX(0.5), this.getRandomY() - 0.25, this.getRandomZ(0.5), (this.random.nextDouble() - 0.5) * 2.0, -this.random.nextDouble(), (this.random.nextDouble() - 0.5) * 2.0);
             }
         }
@@ -193,11 +197,11 @@ public class TethEnderman extends BaseTethered {
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if(pSource.getDirectEntity() instanceof Projectile projectile) {
+        if (pSource.getDirectEntity() instanceof Projectile projectile) {
             Vec3 deflectDir = new Vec3(
-                    (level().random.nextFloat()*2-1)*2,
-                    level().random.nextFloat()*0.5,
-                    (level().random.nextFloat()*2-1)*2
+                    (level().random.nextFloat() * 2 - 1) * 2,
+                    level().random.nextFloat() * 0.5,
+                    (level().random.nextFloat() * 2 - 1) * 2
             );
             projectile.shoot(deflectDir.x, -deflectDir.y, deflectDir.z, 15f, 1f);
             triggerAnim("parry_controller", parryAnim ? "parry1" : "parry2");
@@ -205,7 +209,7 @@ public class TethEnderman extends BaseTethered {
             level().playSound(null, blockPosition(), SoundEvents.SHULKER_SHOOT, SoundSource.HOSTILE);
             return false;
         } else {
-            if(random.nextFloat() < 0.5f) {
+            if (random.nextFloat() < 0.5f) {
                 double angle = random.nextDouble() * Math.PI * 2;
                 double distance = 8 + random.nextDouble() * 12;
                 double x = blockPosition().getX() + Math.cos(angle) * distance;
@@ -244,64 +248,106 @@ public class TethEnderman extends BaseTethered {
         return true;
     }
 
-    public void teleport(Vec3 teleportPosition) {
-        if(level() instanceof ServerLevel slvl) {
-            this.playSound(SoundEvents.ENDERMAN_TELEPORT, 1f, 0.75f);
-            this.playSound(SoundEvents.ENDERMAN_HURT, 0.75f, 1f);
-            this.playSound(SoundEvents.SHULKER_TELEPORT, 0.75f, 1f);
-            this.playSound(SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, 0.75f, 1f);
+    public boolean teleport(Vec3 teleportPosition) {
+        if (level() instanceof ServerLevel slvl) {
+            for (int i = 0; i < 5; i++) {
+                double x = teleportPosition.x + ((random.nextFloat() * 2 - 1) * i);
+                double y = teleportPosition.y + ((random.nextFloat() * 2 - 1) * i);
+                double z = teleportPosition.z + ((random.nextFloat() * 2 - 1) * i);
+                boolean teleportSuccessful = checkTeleportPosition(teleportPosition, slvl);
+                if (teleportSuccessful) {
+                    this.playSound(SoundEvents.ENDERMAN_TELEPORT, 1f, 0.75f);
+                    this.playSound(SoundEvents.ENDERMAN_HURT, 0.75f, 1f);
+                    this.playSound(SoundEvents.SHULKER_TELEPORT, 0.75f, 1f);
+                    this.playSound(SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, 0.75f, 1f);
 
-            slvl.sendParticles(ParticleTypes.REVERSE_PORTAL, this.position().x,this.position().y, this.position().z, 15, this.getBoundingBox().getXsize(), this.getBoundingBox().getYsize(), this.getBoundingBox().getZsize(), 2f);
-            slvl.sendParticles(ParticleTypes.FLASH, this.position().x,this.getEyePosition().y, this.position().z, 1, 0, 0, 0, 2f);
-            double x = teleportPosition.x;
-            double y = teleportPosition.y;
-            double z = teleportPosition.z;
+                    slvl.sendParticles(ParticleTypes.REVERSE_PORTAL, this.position().x, this.position().y, this.position().z, 15, this.getBoundingBox().getXsize(), this.getBoundingBox().getYsize(), this.getBoundingBox().getZsize(), 2f);
+                    slvl.sendParticles(ParticleTypes.FLASH, this.position().x, this.getEyePosition().y, this.position().z, 1, 0, 0, 0, 2f);
+                    slvl.sendParticles(ParticleTypes.REVERSE_PORTAL, x, y, z, 15, this.getBoundingBox().getXsize(), this.getBoundingBox().getYsize(), this.getBoundingBox().getZsize(), 2f);
+                    this.randomTeleport(x, y, z, true);
 
-            slvl.sendParticles(ParticleTypes.REVERSE_PORTAL, x, y, z, 15, this.getBoundingBox().getXsize(), this.getBoundingBox().getYsize(), this.getBoundingBox().getZsize(), 2f);
+                    this.xo = x;
+                    this.yo = y;
+                    this.zo = z;
+                    this.level().gameEvent(GameEvent.TELEPORT, this.position(), GameEvent.Context.of(this));
 
-            boolean teleportSuccessful = checkTeleportPosition(teleportPosition, slvl);
-            if(teleportSuccessful) {
-                this.randomTeleport( x, y, z, true);
+                    slvl.broadcastEntityEvent(this, (byte) 46);
+                    List<String> tpanims = List.of("teleport1", "teleport2", "teleport3");
+                    this.getAnimatableInstanceCache()
+                            .getManagerForId(this.getId()).getAnimationControllers().get("teleport_controller").forceAnimationReset();
+                    triggerAnim("teleport_controller", tpanims.get(random.nextInt(tpanims.size())));
 
-                this.xo = x;
-                this.yo = y;
-                this.zo = z;
-                this.level().gameEvent(GameEvent.TELEPORT, this.position(), GameEvent.Context.of(this));
-
-                slvl.broadcastEntityEvent(this, (byte)46);
-                List<String> tpanims = List.of("teleport1", "teleport2", "teleport3");
-                this.getAnimatableInstanceCache()
-                        .getManagerForId(this.getId()).getAnimationControllers().get("teleport_controller").forceAnimationReset();
-                triggerAnim("teleport_controller", tpanims.get(random.nextInt(tpanims.size())));
-
-                this.playSound(SoundEvents.ENDERMAN_TELEPORT, 1f, 0.75f);
-                this.playSound(SoundEvents.ENDERMAN_HURT, 0.75f, 1f);
-                this.playSound(SoundEvents.SHULKER_TELEPORT, 0.75f, 1f);
-                this.playSound(SoundEvents.IRON_GOLEM_ATTACK, 0.75f, 1f);
-            } else {
-                this.hurt(damageSources().generic(), 3);
-                this.playSound(SoundEvents.ENDERMAN_DEATH);
-                stopAllAnimations();
-                this.triggerAnim("scream_controller", "scream");
-                stunT = 60;
-                this.getNavigation().stop();
+                    this.playSound(SoundEvents.ENDERMAN_TELEPORT, 1f, 0.75f);
+                    this.playSound(SoundEvents.ENDERMAN_HURT, 0.75f, 1f);
+                    this.playSound(SoundEvents.SHULKER_TELEPORT, 0.75f, 1f);
+                    this.playSound(SoundEvents.IRON_GOLEM_ATTACK, 0.75f, 1f);
+                    return true;
+                }
             }
+
+            //Failed the teleport
+            this.hurt(damageSources().generic(), 3);
+            this.playSound(SoundEvents.ENDERMAN_DEATH);
+            stopAllAnimations();
+            this.triggerAnim("scream_controller", "scream");
+            stunT = 60;
+            this.getNavigation().stop();
         }
+        return false;
     }
 
     protected boolean checkTeleportPosition(Vec3 position, ServerLevel slvl) {
+
+        //Find the actually checked position
+        BlockPos blockpos = BlockPos.containing(position);
         BlockState blockstate = this.level().getBlockState(BlockPos.containing(position));
+
+        double d3 = position.y;
+        Level level = this.level();
+        if (level.hasChunkAt(blockpos)) {
+            boolean flagchk = false;
+
+            //If initial position is in air
+            if (blockstate.isAir()) {
+                while (!flagchk && blockpos.getY() > level.getMinBuildHeight()) {
+                    BlockPos blockpos1 = blockpos.below();
+                    blockstate = level.getBlockState(blockpos1);
+                    if (blockstate.blocksMotion()) {
+                        flagchk = true;
+                    } else {
+                        --d3;
+                        blockpos = blockpos1;
+                    }
+                }
+            } else if (blockstate.blocksMotion()) {
+
+                //Check up block until we emerge
+                while (!flagchk && blockpos.getY() < level.getMaxBuildHeight()) {
+                    BlockPos blockpos1 = blockpos.above();
+                    blockstate = level.getBlockState(blockpos1);
+                    if (blockstate.blocksMotion()) {
+                        flagchk = true;
+                    } else {
+                        ++d3;
+                        blockpos = blockpos1;
+                    }
+                }
+            }
+        }
+
+        //check final updated position
+        blockstate = level.getBlockState(blockpos);
         boolean flag = blockstate.blocksMotion();
         boolean flag1 = blockstate.getFluidState().is(FluidTags.WATER);
-        boolean flag2 = !slvl.noCollision(getBoundingBox().move(position.subtract(this.position())));
+        boolean flag2 = !slvl.noCollision(getBoundingBox().deflate(0.2f).move(position.subtract(this.position())));
 
         return !flag && !flag1 && !flag2;
     }
 
 
     public void ramIntoTarget(LivingEntity target) {
-        if(target instanceof Player player) {
-            if(player.isBlocking()) {
+        if (target instanceof Player player) {
+            if (player.isBlocking()) {
                 player.disableShield(true);
                 this.hurt(damageSources().generic(), 5);
                 this.playSound(SoundEvents.ENDERMAN_DEATH);
@@ -314,7 +360,7 @@ public class TethEnderman extends BaseTethered {
                 stunT = 20;
             }
         } else {
-            if(doHurtTarget(target)) {
+            if (doHurtTarget(target)) {
                 //Successful hit
                 target.setDeltaMovement(this.getLookAngle().normalize().add(0, 0.2f, 0).scale(5f));
                 playSound(SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR);

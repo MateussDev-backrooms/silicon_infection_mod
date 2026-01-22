@@ -2,6 +2,7 @@ package com.mateussdev.chemosyntehsis.Core;
 
 import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar.AmalRadar;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner_Model;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret;
@@ -114,6 +115,10 @@ public class ModEntities {
             ENTITIES.register("amal_turret", () -> EntityType.Builder.of(AmalTurret::new, MobCategory.MONSTER)
                     .sized(1.2f, 3f)
                     .build("amal_turret"));
+    public static final RegistryObject<EntityType<AmalRadar>> AMAL_RADAR =
+            ENTITIES.register("amal_radar", () -> EntityType.Builder.of(AmalRadar::new, MobCategory.MONSTER)
+                    .sized(1.2f, 4f)
+                    .build("amal_radar"));
 
     //Hybrid mobs
 

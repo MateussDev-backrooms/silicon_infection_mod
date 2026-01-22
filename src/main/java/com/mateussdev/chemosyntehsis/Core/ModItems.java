@@ -83,6 +83,9 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_AMAL_TURRET =
             ITEMS.register("spawn_amal_turret",
                     () -> new ForgeSpawnEggItem(ModEntities.AMAL_TURRET, 0x933b3b, 0x614558, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_AMAL_RADAR =
+            ITEMS.register("spawn_amal_radar",
+                    () -> new ForgeSpawnEggItem(ModEntities.AMAL_RADAR, 0x933b3b, 0x614558, new Item.Properties()));
 
     //Hybrids
 

@@ -92,12 +92,10 @@ public class BaseTethered extends BaseSiliconite {
         }
 
 
-        Vector3f impulse = boneWobble.get(wobbleBoneName);
-        if (impulse != null) {
-            impulse.lerp(new Vector3f(0, 0, 0), 0.3f);
-
-            if (impulse.length() < 0.05f) {
-                boneWobble.remove(wobbleBoneName);
+        for(String boneName : wobblyBones()) {
+            Vector3f currBone = boneWobble.get(boneName);
+            if(currBone != null) {
+                currBone.lerp(new Vector3f(0), 0.2f);
             }
         }
 
@@ -186,9 +184,9 @@ public class BaseTethered extends BaseSiliconite {
 
         boolean hurtResult = super.hurt(pSource, pAmount);
 
-        if(hurtResult) {
             triggerHitReaction(pSource, pAmount);
-            wobbleBoneName = wobblyBones().get(random.nextInt(wobblyBones().size()));
+        if(hurtResult) {
+//            wobbleBoneName = wobblyBones().get(random.nextInt(wobblyBones().size()));
 
             if (level() instanceof ServerLevel slvl) {
                 slvl.playSound(null, blockPosition(), SoundEvents.SLIME_SQUISH_SMALL, SoundSource.HOSTILE, 1f, 0.8f);

@@ -33,7 +33,7 @@ import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.List;
 
-public class AmalTurret extends BaseAmalgamation implements IBiomassGenerator, RangedAttackMob {
+public class AmalTurret extends BaseAmalgamation implements RangedAttackMob {
     public AmalTurret(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
         this.lookControl = new TurretLookControl(this);

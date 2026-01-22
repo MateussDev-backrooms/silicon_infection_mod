@@ -3,22 +3,58 @@
   "item.silicon_mod.atmosphere_analyzer": "Atmospheric Analyzer",
 
   "item.silicon_mod.spawn_roller": "Roller Spawn Egg",
+  "entity.silicon_mod.silicon_roller": "Roller",
   "item.silicon_mod.spawn_chunk_of_flesh": "Chunk of Flesh Spawn Egg",
+  "entity.silicon_mod.chunk_of_flesh": "Chunk of Flesh",
   "item.silicon_mod.spawn_cluster_of_flesh": "Cluster of Flesh Spawn Egg",
+  "entity.silicon_mod.cluster_of_flesh": "Cluster of Flesh",
 
   "item.silicon_mod.spawn_teth_zombie": "Tethered Zombie Spawn Egg",
+  "entity.silicon_mod.teth_zombie": "Tethered Zombie",
   "item.silicon_mod.spawn_teth_cow": "Tethered Cow Spawn Egg",
+  "entity.silicon_mod.teth_cow": "Tethered Cow",
   "item.silicon_mod.spawn_teth_skeleton": "Tethered Skeleton Spawn Egg",
+  "entity.silicon_mod.teth_skeleton": "Tethered Skeleton",
+  "item.silicon_mod.spawn_teth_enderman": "Tethered Enderman Spawn Egg",
+  "entity.silicon_mod.teth_enderman": "Tethered Enderman",
 
   "item.silicon_mod.spawn_met_zombie": "Metabolized Zombie Spawn Egg",
+  "entity.silicon_mod.met_zombie": "Metabolized Zombie",
+  "item.silicon_mod.spawn_met_cow": "Metabolized Cow Spawn Egg",
+  "entity.silicon_mod.met_cow": "Metabolized Cow",
 
-  "item.silicon_mod.spawn_veg_bulb": "Vegetative Bulb Spawn Egg",
+  "item.silicon_mod.spawn_veg_bulb": "Vegetated Bulb Spawn Egg",
+  "entity.silicon_mod.veg_bulb": "Vegetated Bulb",
   "item.silicon_mod.spawn_veg_roller": "Vegetative Roller Spawn Egg",
+  "entity.silicon_mod.veg_roller": "Vegetative Roller",
   "item.silicon_mod.spawn_vasc_roller": "Vascular Roller Spawn Egg",
+  "entity.silicon_mod.vasc_roller": "Vascular Roller",
 
-  "item.silicon_mod.spawn_amal_zombie": "Zombie Amalgamation Egg",
-  "item.silicon_mod.spawn_amal_spawner": "Spawner Amalgamation Egg",
+  "item.silicon_mod.spawn_amal_zombie": "Zombie Amalgamation Spawn Egg",
+  "entity.silicon_mod.amal_zombie": "Zombie Amalgamation",
+  "item.silicon_mod.spawn_amal_spawner": "Spawner Amalgamation Spawn Egg",
+  "entity.silicon_mod.amal_spawner": "Spawner Amalgamation",
+  "item.silicon_mod.spawn_amal_turret": "Turret Amalgamation Spawn Egg",
+  "entity.silicon_mod.amal_turret": "Turret Amalgamation",
+  "item.silicon_mod.spawn_amal_radar": "Ear Amalgamation Spawn Egg",
+  "entity.silicon_mod.amal_radar": "Ear Amalgamation",
 
 
-  "creativetab.silicon_tab": "Chemosynthesiss"
+  "item.silicon_mod.spawn_hybt1_thrombocyte": "Thrombocyte Spawn Egg",
+  "entity.silicon_mod.hybt1_thrombocyte": "Thrombocyte",
+  "item.silicon_mod.spawn_hybt1_erythrocyte": "Erythrocyte Spawn Egg",
+  "entity.silicon_mod.hybt1_erythrocyte": "Erythrocyte",
+  "item.silicon_mod.spawn_hybt1_astrocyte": "Astrocyte Spawn Egg",
+  "entity.silicon_mod.hybt1_astrocyte": "Astrocyte",
+
+  "item.silicon_mod.spawn_hybt2_perfocyte": "Perfocyte Spawn Egg",
+  "entity.silicon_mod.hybt1_perfocyte": "Perfocyte",
+
+
+  "creativetab.silicon_tab": "Chemosynthesiss",
+
+  "block.silicon_mod.tendrils": "Silicate Tendrils",
+  "block.silicon_mod.sulfurized_tendrils": "Sulfurized Silicate Tendrils",
+
+  "sounds.silicon_mod.amal_radar_scream": "Ear Amalgamation Screams"
 }

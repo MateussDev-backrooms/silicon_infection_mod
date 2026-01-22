@@ -3,7 +3,6 @@ package com.mateussdev.chemosyntehsis.BlockEntities.vein_block;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import mod.azure.azurelib.renderer.GeoBlockRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;

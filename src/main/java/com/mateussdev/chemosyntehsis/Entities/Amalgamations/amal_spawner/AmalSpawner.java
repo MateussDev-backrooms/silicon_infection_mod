@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class AmalSpawner extends BaseAmalgamation implements IBiomassGenerator {
+public class AmalSpawner extends BaseAmalgamation {
     public AmalSpawner(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
     }
@@ -40,7 +40,8 @@ public class AmalSpawner extends BaseAmalgamation implements IBiomassGenerator {
     private List<EntityType<? extends BaseTethered>> spawnables = List.of(
             ModEntities.TETH_ZOMBIE.get(),
             ModEntities.TETH_COW.get(),
-            ModEntities.TETH_SKELETON.get()
+            ModEntities.TETH_SKELETON.get(),
+            ModEntities.TETH_ENDERMAN.get()
     );
 
     @Override

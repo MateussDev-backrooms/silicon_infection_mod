@@ -14,9 +14,10 @@ import java.util.List;
 
 public class TethEndermanCarryMobGoal extends Goal {
     private final TethEnderman enderman;
-    private LivingEntity target;
-    private LivingEntity mobToCarry;
+    private LivingEntity mainTarget; // The player/enemy we are attacking
+    private LivingEntity mobToCarry; // The projectile we are picking up
     private int carryTimer = 0;
+    private Vec3 originPosition; // WHERE WE STOOD BEFORE MOVING (Crucial!)
 
     public TethEndermanCarryMobGoal(TethEnderman enderman) {
         this.enderman = enderman;
@@ -25,74 +26,86 @@ public class TethEndermanCarryMobGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        // Must have a main target (Player)
         if (enderman.getTarget() == null) return false;
-        if (enderman.getRandom().nextFloat() > 0.3F) return false; // 2% chance per tick when canUse is called
+
+        // Only trigger occasionally (e.g., 2% chance)
+        if (enderman.getRandom().nextFloat() > 0.02F) return false;
 
         return findMobToCarry() != null;
     }
 
     @Override
     public boolean canContinueToUse() {
+        // Continue as long as the projectile mob is alive and we haven't finished the attack cycle
+        // If you want them to keep walking until they hit the player, you can remove the timer check here.
         return mobToCarry != null && mobToCarry.isAlive();
     }
 
     @Override
     public void start() {
-        this.target = enderman.getTarget();
+        this.mainTarget = enderman.getTarget();
         this.mobToCarry = findMobToCarry();
         this.carryTimer = 0;
+
+        // CRITICAL: Save the position we are currently standing at!
+        // We will return here after picking up the mob.
+        this.originPosition = enderman.position();
     }
 
     @Override
     public void tick() {
+        carryTimer++;
 
-        if (mobToCarry == null || !mobToCarry.isAlive()) return;
-
-        Vec3 currentPos = null;
-
-        if(carryTimer == 0) {
-            //Find and teleport to mob
-            currentPos = enderman.position();
-            enderman.teleport(mobToCarry.position());
-            if(enderman.distanceTo(mobToCarry) < 2d) {
+        // 1. TELEPORT TO MOB AND PICK IT UP (Tick 0)
+        if (carryTimer == 1) {
+            if (mobToCarry != null && mobToCarry.isAlive()) {
+                // Teleport to the mob
+                enderman.teleport(mobToCarry.position());
+                // Mount the mob (The mob rides the Enderman)
                 mobToCarry.startRiding(enderman);
             }
         }
-        else if(carryTimer == 20) {
-            enderman.teleport(currentPos);
+
+        // 2. TELEPORT BACK TO ORIGIN (Tick 20) - Short pause to let mount happen
+        else if (carryTimer == 20) {
+            if (originPosition != null) {
+                enderman.teleport(originPosition);
+            }
         }
-        else if(carryTimer == 40) {
-            enderman.teleport(findTeleportPositionNearTarget(target));
-            enderman.ejectPassengers();
+
+        // 3. MOVE TOWARDS MAIN TARGET (Tick 40+)
+        // We wait a bit after returning before charging
+        else if (carryTimer > 40) {
+            if (mainTarget != null && mainTarget.isAlive()) {
+                // Start navigation towards the player
+                // This will carry the "mobToCarry" along with it
+                enderman.getNavigation().moveTo(mainTarget, 1.5D);
+            }
         }
-        carryTimer++;
     }
 
     @Override
     public void stop() {
-        this.target = null;
+        // When we stop (goal interrupted or attack finished), eject the passenger
+        enderman.ejectPassengers();
         this.mobToCarry = null;
         this.carryTimer = 0;
-        enderman.ejectPassengers();
     }
 
     private LivingEntity findMobToCarry() {
         AABB searchBox = enderman.getBoundingBox().inflate(30.0D);
         List<LivingEntity> nearbyMobs = enderman.level().getEntitiesOfClass(LivingEntity.class, searchBox, entity -> {
-            // Check if it's a mob we can carry
-            return entity != enderman && entity != enderman.getTarget() && (entity instanceof BaseTethered || entity instanceof BaseMetabolized || entity instanceof SiliconRoller) && entity.distanceTo(enderman) > 8d;
+            // Check filters
+            return entity != enderman &&
+                    entity != enderman.getTarget() &&
+                    (entity instanceof BaseTethered
+                            || entity instanceof BaseMetabolized
+                            || entity instanceof SiliconRoller) &&
+                    !(entity instanceof TethEnderman) &&
+                    entity.distanceTo(enderman) > 8d; // Don't pick up stuff right next to us
         });
 
         return nearbyMobs.isEmpty() ? null : nearbyMobs.get(0);
-    }
-
-    private Vec3 findTeleportPositionNearTarget(LivingEntity target) {
-        double angle = enderman.getRandom().nextDouble() * Math.PI * 2;
-        double distance = 4 + enderman.getRandom().nextDouble() * 4;
-        double x = target.getX() + Math.cos(angle) * distance;
-        double z = target.getZ() + Math.sin(angle) * distance;
-        double y = target.getY();
-
-        return new Vec3(x, y, z);
     }
 }
