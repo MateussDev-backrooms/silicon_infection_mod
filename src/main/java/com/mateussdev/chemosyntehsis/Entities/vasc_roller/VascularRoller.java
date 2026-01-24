@@ -203,7 +203,7 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
         harpoon = new BulbHarpoonEntity(level(), this);
         harpoon.setPos(getX(), getAttachedEyeY(), getZ());
 
-        Vec3 shootDir = target.getCenter().subtract(0, 0.7, 0).subtract(this.position());
+        Vec3 shootDir = target.getCenter().subtract(0, 0.66, 0).subtract(this.position());
         level().playSound(null, blockPosition(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.HOSTILE, 1f, 1f);
         harpoon.shoot(shootDir, 1.2f, 0f, this, 0.08f, 500);
 

@@ -93,6 +93,8 @@ public class VegetativeBulb extends BaseOrganelle {
         vegetativeRoller.moveTo(this.getX(), this.getY(), this.getZ());
         slvl.addFreshEntity(vegetativeRoller);
 
+        if(slvl.getEntities(vegetativeRoller, vegetativeRoller.getBoundingBox()).size() > 1) vegetativeRoller.discard();
+
         // Consume all chunks
         for (VegetativeBulb c : all) {
             c.discard();

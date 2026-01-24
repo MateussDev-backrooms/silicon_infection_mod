@@ -233,10 +233,10 @@ public class HybridPerfocyte extends BaseHybrid {
             tracker.update();
 //            StaticSiliconiteMethods.debugLog(trackedDestructionBlocks.size()+" - tracked destruction of blocks");
 
-            if (tracker.isGarbage) {
-                iterator.remove(); // Remove directly
-                // Clean up any remaining particles or effects
-            }
+//            if (tracker.isGarbage) {
+//                iterator.remove(); // Remove directly
+//                // Clean up any remaining particles or effects
+//            }
         }
     }
 
@@ -262,7 +262,7 @@ public class HybridPerfocyte extends BaseHybrid {
         Vec3 dashVelocity = dashDelta.normalize().scale(INITIAL_DASH_SPEED);
 
         setDeltaMovement(dashVelocity);
-        this.getAnimatableInstanceCache().getManagerForId(this.getId()).getAnimationControllers().get("dash_controller").stop();
+//        this.getAnimatableInstanceCache().getManagerForId(this.getId()).getAnimationControllers().get("dash_controller").stop();
         triggerAnim("dash_controller", "dash");
 
         playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1.0f, 0.3f);
@@ -294,7 +294,12 @@ public class HybridPerfocyte extends BaseHybrid {
             //TEMP - destroy every block in the hitbox
             BlockState state = slvl.getBlockState(pos);
 
-            if(state.isAir() || state.getDestroySpeed(slvl, pos) < 0 || state.getDestroySpeed(slvl, pos) < 0.6) {
+            if(state.isAir() || state.getDestroySpeed(slvl, pos) < 0) {
+                continue;
+            }
+
+            if(state.getDestroySpeed(slvl, pos) < 0.6) {
+                slvl.destroyBlock(pos, false);
                 continue;
             }
 
@@ -309,7 +314,7 @@ public class HybridPerfocyte extends BaseHybrid {
 
         }
 
-        StaticSiliconiteMethods.debugLog(amount_checked+" - amount of blocks iterated to see for collisions");
+//        StaticSiliconiteMethods.debugLog(amount_checked+" - amount of blocks iterated to see for collisions");
         //Calculate normal vector
         BlockHitResult raycast = slvl.clip(new ClipContext(this.position(), this.position().add(getDeltaMovement()).scale(10f), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
 

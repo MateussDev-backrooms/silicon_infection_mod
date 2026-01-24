@@ -29,6 +29,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
+import org.joml.Vector4f;
+import org.joml.Vector4i;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 
@@ -173,7 +176,80 @@ public class StaticSiliconiteMethods {
     // ===== Math ===== //
 
     public static float flerp(float a, float b, float t) {
-        return a * (1 - a) + b * a;
+        return a * (1 - t) + b * t;
+    }
+
+    public static Vector3f RGBtoHSV(int r, int g, int b) {
+        int max = Math.max(r, Math.max(g, b));
+        int min = Math.min(r, Math.min(g, b));
+        float d = max - min;
+
+        float h = 0;
+        float s = max == 0 ? 0 : (float)d / (float)max;
+        float v = max/255f;
+
+        if(max == min) {h=0;}
+        else if(max == r) {h = (g - b) + d * (g < b ? 6: 0); h /= 6 * d;}
+        else if(max == g) {h = (b - r) + d * 2; h /= 6 * d;}
+        else if(max == b) {h = (r - g) + d * 4; h /= 6 * d;}
+
+        return new Vector3f(h, s, v);
+    }
+
+    public static Vector3f RGBtoHSV(Vector3i rgb) {
+        return RGBtoHSV(rgb.x, rgb.y, rgb.z);
+    }
+
+    public static Vector3i HSVtoRGB(float h, float s, float v) {
+        int i = Mth.floor(h * 6);
+        float f = h * 6 - i;
+        float p = v * (1 - s);
+        float q = v * (1 - f * s);
+        float t = v * (1 - (1 - f) * s);
+
+        float rt = 0;
+        float gt = 0;
+        float bt = 0;
+
+        switch((i % 6)) {
+            case 0 -> {rt = v; gt = t; bt = p;}
+            case 1 -> {rt = q; gt = v; bt = p;}
+            case 2 -> {rt = p; gt = v; bt = t;}
+            case 3 -> {rt = p; gt = q; bt = v;}
+            case 4 -> {rt = t; gt = p; bt = v;}
+            case 5 -> {rt = v; gt = p; bt = q;}
+        }
+
+        return new Vector3i(
+                Math.round(rt * 255),
+                Math.round(gt * 255),
+                Math.round(bt * 255)
+        );
+    }
+
+    public static Vector3i HSVtoRGB(Vector3f hsv) {
+        return HSVtoRGB(hsv.x, hsv.y, hsv.z);
+    }
+
+    public static Vector4f colorLerpHSV(Vector4i a, Vector4i b, float t) {
+        float alphalerp = flerp((float)a.w, (float)b.w, t);
+
+        Vector3f hsva = RGBtoHSV(new Vector3i(a.x, a.y, a.z));
+        Vector3f hsvb = RGBtoHSV(new Vector3i(b.x, b.y, b.z));
+
+//        Vector3i result = HSVtoRGB(new Vector3f(
+//           flerp(hsva.x, hsvb.x, t),
+//           flerp(hsva.y, hsvb.y, t),
+//           flerp(hsva.z, hsvb.z, t)
+//        ));
+
+        Vector3i result = new Vector3i(
+                Math.round(flerp(a.x, b.x, t)),
+                Math.round(flerp(a.y, b.y, t)),
+                Math.round(flerp(a.z, b.z, t))
+        );
+
+        return new Vector4f(result.x, result.y, result.z, alphalerp);
     }
 
     public static double boundingBoxVolume(AABB box) {
