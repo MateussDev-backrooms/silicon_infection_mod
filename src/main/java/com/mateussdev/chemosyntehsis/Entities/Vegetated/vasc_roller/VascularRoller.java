@@ -1,18 +1,18 @@
-package com.mateussdev.chemosyntehsis.Entities.vasc_roller;
+package com.mateussdev.chemosyntehsis.Entities.Vegetated.vasc_roller;
 
 import com.mateussdev.chemosyntehsis.Blocks.FleshPileBlock;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.AbstractHarpoonProjectile;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
+import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassContainer;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -178,12 +178,34 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
             } else {
                 //Allow for amalgamation
 
-                if (getBiomass() > 30) {
-                    //choose random non-mob based amalgamation
-                    BaseAmalgamation amalgamation = default_amalgamations.get(random.nextInt(default_amalgamations.size())).create(slvl);
-                    amalgamation.moveTo(position());
-                    slvl.addFreshEntity(amalgamation);
-                    this.discard();
+                List<BaseAmalgamation> amalgams = slvl.getEntitiesOfClass(
+                        BaseAmalgamation.class,
+                        this.getBoundingBox().inflate(2.5)
+                );
+                if(getBiomass() > 30) {
+                    if (amalgams.isEmpty()) {
+                        //choose random non-mob based amalgamation
+                        BaseAmalgamation amalgamation = default_amalgamations.get(random.nextInt(default_amalgamations.size())).create(slvl);
+                        amalgamation.moveTo(position());
+                        slvl.addFreshEntity(amalgamation);
+                        this.discard();
+                    } else {
+                        //Release the biomass
+                        for (int i = 0; i < 10; i++) {
+                            if (slvl.random.nextFloat() < 0.33f) {
+                                ChunkOfFlesh chunkOfFlesh = ModEntities.CHUNK_OF_FLESH.get().create(slvl);
+                                chunkOfFlesh.moveTo(blockPosition().getX(), blockPosition().getY(), blockPosition().getZ());
+                                chunkOfFlesh.addDeltaMovement(new Vec3((slvl.random.nextDouble() * 2f - 1f) * 0.1f, (slvl.random.nextDouble()) * 0.8f, (slvl.random.nextDouble() * 2f - 1f) * 0.1f));
+                                slvl.addFreshEntity(chunkOfFlesh);
+                            } else {
+                                GibFlesh gib = ModEntities.GIB_FLESH.get().create(slvl);
+                                gib.moveTo(blockPosition().getX(), blockPosition().getY(), blockPosition().getZ());
+                                gib.addDeltaMovement(new Vec3((slvl.random.nextDouble() * 2f - 1f) * 0.4f, (slvl.random.nextDouble()) * 0.5f, (slvl.random.nextDouble() * 2f - 1f) * 0.4f));
+                                slvl.addFreshEntity(gib);
+                            }
+                        }
+                        entityData.set(COLLECTED_BIOMASS, 0);
+                    }
                 }
             }
 

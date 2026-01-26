@@ -18,16 +18,16 @@ import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh_Re
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_erythrocyte.HybridErythrocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte.HybridThrombocyte_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.met_cow.MetCow;
 import com.mateussdev.chemosyntehsis.Entities.met_cow.MetCow_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_cow.TethCow_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_skeleton.TethSkeleton_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_zombie.TethZombie_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.vasc_roller.VascularRoller_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Vegetated.vasc_roller.VascularRoller_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb.VegetativeBulb_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_roller.VegetativeRoller_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.util.VeinConnectorEntity_Renderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
@@ -83,6 +83,9 @@ public class EventRegisterRenderer {
 
         //GibEntities
         EntityRenderers.register(ModEntities.GIB_FLESH.get(), GibFlesh_Renderer::new);
+
+        //UTIL
+        EntityRenderers.register(ModEntities.VEIN_CONNECTOR.get(), VeinConnectorEntity_Renderer::new);
 
         //Block entities
         BlockEntityRenderers.register(ModBlockEntities.VEIN_BLOCK.get(), BEVeinBlock_Renderer::new);

@@ -7,6 +7,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassGenerator;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -41,7 +42,7 @@ public class AmalZombie extends BaseAmalgamation implements IBiomassGenerator {
 
         if(level() instanceof ServerLevel slvl) {
             if(tickCount % 240 == 0) {
-                if(random.nextFloat() < 0.4f) {
+                if(random.nextFloat() < 0.4f && GlobalMobCap.canSpawnUnique(slvl, ModEntities.TETH_ZOMBIE.get(), blockPosition(), 600, 128)) {
                     //Zombie mitosis
 
                     slvl.playSound(

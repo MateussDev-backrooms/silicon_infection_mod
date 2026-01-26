@@ -4,14 +4,12 @@ import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar.AmalRadar;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner_Model;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman;
-import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman_Model;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
@@ -24,9 +22,11 @@ import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_skeleton.TethSkeleton;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_zombie.TethZombie;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_cow.TethCow;
-import com.mateussdev.chemosyntehsis.Entities.vasc_roller.VascularRoller;
-import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
-import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller;
+import com.mateussdev.chemosyntehsis.Entities.Vegetated.vasc_roller.VascularRoller;
+import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb.VegetativeBulb;
+import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_roller.VegetativeRoller;
+import com.mateussdev.chemosyntehsis.Entities.util.BaseGraphNodeEntity;
+import com.mateussdev.chemosyntehsis.Entities.util.VeinConnectorEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -164,9 +164,11 @@ public class ModEntities {
 
     //Block entities
 
-    public static final RegistryObject<BlockEntityType<BEVeinBlock>> BE_VEIN_BLOCK =
-            BLOCK_ENTITIES.register("be_vein_block", () -> BlockEntityType.Builder.of(BEVeinBlock::new, ModBlocks.VEIN_BLOCK.get())
-                    .build(null));
+    //Utility
+    public static final RegistryObject<EntityType<VeinConnectorEntity>> VEIN_CONNECTOR =
+            ENTITIES.register("util_vein_connector", () -> EntityType.Builder.of(VeinConnectorEntity::new, MobCategory.MISC)
+                    .sized(0.1f, 0.1f)
+                    .build("util_vein_connector"));
 
 
     //===== DEFINE ENTITIES HERE =====//

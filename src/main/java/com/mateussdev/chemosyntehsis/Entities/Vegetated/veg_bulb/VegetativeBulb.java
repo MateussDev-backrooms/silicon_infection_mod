@@ -1,11 +1,10 @@
-package com.mateussdev.chemosyntehsis.Entities.veg_bulb;
+package com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
-import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
-import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller;
+import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_roller.VegetativeRoller;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;

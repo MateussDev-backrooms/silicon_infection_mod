@@ -1,15 +1,11 @@
 package com.mateussdev.chemosyntehsis.Entities.Tethered.teth_zombie;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie;
-import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -17,8 +13,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
 
 public class TethZombie extends BaseTethered {
     public TethZombie(EntityType<? extends Monster> p_33002_, Level p_33003_) {

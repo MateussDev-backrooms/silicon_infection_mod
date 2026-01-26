@@ -1,17 +1,13 @@
 package com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Core.ModSounds;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseGib;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
-import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
-import com.mateussdev.chemosyntehsis.Entities.veg_roller.VegetativeRoller;
-import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.damagesource.DamageSource;
+import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb.VegetativeBulb;
+import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -23,7 +19,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -136,21 +131,27 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
     }
 
     public void vegetate(ServerLevel slvl) {
-        VegetativeBulb bulb = ModEntities.VEG_BULB.get().create(slvl);
-        bulb.moveTo(this.position());
-        slvl.sendParticles(
-                ParticleTypes.EXPLOSION,
-                this.getX() + 0.5,
-                this.getY() + 0.5,
-                this.getZ() + 0.5,
-                1,
-                0,
-                0,
-                0,
-                0.1
-        );
-        slvl.addFreshEntity(bulb);
-        this.discard();
+        if(GlobalMobCap.canSpawnUnique(slvl, ModEntities.VEG_BULB.get(), blockPosition(), GlobalMobCap.BULB_CAP, 128)) {
+            VegetativeBulb bulb = ModEntities.VEG_BULB.get().create(slvl);
+            bulb.moveTo(this.position());
+            slvl.sendParticles(
+                    ParticleTypes.EXPLOSION,
+                    this.getX() + 0.5,
+                    this.getY() + 0.5,
+                    this.getZ() + 0.5,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0.1
+            );
+            slvl.addFreshEntity(bulb);
+            this.discard();
+        } else {
+            slvl.playSound(null, blockPosition(), ModSounds.BULB_SHATTER.get(), SoundSource.AMBIENT, 0.3f, 1f);
+            StaticSiliconiteMethods.spawnBloodHit(slvl, this.position());
+            this.discard();
+        }
     }
 
     @Override
@@ -214,9 +215,9 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
     protected void onHitBlock(BlockHitResult pResult) {
         super.onHitBlock(pResult);
 
-        if (level().random.nextFloat() < 0.6f) {
-            if (level() instanceof ServerLevel slvl) {
-                slvl.playSound(null, blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.AMBIENT);
+        if (level() instanceof ServerLevel slvl) {
+            if (level().random.nextFloat() < 0.6f || !GlobalMobCap.canSpawnUnique(slvl, ModEntities.BULB_PROJECTILE.get(), blockPosition(), 128, 128)) {
+                slvl.playSound(null, blockPosition(), ModSounds.BULB_SHATTER.get(), SoundSource.AMBIENT, 0.3f, 1f);
                 StaticSiliconiteMethods.spawnBloodHit(slvl, this.position());
                 this.discard();
             }

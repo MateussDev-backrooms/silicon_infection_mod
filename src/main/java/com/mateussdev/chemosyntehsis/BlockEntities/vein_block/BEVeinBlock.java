@@ -2,9 +2,16 @@ package com.mateussdev.chemosyntehsis.BlockEntities.vein_block;
 
 import com.mateussdev.chemosyntehsis.Core.ModBlockEntities;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
+import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar.AmalRadar;
+import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -15,52 +22,78 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BEVeinBlock extends BlockEntity{
-    private static final int RADIUS = 8;
-    private final List<BlockPos> connections = new ArrayList<>();
+    private static final int TICK_INTERVAL = 10; // Ticks every 10 game ticks (0.5 seconds)
+    private int tickCounter = 0;
+    private List<BlockPos> connectedBlocks = new ArrayList<>();
 
-    private static final Logger LOGGER = LogUtils.getLogger();
-
-    public BEVeinBlock(BlockPos pPos, BlockState pBlockState) {
-        super(ModBlockEntities.VEIN_BLOCK.get(), pPos, pBlockState);
+    public BEVeinBlock(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.VEIN_BLOCK.get(), pos, state);
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, BEVeinBlock be) {
-        if (level.getGameTime() % 40 != 0) return;
-        if(level instanceof ServerLevel slvl) {
-            slvl.sendParticles(
-                    ParticleTypes.EXPLOSION,
-                    pos.getX() + 0.5,
-                    pos.getY() + 0.5,
-                    pos.getZ() + 0.5,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0.1
-            );
+    public void tick() {
+        if (level == null || level.isClientSide()) return;
+
+        tickCounter++;
+        if (tickCounter >= TICK_INTERVAL) {
+            tickCounter = 0;
+            findAndConnectBlocks();
+        }
+    }
+
+    private void findAndConnectBlocks() {
+        if (level == null) return;
+
+        connectedBlocks.clear();
+        int range = 10; // Check within 10 blocks radius
+
+        for (int x = -range; x <= range; x++) {
+            for (int y = -range; y <= range; y++) {
+                for (int z = -range; z <= range; z++) {
+                    BlockPos checkPos = worldPosition.offset(x, y, z);
+                    BlockState state = level.getBlockState(checkPos);
+
+                    if (state.is(this.getBlockState().getBlock()) &&
+                            !checkPos.equals(worldPosition)) {
+                        connectedBlocks.add(checkPos);
+                    }
+                }
+            }
         }
 
-        be.scanForConnections();
-
+        // Update visuals on client side
+        syncConnections();
     }
 
-    private void scanForConnections() {
-        connections.clear();
+    public List<BlockPos> getConnectedBlocks() {
+        return connectedBlocks;
+    }
 
-        BlockPos.betweenClosed(
-                worldPosition.offset(-RADIUS, -RADIUS, -RADIUS),
-                worldPosition.offset(RADIUS, RADIUS, RADIUS)
-        ).forEach(p -> {
-            if (!p.equals(worldPosition) &&
-                    level.getBlockState(p).is(ModBlocks.VEIN_BLOCK.get())) {
-                connections.add(p.immutable());
-            }
-        });
-
+    private void syncConnections() {
         setChanged();
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
     }
 
-    public List<BlockPos> getConnections() {
-        return connections;
+    @Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.putInt("ConnectionCount", connectedBlocks.size());
+        int i = 0;
+        for (BlockPos pos : connectedBlocks) {
+            tag.putLong("Connection" + i, pos.asLong());
+            i++;
+        }
+    }
+
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        connectedBlocks.clear();
+        int count = tag.getInt("ConnectionCount");
+        for (int i = 0; i < count; i++) {
+            long posLong = tag.getLong("Connection" + i);
+            connectedBlocks.add(BlockPos.of(posLong));
+        }
     }
 }

@@ -2,5 +2,13 @@
   "amal_radar_scream": {
     "subtitle": "sounds.silicon_mod.amal_radar_scream",
     "sounds": ["silicon_mod:amal_radar_scream"]
+  },
+  "bulb_shatter": {
+    "subtitle": "sounds.silicon_mod.bulb_shatter",
+    "sounds": [
+      "silicon_mod:bulb_shatter",
+      "silicon_mod:bulb_shatter_2",
+      "silicon_mod:bulb_shatter_3"
+    ]
   }
 }

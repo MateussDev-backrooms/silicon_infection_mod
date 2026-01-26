@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.Entities.veg_bulb;
+package com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb;
 
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

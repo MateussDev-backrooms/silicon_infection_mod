@@ -1,18 +1,11 @@
-package com.mateussdev.chemosyntehsis.Entities.veg_bulb;
+package com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class VegetativeBulb_Model extends GeoModel<VegetativeBulb> {
     //MODEL PATH

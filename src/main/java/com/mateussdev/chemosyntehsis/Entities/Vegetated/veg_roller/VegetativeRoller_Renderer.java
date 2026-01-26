@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.Entities.veg_roller;
+package com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_roller;
 
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

@@ -4,6 +4,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.AI.*;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseHybrid;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -16,11 +17,16 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
@@ -30,9 +36,11 @@ import java.util.EnumSet;
 import java.util.List;
 
 public class HybridErythrocyte extends BaseHybrid {
+    private final ErythrocyteStateManager stateManager = new ErythrocyteStateManager(this);
+
     public HybridErythrocyte(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
-        this.moveControl = new FloatingMoveControl(this);
+        this.moveControl = new ImprovedFlyingMoveControl(this, 1f, true);
     }
 
     //##### Entity setup and stats #####//
@@ -40,6 +48,7 @@ public class HybridErythrocyte extends BaseHybrid {
         return Animal.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 16D)
                 .add(Attributes.MOVEMENT_SPEED, 0.5D)
+                .add(Attributes.FLYING_SPEED, 0.5D)
                 .add(Attributes.FOLLOW_RANGE, 25D)
                 .add(Attributes.ARMOR_TOUGHNESS, 3D)
                 .add(Attributes.ATTACK_KNOCKBACK, 0.5D)
@@ -49,8 +58,10 @@ public class HybridErythrocyte extends BaseHybrid {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatingLungeGoal(this, 6f));
-        this.goalSelector.addGoal(0, new FloatingLookAtTargetGoal(this));
+//        this.goalSelector.addGoal(1, new ErythrocyteRetreatGoal(this)); // Highest priority when retreating
+        this.goalSelector.addGoal(0, new ErythrocyteDeployMobGoal(this));
+        this.goalSelector.addGoal(1, new ErythrocytePickUpMobGoal(this));
+//        this.goalSelector.addGoal(2, new FloatingLookAtTargetGoal(this));
         this.goalSelector.addGoal(2, new FloatingSiliconiteRandomStrollGoal(this, 7f, 4f));
 
         //Seek out
@@ -58,10 +69,18 @@ public class HybridErythrocyte extends BaseHybrid {
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
     }
 
-    private int cooldown;
-    private int max_cooldown = 80;
-    private boolean canLunge(Integer integer) {
-        return cooldown <= 0;
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        FlyingPathNavigation navigation = new FlyingPathNavigation(this, level) {
+            @Override
+            public boolean isStableDestination(BlockPos pos) {
+                return true; // Can pathfind anywhere
+            }
+        };
+        navigation.setCanOpenDoors(false);
+        navigation.setCanFloat(true);
+        navigation.setCanPassDoors(true);
+        return navigation;
     }
 
     @Override
@@ -73,6 +92,55 @@ public class HybridErythrocyte extends BaseHybrid {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.setNoGravity(true);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+//        stateManager.tick();
+        if(level() instanceof ServerLevel slvl) {
+            //Float upward when on ground
+            float minFlyDist = this.getTarget() == null ? 1f : getTarget().getBbHeight();
+            BlockHitResult raycastDown = slvl.clip(new ClipContext(this.position(), this.position().add(0, -minFlyDist, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+            if(raycastDown.getType() != HitResult.Type.MISS) {
+                setDeltaMovement(getDeltaMovement().add(0, 0.05, 0));
+            }
+
+            //Float down when hitting ceiling
+            BlockHitResult raycastUp = slvl.clip(new ClipContext(this.position(), this.position().add(0, 1, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+            if(raycastUp.getType() != HitResult.Type.MISS) {
+                setDeltaMovement(getDeltaMovement().add(0, -0.05, 0));
+            }
+        }
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if(level() instanceof ServerLevel slvl) {
+
+            if(getTarget() != null) {
+                if(distanceTo(getTarget()) <= 2 && getFirstPassenger() != null) {
+                    ejectPassengers();
+                }
+            } else {
+                if(!getPassengers().isEmpty()) {
+                    ejectPassengers();
+                }
+            }
+        }
+    }
+
+    @Override
+    public double getPassengersRidingOffset() {
+        if(this.getFirstPassenger() != null) {
+            return -getFirstPassenger().getBbHeight();
+        }
+        return -1.7;
+    }
+
+    public ErythrocyteStateManager getStateManager() {
+        return stateManager;
     }
 
     @Override
@@ -89,79 +157,8 @@ public class HybridErythrocyte extends BaseHybrid {
         return false;
     }
 
-    private int atk_cooldown = 0;
-
-    @Override
-    public void aiStep() {
-        super.aiStep();
-        if(atk_cooldown > 0) {
-            --atk_cooldown;
-        }
-
-        if (this.level() instanceof ServerLevel slvl) {
-
-            //Dash damage
-            if(this.getDeltaMovement().length() > 0.3f) {
-                List<Entity> entities = slvl.getEntities(null,
-                        new AABB(
-                                this.getEyePosition().add(-1, -1, -1),
-                                this.getEyePosition().add(1, 1, 1)
-                        ));
-                for (int i = 0; i < entities.size(); i++) {
-                    if(entities.get(i) instanceof LivingEntity l_entity) {
-                        if(l_entity instanceof Player player) {
-                            if (player.isBlocking() && atk_cooldown <= 0) {
-                                if (player.isUsingItem()) {
-                                    player.disableShield(true);
-
-                                    if (!player.getUseItem().isEmpty()) {
-                                        player.getUseItem().hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(player.getUsedItemHand()));
-                                    }
-
-                                    this.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                                            net.minecraft.sounds.SoundEvents.SHIELD_BREAK,
-                                            net.minecraft.sounds.SoundSource.PLAYERS,
-                                            1.0F, 1.0F);
-
-                                    atk_cooldown = 20;
-
-                                    this.setDeltaMovement(player.getLookAngle().scale(this.getSpeed()));
-                                    this.hasImpulse = true;
-                                }
-                            } else {
-                                if(atk_cooldown <= 0) {
-                                    this.doHurtTarget(player);
-                                }
-                            }
-                        } else {
-                            if(StaticSiliconiteMethods.shouldAttackMob(l_entity) && l_entity.isAlive()) {
-                                this.doHurtTarget(l_entity);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if(cooldown > 0) {
-                cooldown--;
-            } else {
-                boolean isFalling = this.getDeltaMovement().length() > 1.0f;
-                if(isFalling && canLunge(0)) {
-                    cooldown = max_cooldown + (slvl.random.nextInt(10) - 5);
-                }
-            }
-        }
-    }
-
-    public void onLunge() {
-        //TODO add particle effect
-    }
 
     private int deathTime = 0;
-    private boolean hasSelectedRandomDir = false;
-    double rngx;
-    double rngy;
-    double rngz;
     @Override
     protected void tickDeath() {
         if (this.level() instanceof ServerLevel slvl) {
@@ -169,20 +166,16 @@ public class HybridErythrocyte extends BaseHybrid {
             this.setNoGravity(false);
 
             if (this.deathTime >= 60) {
-                slvl.explode(this, this.getX(), this.getY(), this.getZ(), 3, Level.ExplosionInteraction.TNT);
+                slvl.explode(this, this.getX(), this.getY(), this.getZ(), 1.5f, Level.ExplosionInteraction.MOB);
                 StaticSiliconiteMethods.spawnBloodBurst(slvl, this.blockPosition());
                 this.discard();
             }
         }
     }
 
-    private LivingEntity last_attacker;
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if (pSource.getEntity() instanceof LivingEntity living) {
-            this.last_attacker = living;
-        }
+        ejectPassengers();
         return super.hurt(pSource, pAmount);
-
     }
 }

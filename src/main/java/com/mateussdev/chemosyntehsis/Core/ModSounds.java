@@ -13,6 +13,7 @@ public class ModSounds {
 
 
     public static final RegistryObject<SoundEvent> AMAL_RADAR_SCREAM = registerSound("amal_radar_scream");
+    public static final RegistryObject<SoundEvent> BULB_SHATTER = registerSound("bulb_shatter");
 
 
     private static RegistryObject<SoundEvent> registerSound(String name) {

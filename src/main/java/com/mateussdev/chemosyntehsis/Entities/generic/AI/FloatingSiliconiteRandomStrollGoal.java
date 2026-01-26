@@ -24,7 +24,7 @@ public class FloatingSiliconiteRandomStrollGoal extends Goal {
         this.siliconite = siliconite;
         this.horizontal_range = horizontal_range;
         this.vertical_range = vertical_range;
-        this.setFlags(EnumSet.of(Flag.MOVE));
+        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     }
 
     @Override
@@ -44,12 +44,12 @@ public class FloatingSiliconiteRandomStrollGoal extends Goal {
             return false;
         }
 
-        return siliconite.getRandom().nextInt(40) == 0;
+        return siliconite.getRandom().nextInt(20) == 0;
     }
 
     @Override
     public boolean canContinueToUse() {
-        return !siliconite.getMoveControl().hasWanted() &&
+        return siliconite.getMoveControl().hasWanted() &&
                 siliconite.getTarget() == null;
     }
 

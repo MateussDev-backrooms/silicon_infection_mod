@@ -96,7 +96,9 @@ public class StaticSiliconiteMethods {
     }
 
     public static void debugLog(String text) {
-        Minecraft.getInstance().player.sendSystemMessage(Component.literal(text));
+        if(Minecraft.getInstance().player != null) {
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal(text));
+        }
     }
 
     public static void tetherMob(ServerLevel serverLevel, LivingEntity tetherTarget) {
@@ -647,7 +649,7 @@ public class StaticSiliconiteMethods {
     }
 
     private static double simulateGravity(float x, float distance) {
-        double midpoint = distance/2;
+        double midpoint = distance;
 
         return ((double)x-midpoint)*((double)x-midpoint) * (1/(midpoint*midpoint)) - 1;
     }

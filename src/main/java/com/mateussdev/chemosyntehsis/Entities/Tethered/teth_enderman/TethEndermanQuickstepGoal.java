@@ -24,6 +24,7 @@ public class TethEndermanQuickstepGoal extends Goal {
     @Override
     public boolean canUse() {
         if (enderman.getTarget() == null) return false;
+        if(enderman.isPassenger()) return false;
         return enderman.distanceToSqr(enderman.getTarget()) < 256D && enderman.distanceToSqr(enderman.getTarget()) > 36D && enderman.quickstepCooldown <= 0;
     }
 

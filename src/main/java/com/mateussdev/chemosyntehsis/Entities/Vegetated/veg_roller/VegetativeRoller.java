@@ -1,31 +1,20 @@
-package com.mateussdev.chemosyntehsis.Entities.veg_roller;
+package com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_roller;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
-import com.mateussdev.chemosyntehsis.Entities.vasc_roller.VascularRoller;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
+import com.mateussdev.chemosyntehsis.Entities.Vegetated.vasc_roller.VascularRoller;
+import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class VegetativeRoller extends BaseOrganelle {
     public VegetativeRoller(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -66,12 +55,7 @@ public class VegetativeRoller extends BaseOrganelle {
                 StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
                 this.discard();
             } else {
-                List<SiliconRoller> rollers = slvl.getEntitiesOfClass(
-                        SiliconRoller.class,
-                        this.getBoundingBox().inflate(3),
-                        c -> true
-                );
-                if(rollers.size() > 5) {
+                if(GlobalMobCap.canSpawnUnique(slvl, ModEntities.VEG_ROLLER.get(), blockPosition(), 128, 128)) {
                     //reset metabolism
                     entityData.set(METABOLISM_VALUE, 0);
                     return;

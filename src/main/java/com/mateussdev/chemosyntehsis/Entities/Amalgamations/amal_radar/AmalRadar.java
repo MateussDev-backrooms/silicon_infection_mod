@@ -5,9 +5,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
-import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -30,10 +28,8 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.*;
-import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.checkerframework.checker.units.qual.C;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
@@ -206,7 +202,7 @@ public class AmalRadar extends BaseAmalgamation {
                     } else if (tracker.score >= 200) {
                         //TODO : ALERT TO LOCATION
                         sendPatrol(tracker.position);
-                        scream();
+                        scream(tracker.position);
                         positionIterator.remove(); // Remove after alerting
                     }
                 }
@@ -265,7 +261,7 @@ public class AmalRadar extends BaseAmalgamation {
     }
 
     public void sendPatrol(BlockPos pos) {
-        AABB boundingBox = new AABB(pos).inflate(32, 12, 32);
+        AABB boundingBox = new AABB(blockPosition()).inflate(32, 12, 32);
 
         if(level() instanceof ServerLevel slvl) {
             List<BaseSiliconite> all = slvl.getEntitiesOfClass(
@@ -276,7 +272,7 @@ public class AmalRadar extends BaseAmalgamation {
 
 
             StaticSiliconiteMethods.debugLog("Alerted "+all.size()+" siliconites to location");
-            List<LivingEntity> potentialTargets = slvl.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(1f));
+            List<LivingEntity> potentialTargets = slvl.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(1f), StaticSiliconiteMethods::shouldAttackMob);
 
             LivingEntity potentialTarget = null;
 
@@ -297,10 +293,25 @@ public class AmalRadar extends BaseAmalgamation {
         }
     }
 
-    private void scream() {
+    private void scream(BlockPos pos) {
         entityData.set(IS_ALERTED, true);
         alertT = 221;
-        playSound(ModSounds.AMAL_RADAR_SCREAM.get(), 6f, 1f+(random.nextFloat()*2-1)/5);
+        playSound(ModSounds.AMAL_RADAR_SCREAM.get(), 3f, 1f+(random.nextFloat()*2-1)/5);
+
+//        AABB boundingBox = new AABB(blockPosition()).inflate(5);
+//
+//        if(level() instanceof ServerLevel slvl) {
+//            List<AmalRadar> radars = slvl.getEntitiesOfClass(
+//                    AmalRadar.class,
+//                    boundingBox,
+//                    e -> e.alertT <= 0
+//            );
+//
+//            for(AmalRadar radar : radars) {
+//                radar.sendPatrol(pos);
+//                radar.scream(pos);
+//            }
+//        }
     }
 
     @Override

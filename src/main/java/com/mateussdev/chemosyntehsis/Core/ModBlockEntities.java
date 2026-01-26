@@ -14,11 +14,10 @@ public class ModBlockEntities {
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Chemosynthesis.MODID);
 
     public static final RegistryObject<BlockEntityType<BEVeinBlock>> VEIN_BLOCK =
-            BLOCK_ENTITIES.register("vein_block", () ->
-                    BlockEntityType.Builder.of(
-                            BEVeinBlock::new,
-                            ModBlocks.VEIN_BLOCK.get()
-                    ).build(null)
+            BLOCK_ENTITIES.register(
+                    "vein_block", () ->
+                    BlockEntityType.Builder.of(BEVeinBlock::new, ModBlocks.VEIN_BLOCK.get())
+                            .build(null)
             );
 
     public static void register(IEventBus eventBus) {

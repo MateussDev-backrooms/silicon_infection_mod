@@ -3,30 +3,22 @@ package com.mateussdev.chemosyntehsis.Blocks;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
-import com.mateussdev.chemosyntehsis.Entities.veg_bulb.VegetativeBulb;
+import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb.VegetativeBulb;
+import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.MultifaceSpreader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.material.LavaFluid;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
-import java.util.Map;
 
 public class TendrilBlock extends MultifaceBlock {
     private MultifaceSpreader spreader;
@@ -80,13 +72,13 @@ public class TendrilBlock extends MultifaceBlock {
 
         //Transform connected blocks
 
-        ///TODO MAKE A BETTER SYSTEM
+        /// TODO MAKE A BETTER SYSTEM
 
         //Have a chance to spawn a bulb randomly
-        if(pRandom.nextFloat() < 0.1) {
+        if(pRandom.nextFloat() < 0.1 && GlobalMobCap.canSpawnUnique(pLevel, ModEntities.VEG_BULB.get(), pPos, GlobalMobCap.BULB_CAP, 128)) {
             boolean canSpawnBulb = true;
             for(BaseOrganelle organelle : potentialSupporters) {
-                if(organelle.blockPosition().distSqr(pPos) < 2) {
+                if(organelle.blockPosition().distSqr(pPos) < 4) {
                     canSpawnBulb = false;
                     break;
                 }

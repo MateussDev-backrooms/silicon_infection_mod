@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.Entities.vasc_roller;
+package com.mateussdev.chemosyntehsis.Entities.Vegetated.vasc_roller;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import net.minecraft.resources.ResourceLocation;

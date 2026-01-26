@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.Entities.veg_roller;
+package com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_roller;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import software.bernie.geckolib.core.animation.AnimationState;
