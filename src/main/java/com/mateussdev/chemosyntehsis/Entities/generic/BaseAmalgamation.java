@@ -1,6 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
+import com.mateussdev.chemosyntehsis.Entities.util.VeinConnectorEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -8,6 +9,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 public class BaseAmalgamation extends BaseOrganelle{
     protected BaseAmalgamation(EntityType<? extends Monster> pEntityType, Level pLevel) {
@@ -16,6 +19,7 @@ public class BaseAmalgamation extends BaseOrganelle{
 
     private int basePlacementT;
     private int blocksPlaced = 0;
+    private boolean hasPlacedVeinBlock = false;
 
     @Override
     public void tick() {
@@ -52,17 +56,39 @@ public class BaseAmalgamation extends BaseOrganelle{
                     for (BlockPos pos : BlockPos.betweenClosed(p1, p2)) {
 
                         if (count == blocksPlaced) {
-                            slvl.setBlock(pos, ModBlocks.AMALGAMATED_FLESH_BLOCK.get().defaultBlockState(), 3);
+                            if(!hasPlacedVeinBlock && random.nextFloat() < 0.4) {
+                                slvl.setBlock(pos, ModBlocks.VEIN_BLOCK.get().defaultBlockState(), 3);
+                                hasPlacedVeinBlock = true;
+                            } else {
+                                slvl.setBlock(pos, ModBlocks.AMALGAMATED_FLESH_BLOCK.get().defaultBlockState(), 3);
+                            }
                             StaticSiliconiteMethods.spawnBloodHit(slvl, pos.getCenter());
                             blocksPlaced++;
                             break;
                         }
                         count++;
                     }
+
+                    for(BlockPos pos : BlockPos.randomBetweenClosed(random,
+                            3, Math.round((float) getBoundingBox().minX), Math.round((float) getBoundingBox().minY), Math.round((float) getBoundingBox().minZ),
+                            Math.round((float) getBoundingBox().maxX), Math.round((float) getBoundingBox().maxY), Math.round((float) getBoundingBox().maxZ)
+                    )) {
+                        BlockState state = slvl.getBlockState(pos);
+
+                        if(state.getDestroySpeed(slvl, pos) < 20f) {
+                            slvl.destroyBlock(pos, false);
+                        }
+                    }
                 }
                 basePlacementT++;
             }
         }
+    }
+
+    @Override
+    public void onAddedToWorld() {
+        super.onAddedToWorld();
+
     }
 
     @Override

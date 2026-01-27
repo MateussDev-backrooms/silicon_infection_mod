@@ -84,7 +84,7 @@ public class BaseTethered extends BaseSiliconite {
         if (t % globalWarmingRate == 0) {
             if (level() instanceof ServerLevel slvl) {
                 GlobalWarmingData data = GlobalWarmingData.get(slvl);
-                data.addPoints(0.1f);
+                data.addPoints(0.01f);
             }
         }
 
@@ -196,9 +196,7 @@ public class BaseTethered extends BaseSiliconite {
 
     public void triggerHitReaction(DamageSource source, float amount) {
         if (level().isClientSide && source.getEntity() != null) {
-            // Calculate a simple direction vector here if you want directional rotation
-            // For now, let's just give it a generic kick
-            float impactStrength = 90f * amount; // Degrees to rotate
+            float impactStrength = 90f * amount;
             float x = (random.nextFloat() - 0.5f) * impactStrength;
             float y = (random.nextFloat() - 0.5f) * impactStrength;
             float z = (random.nextFloat() - 0.5f) * impactStrength;

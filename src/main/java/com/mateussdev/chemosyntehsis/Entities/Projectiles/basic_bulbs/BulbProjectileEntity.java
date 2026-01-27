@@ -47,7 +47,6 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
     public final int TRANSFORM_IN_SECONDS = 30;
 
     public boolean mustMerge = false;
-    public int evolution_t = 0;
 
     @Override
     protected ItemStack getPickupItem() {
@@ -64,13 +63,8 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
         if (this.level() instanceof ServerLevel slvl) {
             if (this.inGround) {
                 entityData.set(TRANSFORM_TIMER, entityData.get(TRANSFORM_TIMER) + 1);
-
                 if (entityData.get(TRANSFORM_TIMER) >= 20 * TRANSFORM_IN_SECONDS) {
                     this.vegetate(slvl);
-                }
-
-                if (mustMerge && evolution_t++ > 20) {
-                    mergeIntoBulb();
                 }
 
                 if (tickCount % 60 == 0) {
@@ -90,43 +84,24 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
         }
     }
 
-    private void mergeIntoBulb() {
-        if (!(level() instanceof ServerLevel slvl)) return;
-
-        List<BulbProjectileEntity> all = slvl.getEntitiesOfClass(
-                BulbProjectileEntity.class,
-                this.getBoundingBox().inflate(1.2D),
-                c -> c.mustMerge
-        );
-
-        if (all.stream().anyMatch(c -> c.getId() < this.getId())) return;
-
-        // Effects
-        spawnBloodBurst(slvl, this.blockPosition());
-
-        // Spawn Cluster
-        VegetativeBulb vegetativeBulb = ModEntities.VEG_BULB.get().create(slvl);
-
-        vegetativeBulb.moveTo(this.getX(), this.getY(), this.getZ());
-
-        slvl.addFreshEntity(vegetativeBulb);
-
-        for (BulbProjectileEntity c : all) {
-            c.discard();
-        }
-    }
-
     private void initiateMerge(List<BulbProjectileEntity> others) {
-        this.mustMerge = true;
-
-        for (BulbProjectileEntity c : others) {
-            c.mustMerge = true;
-        }
-
         if (level() instanceof ServerLevel slvl) {
-            spawnBloodBurst(slvl, blockPosition());
+            if (others.stream().anyMatch(c -> c.getId() < this.getId())) return;
 
-            slvl.scheduleTick(this.blockPosition(), Blocks.AIR, 20);
+            // Spawn Bulb instantly if possible
+            if(GlobalMobCap.canSpawnUnique(slvl, ModEntities.VEG_BULB.get(), blockPosition(), GlobalMobCap.BULB_CAP, 128)) {
+                VegetativeBulb vegetativeBulb = ModEntities.VEG_BULB.get().create(slvl);
+
+                vegetativeBulb.moveTo(this.getX(), this.getY(), this.getZ());
+
+                slvl.addFreshEntity(vegetativeBulb);
+            }
+
+            //discard the others
+
+            for (BulbProjectileEntity c : others) {
+                c.discard();
+            }
         }
     }
 

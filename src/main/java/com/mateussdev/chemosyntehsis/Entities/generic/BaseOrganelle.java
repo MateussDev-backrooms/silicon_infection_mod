@@ -268,6 +268,18 @@ public abstract class BaseOrganelle extends BaseSiliconite {
     }
 
     @Override
+    protected void tryCheckInsideBlocks() {
+    }
+
+    @Override
+    public void travel(Vec3 pTravelVector) {
+        //DO NOT TRAVEL
+        if(!hasSettled) {
+            super.travel(pTravelVector);
+        }
+    }
+
+    @Override
     public void onAddedToWorld() {
         super.onAddedToWorld();
 

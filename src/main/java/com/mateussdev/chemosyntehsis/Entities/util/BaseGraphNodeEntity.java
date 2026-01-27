@@ -2,6 +2,7 @@ package com.mateussdev.chemosyntehsis.Entities.util;
 
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar.AmalRadar;
 import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -14,6 +15,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.fluids.FluidType;
 
@@ -40,30 +43,30 @@ public class BaseGraphNodeEntity extends Entity {
         super.tick();
 
         if(level() instanceof ServerLevel slvl) {
-            List<BaseGraphNodeEntity> nearbyNodes = slvl.getEntitiesOfClass(
-                    BaseGraphNodeEntity.class,
-                    new AABB(blockPosition()).inflate(getConnectionRadius()),
-                    e -> e.getUUID() != this.getUUID()
-            );
-
-            this.moveTo(this.blockPosition().getCenter());
-
-            for(BaseGraphNodeEntity node : nearbyNodes) {
-                if(!node.hasConnection(this.getUUID())) {
-                    this.connectTo(node);
-                }
-            }
-
-            //Remove invalid connections
-            Iterator<UUID> connectionIterator = connectionList.iterator();
-            while (connectionIterator.hasNext()) {
-                UUID entry = connectionIterator.next();
-                if(slvl.getEntity(entry) == null) {
-                    connectionIterator.remove();
-                }
-            }
-
             if(tickCount % 5 == 0) {
+                List<BaseGraphNodeEntity> nearbyNodes = slvl.getEntitiesOfClass(
+                        BaseGraphNodeEntity.class,
+                        new AABB(blockPosition()).inflate(getConnectionRadius()),
+                        e -> e.getUUID() != this.getUUID()
+                );
+
+                this.moveTo(this.blockPosition().getCenter());
+
+                for(BaseGraphNodeEntity node : nearbyNodes) {
+                    if(!node.hasConnection(this.getUUID())) {
+                        this.connectTo(node);
+                    }
+                }
+
+                //Remove invalid connections
+                Iterator<UUID> connectionIterator = connectionList.iterator();
+                while (connectionIterator.hasNext()) {
+                    UUID entry = connectionIterator.next();
+                    if(slvl.getEntity(entry) == null) {
+                        connectionIterator.remove();
+                    }
+                }
+
                 syncConnectionDataToClient();
             }
         }
@@ -94,6 +97,8 @@ public class BaseGraphNodeEntity extends Entity {
 
         other.removeConnection(this);
     }
+
+
 
     private void syncConnectionDataToClient() {
         if(level() instanceof ServerLevel slvl) {
@@ -197,6 +202,21 @@ public class BaseGraphNodeEntity extends Entity {
     }
 
     @Override
+    public boolean isColliding(BlockPos pPos, BlockState pState) {
+        return false;
+    }
+
+    @Override
+    public boolean isSilent() {
+        return true;
+    }
+
+    @Override
+    public boolean canCollideWith(Entity pEntity) {
+        return false;
+    }
+
+    @Override
     public float getLightLevelDependentMagicValue() {
         BlockPos pos = this.blockPosition();
         return this.level().getMaxLocalRawBrightness(pos);
@@ -230,13 +250,53 @@ public class BaseGraphNodeEntity extends Entity {
                 connectionTag.putUUID("connection_uuid", connectionID);
                 list.add(connectionTag);
 
-                CompoundTag positionTag = new CompoundTag();
-                positionTag.putLong("connection_position", slvl.getEntity(connectionID).blockPosition().asLong());
-                list2.add(positionTag);
+                if(slvl.getEntity(connectionID) != null) {
+                    CompoundTag positionTag = new CompoundTag();
+                    positionTag.putLong("connection_position", slvl.getEntity(connectionID).blockPosition().asLong());
+                    list2.add(positionTag);
+                }
             }
 
             compoundTag.put("connections", list);
             compoundTag.put("connection_positions", list2);
         }
+    }
+
+    public int getCorrectPackedLight() {
+        if (level() == null) return 0;
+
+        BlockPos entityPos = blockPosition();
+
+        // Check all 6 directions for an air block to sample light from
+        BlockPos[] checkPositions = {
+                entityPos.above(),      // Above
+                entityPos.below(),      // Below
+                entityPos.north(),      // North
+                entityPos.south(),      // South
+                entityPos.east(),       // East
+                entityPos.west()        // West
+        };
+
+        int maxBlockLight = 0;
+        int maxSkyLight = 0;
+
+        for (BlockPos checkPos : checkPositions) {
+            if (!level().getBlockState(checkPos).isSolidRender(level(), checkPos)) {
+                int blockLight = level().getBrightness(LightLayer.BLOCK, checkPos);
+                int skyLight = level().getBrightness(LightLayer.SKY, checkPos);
+
+                maxBlockLight = Math.max(maxBlockLight, blockLight);
+                maxSkyLight = Math.max(maxSkyLight, skyLight);
+                return LightTexture.pack(maxBlockLight, maxSkyLight);
+            }
+        }
+
+        maxBlockLight = level().getBrightness(LightLayer.BLOCK, entityPos);
+        maxSkyLight = level().getBrightness(LightLayer.SKY, entityPos);
+
+        maxBlockLight = Math.max(maxBlockLight, 4);
+        maxSkyLight = Math.max(maxSkyLight, 4);
+
+        return LightTexture.pack(maxBlockLight, maxSkyLight);
     }
 }

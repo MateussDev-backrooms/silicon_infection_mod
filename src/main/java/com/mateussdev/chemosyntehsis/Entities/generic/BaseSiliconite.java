@@ -121,7 +121,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         //prevent drowning
         this.setAirSupply(this.getMaxAirSupply());
 
-        if (!this.level().isClientSide) {
+        if (this.level() instanceof ServerLevel slvl) {
             t++;
 
             //Metabolism stuffs

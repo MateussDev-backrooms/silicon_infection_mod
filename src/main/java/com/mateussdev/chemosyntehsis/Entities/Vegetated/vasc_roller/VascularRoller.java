@@ -242,33 +242,41 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
 
     private BlockPos findNearbyFlesh() {
         BlockPos mobPos = this.blockPosition();
-        BlockPos bestTarget = null;
-        double closestDist = Double.MAX_VALUE;
+        List<BlockPos> candidates = new java.util.ArrayList<>();
 
+        // 1. SWEEP: Gather all FleshPileBlocks and sort them by distance
+        // Pure math is cheap. We can do this for 4000 blocks easily.
         for (BlockPos pos : BlockPos.betweenClosed(
                 mobPos.offset(-FLESH_CHECK_RADIUS, -FLESH_CHECK_RADIUS, -FLESH_CHECK_RADIUS),
                 mobPos.offset(FLESH_CHECK_RADIUS, FLESH_CHECK_RADIUS, FLESH_CHECK_RADIUS))) {
 
-            BlockState state = this.level().getBlockState(pos);
-
-            if (state.getBlock() instanceof FleshPileBlock) {
-                Vec3 startVec = this.position();
-                Vec3 endVec = pos.getCenter();
-
-                ClipContext context = new ClipContext(startVec, endVec, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this);
-                BlockHitResult hit = this.level().clip(context);
-
-                if (hit.getType() == HitResult.Type.BLOCK && hit.getBlockPos().equals(pos)) {
-                    double dist = this.distanceToSqr(pos.getX(), pos.getY(), pos.getZ());
-                    if (dist < closestDist) {
-                        closestDist = dist;
-                        bestTarget = pos.immutable();
-                    }
-                }
+            if (this.level().getBlockState(pos).getBlock() instanceof FleshPileBlock) {
+                candidates.add(pos.immutable());
             }
         }
 
-        return bestTarget;
+        // 2. SORT: Find the closest ones
+        // Sort candidates by distance to mob (closest first)
+        candidates.sort((p1, p2) -> Double.compare(mobPos.distSqr(p1), mobPos.distSqr(p2)));
+
+        // 3. FILTER: Raycast ONLY the top 10 closest candidates
+        // Raycasting is expensive. We only check the ones we actually care about.
+        int maxChecks = Math.min(candidates.size(), 10);
+        for (int i = 0; i < maxChecks; i++) {
+            BlockPos pos = candidates.get(i);
+            Vec3 startVec = this.position();
+            Vec3 endVec = pos.getCenter();
+
+            ClipContext context = new ClipContext(startVec, endVec, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this);
+            BlockHitResult hit = this.level().clip(context);
+
+            // If the ray actually hits the block (not a wall in front of it), return it
+            if (hit.getType() == HitResult.Type.BLOCK && hit.getBlockPos().equals(pos)) {
+                return pos.immutable();
+            }
+        }
+
+        return null;
     }
 
 

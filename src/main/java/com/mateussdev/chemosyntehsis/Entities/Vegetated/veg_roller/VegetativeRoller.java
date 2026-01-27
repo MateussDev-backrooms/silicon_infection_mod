@@ -43,28 +43,30 @@ public class VegetativeRoller extends BaseOrganelle {
     @Override
     public void evolve() {
         if(this.level() instanceof ServerLevel slvl) {
-            List<VascularRoller> vasculars = slvl.getEntitiesOfClass(
-                    VascularRoller.class,
-                    this.getBoundingBox().inflate(5),
-                    c -> true
-            );
-            if(vasculars.isEmpty() && random.nextFloat() < 0.7f) {
-                VascularRoller vascularRoller = ModEntities.VASC_ROLLER.get().create(slvl);
-                vascularRoller.moveTo(position());
-                slvl.addFreshEntity(vascularRoller);
-                StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
-                this.discard();
-            } else {
-                if(GlobalMobCap.canSpawnUnique(slvl, ModEntities.VEG_ROLLER.get(), blockPosition(), 128, 128)) {
-                    //reset metabolism
-                    entityData.set(METABOLISM_VALUE, 0);
-                    return;
+            if(GlobalMobCap.canSpawnGeneral(slvl, blockPosition(), GlobalMobCap.BULB_CAP*2, 128)) {
+                List<VascularRoller> vasculars = slvl.getEntitiesOfClass(
+                        VascularRoller.class,
+                        this.getBoundingBox().inflate(5),
+                        c -> true
+                );
+                if (vasculars.isEmpty() && random.nextFloat() < 0.7f) {
+                    VascularRoller vascularRoller = ModEntities.VASC_ROLLER.get().create(slvl);
+                    vascularRoller.moveTo(position());
+                    slvl.addFreshEntity(vascularRoller);
+                    StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
+                    this.discard();
+                } else {
+                    if (!GlobalMobCap.canSpawnUnique(slvl, ModEntities.SILICON_ROLLER.get(), blockPosition(), 128, 128)) {
+                        //reset metabolism
+                        entityData.set(METABOLISM_VALUE, 0);
+                        return;
+                    }
+                    SiliconRoller roller = ModEntities.SILICON_ROLLER.get().create(slvl);
+                    roller.moveTo(position());
+                    slvl.addFreshEntity(roller);
+                    StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
+                    this.discard();
                 }
-                SiliconRoller roller = ModEntities.SILICON_ROLLER.get().create(slvl);
-                roller.moveTo(position());
-                slvl.addFreshEntity(roller);
-                StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
-                this.discard();
             }
         }
     }

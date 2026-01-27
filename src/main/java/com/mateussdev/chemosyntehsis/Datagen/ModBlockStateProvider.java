@@ -24,13 +24,14 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(ModBlocks.MUSHY_SILICON_BLOCK);
         blockWithItem(ModBlocks.AMALGAMATED_FLESH_BLOCK);
 
+        simpleBlockWithItem(ModBlocks.VEIN_BLOCK.get(), cubeAll(ModBlocks.VEIN_BLOCK.get()));
 
         simpleBlock(ModBlocks.BIOMUSH.get(), new ModelFile.UncheckedModelFile(modLoc("block/biomush")));
         simpleBlock(ModBlocks.FLESH_PILE.get(), new ModelFile.UncheckedModelFile(modLoc("block/flesh_pile")));
 
         horizontalBlock(ModBlocks.CORPSE_COW.get(), new ModelFile.UncheckedModelFile(modLoc("block/cow_corpse")));
         horizontalBlock(ModBlocks.CORPSE_PIG.get(), new ModelFile.UncheckedModelFile(modLoc("block/pig_corpse")));
-        //blockWithItem(ModBlocks.TENDRIL_BLOCK);
+//        blockWithItem(ModBlocks.TENDRIL_BLOCK);
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject) {

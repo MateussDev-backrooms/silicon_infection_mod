@@ -32,7 +32,7 @@ import static com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMet
 public abstract class BaseGib extends Entity implements GeoEntity {
 
     protected int age;
-    protected int lifetime = -1;
+    protected int lifetime = 2400;
 
     protected boolean mustMerge = false;
 

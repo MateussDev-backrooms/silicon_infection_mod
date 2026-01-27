@@ -9,7 +9,7 @@ import net.minecraft.world.phys.AABB;
 
 public class GlobalMobCap {
 
-    public static final int BULB_CAP = 250;
+    public static final int BULB_CAP = 180;
 
     public static boolean canSpawnUnique(ServerLevel level, EntityType<?> type, BlockPos pos, int maxCount, int radius) {
         AABB searchBox = new AABB(pos).inflate(radius);

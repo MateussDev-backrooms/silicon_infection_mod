@@ -116,11 +116,9 @@ public class BaseMetabolized extends BaseTethered{
     public Vec3 calculateDodgeDir(Vec3 attackerLook, double coneAngleDeg) {
         Vec3 forward = attackerLook.normalize();
 
-        // Pick a random perpendicular vector
         Vec3 up = Math.abs(forward.y) < 0.99 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0);
         Vec3 right = forward.cross(up).normalize();
 
-        // Random angle within cone
         double angleRad = Math.toRadians(coneAngleDeg);
         double yaw = (random.nextDouble() * 2 - 1) * angleRad;
 
@@ -152,7 +150,7 @@ public class BaseMetabolized extends BaseTethered{
             this.getNavigation().stop();
 
 
-            if (dodgeTick > 10) { // tight, snappy dodge
+            if (dodgeTick > 10) {
                 isDodging = false;
                 dodgeTick = 0;
             }
