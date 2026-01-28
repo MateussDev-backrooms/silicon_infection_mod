@@ -3,7 +3,7 @@ package com.mateussdev.chemosyntehsis.Entities.Tethered.teth_skeleton;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.sounds.SoundEvents;

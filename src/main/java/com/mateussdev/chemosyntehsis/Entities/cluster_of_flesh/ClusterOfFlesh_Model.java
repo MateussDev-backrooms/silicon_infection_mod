@@ -1,11 +1,8 @@
 package com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
-import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 
 public class ClusterOfFlesh_Model extends GeoModel<ClusterOfFlesh> {
     //MODEL PATH

@@ -1,11 +1,8 @@
 package com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret;
 
-import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
-import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassGenerator;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -25,13 +22,10 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
-
-import java.util.List;
 
 public class AmalTurret extends BaseAmalgamation implements RangedAttackMob {
     public AmalTurret(EntityType<? extends Monster> p_33002_, Level p_33003_) {

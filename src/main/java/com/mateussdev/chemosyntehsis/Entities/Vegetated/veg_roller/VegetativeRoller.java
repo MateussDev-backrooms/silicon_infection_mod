@@ -2,7 +2,7 @@ package com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_roller;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.vasc_roller.VascularRoller;
 import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;

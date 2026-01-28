@@ -1,6 +1,5 @@
 package com.mateussdev.chemosyntehsis.Core;
 
-import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar.AmalRadar;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner;

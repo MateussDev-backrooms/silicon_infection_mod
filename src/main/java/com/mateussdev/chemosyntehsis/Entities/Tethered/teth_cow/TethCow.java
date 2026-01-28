@@ -2,9 +2,8 @@ package com.mateussdev.chemosyntehsis.Entities.Tethered.teth_cow;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.met_cow.MetCow;
-import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie;
 import net.minecraft.server.level.ServerLevel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;

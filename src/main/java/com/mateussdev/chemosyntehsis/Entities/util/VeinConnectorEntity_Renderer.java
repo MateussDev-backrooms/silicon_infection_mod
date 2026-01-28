@@ -1,12 +1,10 @@
 package com.mateussdev.chemosyntehsis.Entities.util;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Util.StaticRenderingMethods;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -15,8 +13,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -56,15 +52,11 @@ public class VeinConnectorEntity_Renderer extends EntityRenderer<VeinConnectorEn
     @Override
     public void render(VeinConnectorEntity pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         super.render(pEntity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);
-        List<BlockPos> positions = pEntity.getClientConnectionPositions();
+        VertexConsumer consumer = pBuffer.getBuffer(
+                RenderType.entityTranslucentCull(new ResourceLocation(Chemosynthesis.MODID, "textures/block/amalgamated_flesh_block.png"))
+        );
 
-            VertexConsumer consumer = pBuffer.getBuffer(
-//                    RenderType.debugQuads()
-                    RenderType.entityTranslucentCull(new ResourceLocation(Chemosynthesis.MODID, "textures/block/amalgamated_flesh_block.png"))
-            );
-//        StaticRenderingMethods.renderDebugCube(consumer, pPoseStack, pPoseStack.last(), 0, 0, 0, 0.5f, 0.5f, 0.5f, 1f, 1f, 1f, 1f, 15728880);
-
-        for(BlockPos pos : positions) {
+        for(BlockPos pos : pEntity.getClientConnectionPositions()) {
 
             Vec3 sourcePos = pEntity.blockPosition().getCenter();
             Vec3 targetPos = pos.getCenter();
@@ -77,7 +69,7 @@ public class VeinConnectorEntity_Renderer extends EntityRenderer<VeinConnectorEn
 
                 float heartbeat = (1+heartbeatFunction(pEntity.level().getGameTime() + pPartialTick)/50);
 
-                StaticSiliconiteMethods.renderParabolaTube(consumer, pPoseStack.last(),
+                StaticRenderingMethods.renderParabolaTube(consumer, pPoseStack.last(),
                         vein.offset, relPos.add(vein.offset),
                         (float) vein.color.x, (float) vein.color.y, (float) vein.color.z,
                         vein.thickness*heartbeat, dst, Mth.floor(dst*1.2f),

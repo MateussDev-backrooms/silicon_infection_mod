@@ -1,8 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.generic.AI;
 
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_erythrocyte.HybridErythrocyte;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
-import net.minecraft.core.particles.ParticleTypes;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 

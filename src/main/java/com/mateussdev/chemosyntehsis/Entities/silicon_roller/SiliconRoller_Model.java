@@ -1,8 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.silicon_roller;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
-import software.bernie.geckolib.cache.object.GeoBone;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.resources.ResourceLocation;

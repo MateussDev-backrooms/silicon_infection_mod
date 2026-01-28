@@ -1,7 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
-import com.mateussdev.chemosyntehsis.Entities.util.VeinConnectorEntity;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -10,7 +10,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 public class BaseAmalgamation extends BaseOrganelle{
     protected BaseAmalgamation(EntityType<? extends Monster> pEntityType, Level pLevel) {

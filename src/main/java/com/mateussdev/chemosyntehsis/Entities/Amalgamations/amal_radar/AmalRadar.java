@@ -4,7 +4,7 @@ import com.mateussdev.chemosyntehsis.Core.ModSounds;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

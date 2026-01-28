@@ -1,6 +1,5 @@
 package com.mateussdev.chemosyntehsis.Blocks;
 
-import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.util.VeinConnectorEntity;
 import com.mateussdev.chemosyntehsis.Entities.util.VeinConnectorEntity_Renderer;

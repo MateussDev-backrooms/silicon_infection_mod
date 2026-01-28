@@ -1,32 +1,13 @@
 package com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar;
 
-import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
-import com.mateussdev.chemosyntehsis.Util.StaticRenderingMethods;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.debug.DebugRenderer;
-import net.minecraft.client.renderer.entity.DisplayRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import org.joml.Vector4f;
-import org.joml.Vector4i;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
-
-import java.util.Collections;
-import java.util.logging.Logger;
 
 public class AmalRadar_Renderer extends GeoEntityRenderer<AmalRadar> {
     public AmalRadar_Renderer(EntityRendererProvider.Context context) {

@@ -1,27 +1,14 @@
 package com.mateussdev.chemosyntehsis.Entities.met_zombie;
 
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.LungeGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseMetabolized;
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class MetZombie extends BaseMetabolized {

@@ -9,7 +9,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.AI.LungeGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseGib;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseHybrid;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;

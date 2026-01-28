@@ -3,13 +3,11 @@ package com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.SeekAndEatBiomushGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseHybrid;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -33,13 +31,10 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.eventbus.api.BusBuilder;
 
-import java.sql.Array;
 import java.util.List;
-import java.util.Set;
 
-import static com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods.spawnBloodBurst;
+import static com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods.spawnBloodBurst;
 
 public class ChunkOfFlesh extends BaseSiliconite {
     public ChunkOfFlesh(EntityType<? extends Monster> p_33002_, Level p_33003_) {

@@ -1,7 +1,5 @@
 package com.mateussdev.chemosyntehsis.Entities.util;
 
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar.AmalRadar;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -13,7 +11,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;

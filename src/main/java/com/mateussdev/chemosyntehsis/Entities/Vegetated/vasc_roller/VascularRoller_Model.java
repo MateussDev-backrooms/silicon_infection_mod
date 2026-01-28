@@ -44,6 +44,5 @@ public class VascularRoller_Model extends GeoModel<VascularRoller> {
         biopile.setScaleX(animatable.getBiomass()/20f);
         biopile.setScaleY(animatable.getBiomass()/20f);
         biopile.setScaleZ(animatable.getBiomass()/20f);
-
     }
 }

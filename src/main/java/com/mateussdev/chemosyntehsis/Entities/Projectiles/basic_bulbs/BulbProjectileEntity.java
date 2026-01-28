@@ -4,11 +4,10 @@ import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Core.ModSounds;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseGib;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb.VegetativeBulb;
 import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.Blocks;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -29,8 +28,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 import java.util.List;
-
-import static com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods.spawnBloodBurst;
 
 public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable {
     public BulbProjectileEntity(EntityType<? extends AbstractArrow> pEntityType, Level pLevel) {

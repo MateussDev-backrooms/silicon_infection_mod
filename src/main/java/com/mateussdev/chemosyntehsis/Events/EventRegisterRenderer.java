@@ -1,6 +1,5 @@
 package com.mateussdev.chemosyntehsis.Events;
 
-import com.mateussdev.chemosyntehsis.BlockEntities.vein_block.BEVeinBlock_Renderer;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModBlockEntities;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
@@ -88,6 +87,5 @@ public class EventRegisterRenderer {
         EntityRenderers.register(ModEntities.VEIN_CONNECTOR.get(), VeinConnectorEntity_Renderer::new);
 
         //Block entities
-        BlockEntityRenderers.register(ModBlockEntities.VEIN_BLOCK.get(), BEVeinBlock_Renderer::new);
     }
 }

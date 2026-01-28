@@ -3,7 +3,7 @@ package com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
-import com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_roller.VegetativeRoller;
 import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
 import net.minecraft.core.Vec3i;
@@ -23,7 +23,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mateussdev.chemosyntehsis.Entities.generic.StaticSiliconiteMethods.spawnBloodBurst;
+import static com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods.spawnBloodBurst;
 
 public class VegetativeBulb extends BaseOrganelle {
     public VegetativeBulb(EntityType<? extends Monster> p_33002_, Level p_33003_) {
