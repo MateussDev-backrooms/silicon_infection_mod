@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
@@ -17,6 +18,7 @@ public class BaseAmalgamation extends BaseOrganelle{
     }
 
     private int basePlacementT;
+    private int regenT;
     private int blocksPlaced = 0;
     private boolean hasPlacedVeinBlock = false;
 
@@ -81,7 +83,19 @@ public class BaseAmalgamation extends BaseOrganelle{
                 }
                 basePlacementT++;
             }
+
+            if(regenT<240) regenT++;
+            else {
+                heal(1f);
+                regenT=0;
+            }
         }
+    }
+
+    @Override
+    public boolean hurt(DamageSource pSource, float pAmount) {
+        regenT = 0; //Do not regen when actively hurt
+        return super.hurt(pSource, pAmount);
     }
 
     @Override

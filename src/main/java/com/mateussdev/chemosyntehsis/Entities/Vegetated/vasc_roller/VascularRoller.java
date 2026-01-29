@@ -327,7 +327,15 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
         if (this.level() instanceof ServerLevel slvl) {
             StaticSiliconiteMethods.spawnBloodBurst(slvl, blockPosition());
             slvl.playSound(null, blockPosition(), SoundEvents.MUD_BREAK, SoundSource.HOSTILE, 1f, 1f);
-            entityData.set(COLLECTED_BIOMASS, entityData.get(COLLECTED_BIOMASS) + amount);
+
+            //Heal when wounded, otherwise construct amalgamation
+
+            if(getHealth() < getMaxHealth()) {
+                heal(1);
+            }
+            else {
+                entityData.set(COLLECTED_BIOMASS, entityData.get(COLLECTED_BIOMASS) + amount);
+            }
         }
     }
 
