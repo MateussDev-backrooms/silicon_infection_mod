@@ -17,10 +17,16 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        this.add(ModBlocks.SILICATE_BLOCK.get(),
-                block -> createOreDrop(ModBlocks.SILICATE_BLOCK.get(), ModItems.SILICON.get()));
-        this.add(ModBlocks.MUSHY_SILICON_BLOCK.get(),
-                block -> createOreDrop(ModBlocks.MUSHY_SILICON_BLOCK.get(), ModItems.SILICON.get()));
+        this.add(ModBlocks.SILICATE_BLOCK_L1.get(),
+                block -> createOreDrop(ModBlocks.SILICATE_BLOCK_L1.get(), ModItems.SILICON.get()));
+        this.add(ModBlocks.SILICATE_BLOCK_L2.get(),
+                block -> createOreDrop(ModBlocks.SILICATE_BLOCK_L2.get(), ModItems.SILICON.get()));
+        this.add(ModBlocks.SILICATE_BLOCK_L3.get(),
+                block -> createOreDrop(ModBlocks.SILICATE_BLOCK_L3.get(), ModItems.SILICON.get()));
+
+        this.dropWhenSilkTouch(ModBlocks.SILICATED_LOG_L4.get());
+        this.dropWhenSilkTouch(ModBlocks.SILICATED_STONE_L4.get());
+
         this.add(ModBlocks.AMALGAMATED_FLESH_BLOCK.get(),
                 block -> createOreDrop(ModBlocks.AMALGAMATED_FLESH_BLOCK.get(), Items.ROTTEN_FLESH));
 

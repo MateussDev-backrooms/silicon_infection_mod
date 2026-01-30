@@ -9,6 +9,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -23,13 +24,27 @@ public class ModBlocks {
 
     //===== DEFINE BLOCKS HERE =====//
 
-    public static final RegistryObject<Block> SILICATE_BLOCK = registerBlock("silicate_block",
+    //Block infection
+    public static final RegistryObject<Block> SILICATE_BLOCK_L1 = registerBlock("silicate_block_l1",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)
+                    .requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> SILICATE_BLOCK_L2 = registerBlock("silicate_block_l2",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERRACK)
+                    .requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> SILICATE_BLOCK_L3 = registerBlock("silicate_block_l3",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.DRIPSTONE_BLOCK)
                     .requiresCorrectToolForDrops()));
 
-    public static final RegistryObject<Block> MUSHY_SILICON_BLOCK = registerBlock("mushy_silicate_block",
-            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)
+    //L4 infected variants
+    public static final RegistryObject<Block> SILICATED_STONE_L4 = registerBlock("silicated_stone_l4",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.STONE)
                     .requiresCorrectToolForDrops()));
+    public static final RegistryObject<RotatedPillarBlock> SILICATED_LOG_L4 = registerBlock("silicated_log_l4",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LOG)
+                    .requiresCorrectToolForDrops()));
+
+
+
     public static final RegistryObject<Block> AMALGAMATED_FLESH_BLOCK = registerBlock("amalgamated_flesh_block",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)
                     .requiresCorrectToolForDrops()));

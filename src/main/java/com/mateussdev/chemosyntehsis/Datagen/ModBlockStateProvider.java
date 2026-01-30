@@ -20,9 +20,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        blockWithItem(ModBlocks.SILICATE_BLOCK);
-        blockWithItem(ModBlocks.MUSHY_SILICON_BLOCK);
         blockWithItem(ModBlocks.AMALGAMATED_FLESH_BLOCK);
+
+        //Silicated blocks
+        blockWithItem(ModBlocks.SILICATE_BLOCK_L1);
+        blockWithItem(ModBlocks.SILICATE_BLOCK_L2);
+        blockWithItem(ModBlocks.SILICATE_BLOCK_L3);
+
+        //Silicated block variants
+        blockWithItem(ModBlocks.SILICATED_STONE_L4);
+        logBlock(ModBlocks.SILICATED_LOG_L4.get());
 
         simpleBlockWithItem(ModBlocks.VEIN_BLOCK.get(), cubeAll(ModBlocks.VEIN_BLOCK.get()));
 

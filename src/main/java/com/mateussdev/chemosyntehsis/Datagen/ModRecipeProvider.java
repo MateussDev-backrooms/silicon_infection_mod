@@ -22,17 +22,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
     @Override
     protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.SILICATE_BLOCK.get())
-                .pattern("SS")
-                .pattern("SS")
-                .define('S', ModItems.SILICON.get())
-                .unlockedBy(getHasName(ModItems.SILICON.get()), has(ModItems.SILICON.get()))
-                .save(consumer);
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.SILICON.get(), 4)
-                .requires(ModBlocks.SILICATE_BLOCK.get())
-                .unlockedBy(getHasName(ModItems.SILICON.get()), has(ModItems.SILICON.get()))
-                .save(consumer);
     }
 
     protected static void oreSmelting(Consumer<FinishedRecipe> pFinishedRecipeConsumer, List<ItemLike> pIngredients, RecipeCategory pCategory, ItemLike pResult, float pExperience, int pCookingTIme, String pGroup) {

@@ -52,8 +52,11 @@ public class ModCreativeTabs {
                         pOutput.accept(ModItems.SPAWN_PERFOCYTE.get());
 
                         //Blocks
-                        pOutput.accept(ModBlocks.SILICATE_BLOCK.get());
-                        pOutput.accept(ModBlocks.MUSHY_SILICON_BLOCK.get());
+                        pOutput.accept(ModBlocks.SILICATE_BLOCK_L1.get());
+                        pOutput.accept(ModBlocks.SILICATE_BLOCK_L2.get());
+                        pOutput.accept(ModBlocks.SILICATE_BLOCK_L3.get());
+                        pOutput.accept(ModBlocks.SILICATED_STONE_L4.get());
+                        pOutput.accept(ModBlocks.SILICATED_LOG_L4.get());
                         pOutput.accept(ModBlocks.AMALGAMATED_FLESH_BLOCK.get());
                         pOutput.accept(ModBlocks.VEIN_BLOCK.get());
                         pOutput.accept(ModBlocks.TENDRILS.get());
