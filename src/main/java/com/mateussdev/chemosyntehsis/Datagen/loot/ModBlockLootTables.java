@@ -24,8 +24,11 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.add(ModBlocks.SILICATE_BLOCK_L3.get(),
                 block -> createOreDrop(ModBlocks.SILICATE_BLOCK_L3.get(), ModItems.SILICON.get()));
 
-        this.dropWhenSilkTouch(ModBlocks.SILICATED_LOG_L4.get());
+        this.dropWhenSilkTouch(ModBlocks.SILICATED_GRASS_L4.get());
+        this.dropWhenSilkTouch(ModBlocks.SILICATED_DIRT_L4.get());
         this.dropWhenSilkTouch(ModBlocks.SILICATED_STONE_L4.get());
+        this.dropWhenSilkTouch(ModBlocks.SILICATED_DEEPSLATE_L4.get());
+        this.dropWhenSilkTouch(ModBlocks.SILICATED_LOG_L4.get());
 
         this.add(ModBlocks.AMALGAMATED_FLESH_BLOCK.get(),
                 block -> createOreDrop(ModBlocks.AMALGAMATED_FLESH_BLOCK.get(), Items.ROTTEN_FLESH));

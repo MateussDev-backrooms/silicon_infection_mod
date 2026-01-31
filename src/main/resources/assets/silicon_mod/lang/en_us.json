@@ -38,17 +38,19 @@
   "entity.silicon_mod.amal_turret": "Turret Amalgamation",
   "item.silicon_mod.spawn_amal_radar": "Ear Amalgamation Spawn Egg",
   "entity.silicon_mod.amal_radar": "Ear Amalgamation",
+  "item.silicon_mod.spawn_amal_converter": "Converter Amalgamation Spawn Egg",
+  "entity.silicon_mod.amal_converter": "Converter Amalgamation",
 
 
-  "item.silicon_mod.spawn_hybt1_thrombocyte": "Thrombocyte Spawn Egg",
-  "entity.silicon_mod.hybt1_thrombocyte": "Thrombocyte",
-  "item.silicon_mod.spawn_hybt1_erythrocyte": "Erythrocyte Spawn Egg",
-  "entity.silicon_mod.hybt1_erythrocyte": "Erythrocyte",
-  "item.silicon_mod.spawn_hybt1_astrocyte": "Astrocyte Spawn Egg",
-  "entity.silicon_mod.hybt1_astrocyte": "Astrocyte",
+  "item.silicon_mod.spawn_thrombocyte": "Thrombocyte Spawn Egg",
+  "entity.silicon_mod_thrombocyte": "Thrombocyte",
+  "item.silicon_mod.spawn_erythrocyte": "Erythrocyte Spawn Egg",
+  "entity.silicon_mod_erythrocyte": "Erythrocyte",
+  "item.silicon_mod.spawn_astrocyte": "Astrocyte Spawn Egg",
+  "entity.silicon_mod_astrocyte": "Astrocyte",
 
-  "item.silicon_mod.spawn_hybt2_perfocyte": "Perfocyte Spawn Egg",
-  "entity.silicon_mod.hybt1_perfocyte": "Perfocyte",
+  "item.silicon_mod.spawn_perfocyte": "Perfocyte Spawn Egg",
+  "entity.silicon_mod_perfocyte": "Perfocyte",
 
 
   "creativetab.silicon_tab": "Chemosynthesiss",
@@ -56,5 +58,18 @@
   "block.silicon_mod.tendrils": "Silicate Tendrils",
   "block.silicon_mod.sulfurized_tendrils": "Sulfurized Silicate Tendrils",
 
-  "sounds.silicon_mod.amal_radar_scream": "Ear Amalgamation Screams"
+  "block.silicon_mod.biomush": "Biomush",
+  "block.silicon_mod.flesh_pile": "Flesh pile",
+
+  "block.silicon_mod.silicate_block_l1": "Stage 4 Silicate Block",
+  "block.silicon_mod.silicate_block_l2": "Stage 3 Silicate Block",
+  "block.silicon_mod.silicate_block_l3": "Stage 2 Silicate Block",
+
+  "block.silicon_mod.silicated_grass_l4": "Silicated Grass",
+  "block.silicon_mod.silicated_dirt_l4": "Silicated Dirt",
+  "block.silicon_mod.silicated_stone_l4": "Silicated Stone",
+  "block.silicon_mod.silicated_deepslate_l4": "Silicated Deepslate",
+  "block.silicon_mod.silicated_log_l4": "Silicated Log",
+
+  "sound.silicon_mod.amal_radar_scream": "Ear Amalgamation Screams"
 }

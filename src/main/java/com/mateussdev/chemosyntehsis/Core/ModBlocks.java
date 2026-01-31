@@ -39,6 +39,15 @@ public class ModBlocks {
     public static final RegistryObject<Block> SILICATED_STONE_L4 = registerBlock("silicated_stone_l4",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.STONE)
                     .requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> SILICATED_DIRT_L4 = registerBlock("silicated_dirt_l4",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.DIRT)
+                    .requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> SILICATED_GRASS_L4 = registerBlock("silicated_grass_l4",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.GRASS_BLOCK)
+                    .requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> SILICATED_DEEPSLATE_L4 = registerBlock("silicated_deepslate_l4",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE)
+                    .requiresCorrectToolForDrops()));
     public static final RegistryObject<RotatedPillarBlock> SILICATED_LOG_L4 = registerBlock("silicated_log_l4",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LOG)
                     .requiresCorrectToolForDrops()));

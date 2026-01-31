@@ -48,6 +48,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent(ModItems.SPAWN_AMAL_ZOMBIE.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SPAWN_AMAL_TURRET.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SPAWN_AMAL_RADAR.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.SPAWN_AMAL_CONVERTER.getId().getPath(), mcLoc("item/template_spawn_egg"));
     }
 
     private ItemModelBuilder simpleItem(RegistryObject<Item> item) {

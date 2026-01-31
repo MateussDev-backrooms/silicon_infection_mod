@@ -271,14 +271,14 @@ public class AmalRadar extends BaseAmalgamation {
             );
 
 
-            StaticSiliconiteMethods.debugLog("Alerted "+all.size()+" siliconites to location");
+//            StaticSiliconiteMethods.debugLog("Alerted "+all.size()+" siliconites to location");
             List<LivingEntity> potentialTargets = slvl.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(1f), StaticSiliconiteMethods::shouldAttackMob);
 
             LivingEntity potentialTarget = null;
 
             if(!potentialTargets.isEmpty()) {
                 potentialTarget = potentialTargets.get(0);
-                StaticSiliconiteMethods.debugLog("Targeting mob: "+potentialTarget.getType().toString());
+//                StaticSiliconiteMethods.debugLog("Targeting mob: "+potentialTarget.getType().toString());
             }
 
             for(BaseSiliconite siliconite : all) {

@@ -40,7 +40,7 @@ public class ErythrocyteDeployMobGoal extends Goal {
             erythrocyte.getLookControl().setLookAt(attackTarget, 30.0F, 30.0F);
             erythrocyte.getNavigation().moveTo(attackTarget.getX(), attackTarget.getY() + 4f, attackTarget.getZ(), 0.75);
 //            erythrocyte.level().addParticle(ParticleTypes.HEART, attackTarget.getX(), attackTarget.getY(), attackTarget.getZ(), 1f, 1f, 1f);
-            StaticSiliconiteMethods.debugLog("Deploying...");
+//            StaticSiliconiteMethods.debugLog("Deploying...");
 
 
 //            // Check if close enough to deploy

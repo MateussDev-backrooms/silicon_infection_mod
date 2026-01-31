@@ -23,6 +23,17 @@ public class ModCreativeTabs {
                         pOutput.accept(ModItems.ATMOSPHERE_ANALYZER.get());
                         pOutput.accept(ModItems.BULB_HARPOON_GUN.get());
 
+                        //Blocks
+                        pOutput.accept(ModBlocks.SILICATE_BLOCK_L1.get());
+                        pOutput.accept(ModBlocks.SILICATE_BLOCK_L2.get());
+                        pOutput.accept(ModBlocks.SILICATE_BLOCK_L3.get());
+
+                        pOutput.accept(ModBlocks.SILICATED_GRASS_L4.get());
+                        pOutput.accept(ModBlocks.SILICATED_DIRT_L4.get());
+                        pOutput.accept(ModBlocks.SILICATED_STONE_L4.get());
+                        pOutput.accept(ModBlocks.SILICATED_DEEPSLATE_L4.get());
+                        pOutput.accept(ModBlocks.SILICATED_LOG_L4.get());
+
                         //Mobs
                         pOutput.accept(ModItems.SPAWN_ROLLER.get());
                         pOutput.accept(ModItems.SPAWN_CHUNK_OF_FLESH.get());
@@ -44,6 +55,7 @@ public class ModCreativeTabs {
                         pOutput.accept(ModItems.SPAWN_AMAL_SPAWNER.get());
                         pOutput.accept(ModItems.SPAWN_AMAL_TURRET.get());
                         pOutput.accept(ModItems.SPAWN_AMAL_RADAR.get());
+                        pOutput.accept(ModItems.SPAWN_AMAL_CONVERTER.get());
 
                         pOutput.accept(ModItems.SPAWN_THROMBOCYTE.get());
                         pOutput.accept(ModItems.SPAWN_ERYTHROCYTE.get());
@@ -51,22 +63,16 @@ public class ModCreativeTabs {
 
                         pOutput.accept(ModItems.SPAWN_PERFOCYTE.get());
 
-                        //Blocks
-                        pOutput.accept(ModBlocks.SILICATE_BLOCK_L1.get());
-                        pOutput.accept(ModBlocks.SILICATE_BLOCK_L2.get());
-                        pOutput.accept(ModBlocks.SILICATE_BLOCK_L3.get());
-                        pOutput.accept(ModBlocks.SILICATED_STONE_L4.get());
-                        pOutput.accept(ModBlocks.SILICATED_LOG_L4.get());
-                        pOutput.accept(ModBlocks.AMALGAMATED_FLESH_BLOCK.get());
-                        pOutput.accept(ModBlocks.VEIN_BLOCK.get());
-                        pOutput.accept(ModBlocks.TENDRILS.get());
-                        pOutput.accept(ModBlocks.SULFURED_TENDRILS.get());
-
                         //Corpses
                         pOutput.accept(ModBlocks.BIOMUSH.get());
                         pOutput.accept(ModBlocks.FLESH_PILE.get());
                         pOutput.accept(ModBlocks.CORPSE_COW.get());
                         pOutput.accept(ModBlocks.CORPSE_PIG.get());
+
+                        pOutput.accept(ModBlocks.AMALGAMATED_FLESH_BLOCK.get());
+                        pOutput.accept(ModBlocks.VEIN_BLOCK.get());
+                        pOutput.accept(ModBlocks.TENDRILS.get());
+                        pOutput.accept(ModBlocks.SULFURED_TENDRILS.get());
                     })
                     .build());
 

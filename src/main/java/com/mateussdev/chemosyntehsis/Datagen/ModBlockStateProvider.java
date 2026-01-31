@@ -29,6 +29,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
         //Silicated block variants
         blockWithItem(ModBlocks.SILICATED_STONE_L4);
+        blockWithItem(ModBlocks.SILICATED_DEEPSLATE_L4);
+        blockWithItem(ModBlocks.SILICATED_DIRT_L4);
+
         logBlock(ModBlocks.SILICATED_LOG_L4.get());
 
         simpleBlockWithItem(ModBlocks.VEIN_BLOCK.get(), cubeAll(ModBlocks.VEIN_BLOCK.get()));

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "silicon_mod:block/silicated_log_l4_horizontal",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "silicon_mod:block/silicated_log_l4"
+    },
+    "axis=z": {
+      "model": "silicon_mod:block/silicated_log_l4_horizontal",
+      "x": 90
+    }
+  }
+}

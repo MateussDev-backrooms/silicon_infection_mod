@@ -86,7 +86,7 @@ public class ErythrocytePickUpMobGoal extends Goal {
             if (erythrocyte.distanceToSqr(transportTarget) < 2.25) { // 1.5 blocks
                 erythrocyte.getNavigation().stop();
                 transportTarget.startRiding(erythrocyte);
-                StaticSiliconiteMethods.debugLog("Picked up "+transportTarget.getType().toString());
+//                StaticSiliconiteMethods.debugLog("Picked up "+transportTarget.getType().toString());
             }
         }
     }

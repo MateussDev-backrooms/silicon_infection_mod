@@ -86,6 +86,9 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_AMAL_RADAR =
             ITEMS.register("spawn_amal_radar",
                     () -> new ForgeSpawnEggItem(ModEntities.AMAL_RADAR, 0x933b3b, 0x614558, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_AMAL_CONVERTER =
+            ITEMS.register("spawn_amal_converter",
+                    () -> new ForgeSpawnEggItem(ModEntities.AMAL_CONVERTER, 0x933b3b, 0x614558, new Item.Properties()));
 
     //Hybrids
 

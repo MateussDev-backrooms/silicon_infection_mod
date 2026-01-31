@@ -24,7 +24,7 @@
                   }
                 }
               ],
-              "name": "silicon_mod:silicate_block"
+              "name": "silicon_mod:silicate_block_l2"
             },
             {
               "type": "minecraft:item",
@@ -46,5 +46,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "silicon_mod:blocks/silicate_block"
+  "random_sequence": "silicon_mod:blocks/silicate_block_l2"
 }

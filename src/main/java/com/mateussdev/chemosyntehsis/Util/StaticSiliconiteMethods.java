@@ -1,6 +1,7 @@
 package com.mateussdev.chemosyntehsis.Util;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
@@ -24,6 +25,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -53,8 +55,51 @@ public class StaticSiliconiteMethods {
                     EntityType.ENDERMAN, ModEntities.TETH_ENDERMAN.get()
             );
 
-    public static Map<Block, Block> infectionConversionMap = Map.of(
-            //Empty for now
+    public static final Map<Block, Block> infectionConversionMap = Map.ofEntries(
+            //Surface
+            Map.entry(Blocks.GRASS_BLOCK, ModBlocks.SILICATED_GRASS_L4.get()),
+            Map.entry(Blocks.PODZOL, ModBlocks.SILICATED_GRASS_L4.get()),
+            Map.entry(Blocks.MYCELIUM, ModBlocks.SILICATED_GRASS_L4.get()),
+            Map.entry(Blocks.DIRT, ModBlocks.SILICATED_DIRT_L4.get()),
+
+            //Stones
+            Map.entry(Blocks.STONE, ModBlocks.SILICATED_STONE_L4.get()),
+            Map.entry(Blocks.ANDESITE, ModBlocks.SILICATED_STONE_L4.get()),
+            Map.entry(Blocks.DIORITE, ModBlocks.SILICATED_STONE_L4.get()),
+            Map.entry(Blocks.GRANITE, ModBlocks.SILICATED_STONE_L4.get()),
+            Map.entry(Blocks.DEEPSLATE, ModBlocks.SILICATED_DEEPSLATE_L4.get()),
+            Map.entry(Blocks.TUFF, ModBlocks.SILICATED_DEEPSLATE_L4.get()),
+
+            //Wood
+            Map.entry(Blocks.ACACIA_LOG, ModBlocks.SILICATED_LOG_L4.get()),
+            Map.entry(Blocks.BIRCH_LOG, ModBlocks.SILICATED_LOG_L4.get()),
+            Map.entry(Blocks.CHERRY_LOG, ModBlocks.SILICATED_LOG_L4.get()),
+            Map.entry(Blocks.JUNGLE_LOG, ModBlocks.SILICATED_LOG_L4.get()),
+            Map.entry(Blocks.DARK_OAK_LOG, ModBlocks.SILICATED_LOG_L4.get()),
+            Map.entry(Blocks.MANGROVE_LOG, ModBlocks.SILICATED_LOG_L4.get()),
+            Map.entry(Blocks.OAK_LOG, ModBlocks.SILICATED_LOG_L4.get()),
+
+            //Other
+            Map.entry(Blocks.ACACIA_LEAVES, Blocks.AIR),
+            Map.entry(Blocks.BIRCH_LEAVES, Blocks.AIR),
+            Map.entry(Blocks.CHERRY_LEAVES, Blocks.AIR),
+            Map.entry(Blocks.JUNGLE_LEAVES, Blocks.AIR),
+            Map.entry(Blocks.DARK_OAK_LEAVES, Blocks.AIR),
+            Map.entry(Blocks.MANGROVE_LEAVES, Blocks.AIR),
+            Map.entry(Blocks.OAK_LEAVES, Blocks.AIR)
+    );
+
+    public static List<Block> blockConversionBlacklist = List.of(
+            ModBlocks.AMALGAMATED_FLESH_BLOCK.get(),
+            ModBlocks.VEIN_BLOCK.get(),
+            ModBlocks.BIOMUSH.get(),
+            ModBlocks.FLESH_PILE.get(),
+            ModBlocks.TENDRILS.get(),
+            ModBlocks.SULFURED_TENDRILS.get(),
+            ModBlocks.CORPSE_PIG.get(),
+            ModBlocks.CORPSE_COW.get(),
+            Blocks.OBSIDIAN,
+            Blocks.CRYING_OBSIDIAN
     );
 
     public static Map<EntityType<? extends BaseOrganelle>, Integer> vegetatedRadiusMap = Map.of(

@@ -12,7 +12,12 @@
 			},
 			"bones": [
 				{
+					"name": "root",
+					"pivot": [0, 0, 0]
+				},
+				{
 					"name": "body",
+					"parent": "root",
 					"pivot": [3, 42.05243, -3.29993]
 				},
 				{
@@ -90,6 +95,7 @@
 				},
 				{
 					"name": "tube",
+					"parent": "root",
 					"pivot": [9, 15, -2],
 					"rotation": [-7.5, 0, 0],
 					"cubes": [
@@ -123,6 +129,7 @@
 				},
 				{
 					"name": "stem1",
+					"parent": "root",
 					"pivot": [-4, 7, 8],
 					"rotation": [133.72876, 49.22693, -93.60715],
 					"cubes": [

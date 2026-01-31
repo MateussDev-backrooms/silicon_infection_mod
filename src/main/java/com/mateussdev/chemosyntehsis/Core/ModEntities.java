@@ -1,6 +1,7 @@
 package com.mateussdev.chemosyntehsis.Core;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_converter.AmalConverter;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar.AmalRadar;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret;
@@ -118,6 +119,10 @@ public class ModEntities {
             ENTITIES.register("amal_radar", () -> EntityType.Builder.of(AmalRadar::new, MobCategory.MONSTER)
                     .sized(1.2f, 4f)
                     .build("amal_radar"));
+    public static final RegistryObject<EntityType<AmalConverter>> AMAL_CONVERTER =
+            ENTITIES.register("amal_converter", () -> EntityType.Builder.of(AmalConverter::new, MobCategory.MONSTER)
+                    .sized(1.2f, 3f)
+                    .build("amal_converter"));
 
     //Hybrid mobs
 

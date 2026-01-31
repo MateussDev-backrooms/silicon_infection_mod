@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "silicon_mod:block/silicated_log_l4_top",
+    "side": "silicon_mod:block/silicated_log_l4"
+  }
+}

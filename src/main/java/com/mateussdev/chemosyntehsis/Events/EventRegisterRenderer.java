@@ -3,6 +3,7 @@ package com.mateussdev.chemosyntehsis.Events;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModBlockEntities;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_converter.AmalConverter_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar.AmalRadar_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret_Renderer;
@@ -64,6 +65,7 @@ public class EventRegisterRenderer {
         EntityRenderers.register(ModEntities.AMAL_SPAWNER.get(), AmalSpawner_Renderer::new);
         EntityRenderers.register(ModEntities.AMAL_TURRET.get(), AmalTurret_Renderer::new);
         EntityRenderers.register(ModEntities.AMAL_RADAR.get(), AmalRadar_Renderer::new);
+        EntityRenderers.register(ModEntities.AMAL_CONVERTER.get(), AmalConverter_Renderer::new);
 
         //Hybrids
 
