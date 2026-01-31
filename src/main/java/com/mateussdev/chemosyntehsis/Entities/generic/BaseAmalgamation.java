@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 public class BaseAmalgamation extends BaseOrganelle{
     protected BaseAmalgamation(EntityType<? extends Monster> pEntityType, Level pLevel) {
@@ -70,9 +71,11 @@ public class BaseAmalgamation extends BaseOrganelle{
                         count++;
                     }
 
+                    AABB removeBox = getBoundingBox().move(attachDir.getNormal().getX(), attachDir.getNormal().getY(), attachDir.getNormal().getZ());
+
                     for(BlockPos pos : BlockPos.randomBetweenClosed(random,
-                            3, Math.round((float) getBoundingBox().minX), Math.round((float) getBoundingBox().minY), Math.round((float) getBoundingBox().minZ),
-                            Math.round((float) getBoundingBox().maxX), Math.round((float) getBoundingBox().maxY), Math.round((float) getBoundingBox().maxZ)
+                            3, Math.round((float) removeBox.minX), Math.round((float) removeBox.minY), Math.round((float) removeBox.minZ),
+                            Math.round((float) removeBox.maxX), Math.round((float) removeBox.maxY), Math.round((float) removeBox.maxZ)
                     )) {
                         BlockState state = slvl.getBlockState(pos);
 

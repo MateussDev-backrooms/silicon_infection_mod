@@ -9,6 +9,7 @@ import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassContainer;
+import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import net.minecraft.core.BlockPos;
@@ -42,6 +43,7 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class VascularRoller extends BaseOrganelle implements IBiomassContainer, RangedAttackMob {
@@ -69,12 +71,15 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
     public LivingEntity targetedEntity;
     public BlockPos targetedBlock;
 
-    private List<EntityType<? extends BaseAmalgamation>> default_amalgamations = List.of(
-            ModEntities.AMAL_ZOMBIE.get(),
-            ModEntities.AMAL_SPAWNER.get(),
-            ModEntities.AMAL_TURRET.get(),
-            ModEntities.AMAL_RADAR.get()
+    private final List<AmalgamationDefinition> default_amalgamations = List.of(
+            new AmalgamationDefinition(ModEntities.AMAL_SPAWNER.get(), 0),
+            new AmalgamationDefinition(ModEntities.AMAL_ZOMBIE.get(), 0),
+            new AmalgamationDefinition(ModEntities.AMAL_TURRET.get(), 0),
+            new AmalgamationDefinition(ModEntities.AMAL_RADAR.get(), 10),
+            new AmalgamationDefinition(ModEntities.AMAL_CONVERTER.get(), 10)
     );
+
+    private record AmalgamationDefinition(EntityType<? extends BaseAmalgamation> amalgamation, int minRadius) {}
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
@@ -184,10 +189,7 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
                 if(getBiomass() > 30) {
                     if (amalgams.isEmpty()) {
                         //choose random non-mob based amalgamation
-                        BaseAmalgamation amalgamation = default_amalgamations.get(random.nextInt(default_amalgamations.size())).create(slvl);
-                        amalgamation.moveTo(position());
-                        slvl.addFreshEntity(amalgamation);
-                        this.discard();
+                        chooseAndSpawnAmalgamation(slvl);
                     } else {
                         //Release the biomass
                         for (int i = 0; i < 10; i++) {
@@ -208,6 +210,18 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
                 }
             }
 
+        }
+    }
+
+    private void chooseAndSpawnAmalgamation(ServerLevel slvl) {
+        AmalgamationDefinition definition = default_amalgamations.get(random.nextInt(default_amalgamations.size()));
+        if(GlobalMobCap.canSpawnUnique(slvl, definition.amalgamation, blockPosition(), 1, definition.minRadius)) {
+            BaseAmalgamation amalgamation = definition.amalgamation.create(slvl);
+            amalgamation.moveTo(position());
+            slvl.addFreshEntity(amalgamation);
+            this.discard();
+        } else {
+            chooseAndSpawnAmalgamation(slvl);
         }
     }
 
@@ -243,8 +257,6 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
         BlockPos mobPos = this.blockPosition();
         List<BlockPos> candidates = new java.util.ArrayList<>();
 
-        // 1. SWEEP: Gather all FleshPileBlocks and sort them by distance
-        // Pure math is cheap. We can do this for 4000 blocks easily.
         for (BlockPos pos : BlockPos.betweenClosed(
                 mobPos.offset(-FLESH_CHECK_RADIUS, -FLESH_CHECK_RADIUS, -FLESH_CHECK_RADIUS),
                 mobPos.offset(FLESH_CHECK_RADIUS, FLESH_CHECK_RADIUS, FLESH_CHECK_RADIUS))) {
@@ -254,12 +266,8 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
             }
         }
 
-        // 2. SORT: Find the closest ones
-        // Sort candidates by distance to mob (closest first)
-        candidates.sort((p1, p2) -> Double.compare(mobPos.distSqr(p1), mobPos.distSqr(p2)));
+        candidates.sort(Comparator.comparingDouble(mobPos::distSqr));
 
-        // 3. FILTER: Raycast ONLY the top 10 closest candidates
-        // Raycasting is expensive. We only check the ones we actually care about.
         int maxChecks = Math.min(candidates.size(), 10);
         for (int i = 0; i < maxChecks; i++) {
             BlockPos pos = candidates.get(i);
@@ -269,7 +277,6 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
             ClipContext context = new ClipContext(startVec, endVec, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this);
             BlockHitResult hit = this.level().clip(context);
 
-            // If the ray actually hits the block (not a wall in front of it), return it
             if (hit.getType() == HitResult.Type.BLOCK && hit.getBlockPos().equals(pos)) {
                 return pos.immutable();
             }
