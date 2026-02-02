@@ -235,11 +235,9 @@ public class StaticRenderingMethods {
     private static float[] calculateNormal(float x1, float y1, float z1,
                                            float x2, float y2, float z2,
                                            float x3, float y3, float z3) {
-        // Edge vectors: v2 - v1 and v3 - v1
         float[] edge1 = {x2 - x1, y2 - y1, z2 - z1};
         float[] edge2 = {x3 - x1, y3 - y1, z3 - z1};
 
-        // Cross product: edge1 × edge2
         float[] normalRaw = cross(edge1, edge2);
         normalize(normalRaw);
         return normalRaw;

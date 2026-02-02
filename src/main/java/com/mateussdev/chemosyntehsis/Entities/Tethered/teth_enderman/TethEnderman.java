@@ -20,14 +20,18 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeHooks;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
@@ -43,13 +47,6 @@ public class TethEnderman extends BaseTethered {
     private boolean parryAnim = false;
 
     //Enderman mechanics
-    public enum TethEndermanState {
-        CHASE,
-        CARRYING_MOB,
-        QUICKSTEP,
-        SCREAM,
-        STUNNED
-    }
 
     public int screamCooldown = 0;
     public int quickstepCooldown = 0;
@@ -66,7 +63,7 @@ public class TethEnderman extends BaseTethered {
     //##### Entity setup and stats #####//
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 32D)
+                .add(Attributes.MAX_HEALTH, 40D)
                 .add(Attributes.MOVEMENT_SPEED, 0.45D)
                 .add(Attributes.FOLLOW_RANGE, 30D)
                 .add(Attributes.ARMOR_TOUGHNESS, 3D)
@@ -84,6 +81,8 @@ public class TethEnderman extends BaseTethered {
         this.goalSelector.addGoal(0, new TethEndermanQuickstepGoal(this));
 //        this.goalSelector.addGoal(3, new TethEndermanChaseGoal(this));
         this.goalSelector.addGoal(1, new TethEndermanCarryMobGoal(this));
+        this.goalSelector.addGoal(2, new TethEndermanTeleportWhenSeen(this));
+
 //        this.goalSelector.addGoal(2, new TethEndermanScreamGoal(this));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0f, true));
 
@@ -197,7 +196,7 @@ public class TethEnderman extends BaseTethered {
             level().playSound(null, blockPosition(), SoundEvents.SHULKER_SHOOT, SoundSource.HOSTILE);
             return false;
         } else {
-            if (random.nextFloat() < 0.5f) {
+            if (random.nextFloat() < 0.7f) {
                 double angle = random.nextDouble() * Math.PI * 2;
                 double distance = 8 + random.nextDouble() * 12;
                 double x = blockPosition().getX() + Math.cos(angle) * distance;
@@ -339,6 +338,9 @@ public class TethEnderman extends BaseTethered {
                 player.disableShield(true);
                 this.hurt(damageSources().generic(), 5);
                 this.playSound(SoundEvents.ENDERMAN_DEATH);
+                this.playSound(SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR);
+                level().playSound(null, player.blockPosition(), SoundEvents.ANVIL_FALL, SoundSource.HOSTILE, 1f, 1f);
+                player.setDeltaMovement(this.getLookAngle().normalize().add(0, 0.2f, 0).scale(0.5f));
                 stopAllAnimations();
                 this.triggerAnim("scream_controller", "scream");
                 stunT = 60;
@@ -366,5 +368,22 @@ public class TethEnderman extends BaseTethered {
         this.getAnimatableInstanceCache().getManagerForId(this.getId()).getAnimationControllers().get("movement").forceAnimationReset();
         this.getAnimatableInstanceCache().getManagerForId(this.getId()).getAnimationControllers().get("parry_controller").forceAnimationReset();
         this.getAnimatableInstanceCache().getManagerForId(this.getId()).getAnimationControllers().get("quickstep_controller").forceAnimationReset();
+    }
+
+    boolean isLookingAtMe(Player pPlayer) {
+        if(stunT > 0) return false; //Do not teleport when stunned
+
+        ItemStack itemstack = (ItemStack)pPlayer.getInventory().armor.get(3);
+        if (itemstack.getItem() == Blocks.CARVED_PUMPKIN.asItem()) {
+            //prevent teleport when wearing a carved pumpkin
+            return false;
+        } else {
+            Vec3 vec3 = pPlayer.getViewVector(1.0F).normalize();
+            Vec3 vec31 = new Vec3(this.getX() - pPlayer.getX(), this.getEyeY() - pPlayer.getEyeY(), this.getZ() - pPlayer.getZ());
+            double d0 = vec31.length();
+            vec31 = vec31.normalize();
+            double d1 = vec3.dot(vec31);
+            return d1 > 1.0 - 0.160 / d0 ? pPlayer.hasLineOfSight(this) : false;
+        }
     }
 }

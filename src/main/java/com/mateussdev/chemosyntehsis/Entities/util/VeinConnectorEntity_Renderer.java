@@ -54,6 +54,7 @@ public class VeinConnectorEntity_Renderer extends EntityRenderer<VeinConnectorEn
         super.render(pEntity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);
         VertexConsumer consumer = pBuffer.getBuffer(
                 RenderType.entityTranslucentCull(new ResourceLocation(Chemosynthesis.MODID, "textures/block/amalgamated_flesh_block.png"))
+                
         );
 
         for(BlockPos pos : pEntity.getClientConnectionPositions()) {
