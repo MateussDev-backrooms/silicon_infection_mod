@@ -14,6 +14,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Chemosynthesis.MODID)
 public class Chemosynthesis
@@ -22,6 +24,9 @@ public class Chemosynthesis
     public static final String MODID = "silicon_mod";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
+
+    // A thread-safe map to store which Entity IDs are infected on the Client
+    public static final ConcurrentHashMap<Integer, Boolean> INFECTED_CACHE = new ConcurrentHashMap<>();
 
     public Chemosynthesis(FMLJavaModLoadingContext context)
     {

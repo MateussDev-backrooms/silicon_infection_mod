@@ -193,30 +193,20 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     //On hurt others
     @Override
     public boolean doHurtTarget(Entity pEntity) {
-        boolean success = super.doHurtTarget(pEntity);
-        if (success) {
-            //Check if attacking entity
-            if (pEntity instanceof LivingEntity le) {
-                //Add energy on hurting target
-                //TODO add Tethered effect when hurt
-            }
-        }
-        return success;
-    }
-
-    @Override
-    public void awardKillScore(Entity killed, int score, DamageSource source) {
-        super.awardKillScore(killed, score, source);
-
-        if (level().random.nextFloat() < getTetherChance()) {
-            if (!this.level().isClientSide && killed instanceof LivingEntity victim && source.getEntity() == this) {
-                StaticSiliconiteMethods.tetherMob((ServerLevel) level(), victim);
-
-                if (destructiveTether()) {
-                    this.remove(RemovalReason.DISCARDED);
+        //Check if attacking entity
+        if (pEntity instanceof LivingEntity le) {
+            if(le.getHealth()/le.getMaxHealth() < 0.33f) {
+                if(level() instanceof ServerLevel slvl) {
+                    StaticSiliconiteMethods.tetherMob(slvl, le);
+                    if (destructiveTether()) {
+                        this.remove(RemovalReason.DISCARDED);
+                    }
+                    return false;
                 }
             }
         }
+        boolean success = super.doHurtTarget(pEntity);
+        return success;
     }
 
     @Override

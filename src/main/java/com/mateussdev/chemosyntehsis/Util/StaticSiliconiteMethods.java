@@ -5,6 +5,7 @@ import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.generic.AI.UniversalTetheredAttackGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
@@ -24,6 +25,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
@@ -129,8 +137,20 @@ public class StaticSiliconiteMethods {
             EntityType.GLOW_SQUID
     );
     public static boolean shouldAttackMob(LivingEntity entity) {
+        //Do not target siliconites
         if(entity instanceof BaseSiliconite) return false;
         if(isMobFromChemosynthesisMod(entity)) return false;
+
+        //Do not target mobs that have a universal tethered attack goal
+        if(entity instanceof Mob mob) {
+            for(WrappedGoal goal : mob.goalSelector.getAvailableGoals()) {
+                if(goal.getGoal() instanceof UniversalTetheredAttackGoal) {
+                    return false;
+                }
+            }
+        }
+
+
         return !BLACKLISTED_MOBS.contains(entity.getType());
     }
 
@@ -148,7 +168,20 @@ public class StaticSiliconiteMethods {
         EntityType<? extends LivingEntity> tethered_result_type = tetherHashMap.get(tetherTarget.getType());
         if(tethered_result_type==null) {
             //Split into chunks depending on the bounding box size
-            splitIntoChunks(serverLevel, tetherTarget.blockPosition(), Mth.clamp(Mth.ceil(boundingBoxVolume(tetherTarget.getBoundingBox())), 2, 64));
+            if(boundingBoxVolume(tetherTarget.getBoundingBox()) < 0.5f) {
+                splitIntoChunks(serverLevel, tetherTarget.blockPosition(), Mth.clamp(Mth.ceil(boundingBoxVolume(tetherTarget.getBoundingBox())), 2, 64));
+                tetherTarget.die(tetherTarget.damageSources().drown());
+            } else {
+                spawnTransformationParticle(serverLevel, tetherTarget.blockPosition());
+                serverLevel.playSound(
+                        null,
+                        tetherTarget.blockPosition(),
+                        SoundEvents.ZOMBIE_INFECT,
+                        SoundSource.HOSTILE,
+                        1f,
+                        1f);
+                universalTether(serverLevel, tetherTarget);
+            }
             return;
         }
         LivingEntity tethered_result = tethered_result_type.create(serverLevel);
@@ -165,6 +198,36 @@ public class StaticSiliconiteMethods {
                     1f);
 
             serverLevel.addFreshEntity(tethered_result);
+            tetherTarget.die(tetherTarget.damageSources().drown());
+        }
+    }
+
+    public static void universalTether(ServerLevel slvl, LivingEntity target) {
+        if(target instanceof PathfinderMob mob) {
+            //Only affect pathfinder mobs
+            mob.setHealth(mob.getMaxHealth());
+            //Reset target selectors
+            mob.targetSelector.removeAllGoals(e -> true);
+            //Make mob target the same things as
+            mob.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(mob, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
+
+            //Make sure we use other goals and set up missing ones
+            boolean hasAttackGoal = false;
+            for(WrappedGoal goal : mob.goalSelector.getAvailableGoals()) {
+                if(goal.getGoal() instanceof MeleeAttackGoal) {
+                    hasAttackGoal = true;
+                    break;
+                }
+            }
+
+            if(!hasAttackGoal) {
+                double attackDamage = mob.getAttribute(Attributes.ATTACK_DAMAGE) == null ? 6D : mob.getAttributeValue(Attributes.ATTACK_DAMAGE);
+                double attackKnockback = mob.getAttribute(Attributes.ATTACK_KNOCKBACK) == null ? 0.5D : mob.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
+                mob.goalSelector.addGoal(0, new UniversalTetheredAttackGoal(mob, 2.0f, attackDamage, attackKnockback, true));
+            }
+
+        } else {
+            splitIntoChunks(slvl, target.blockPosition(), Mth.clamp(Mth.ceil(boundingBoxVolume(target.getBoundingBox())), 2, 64));
         }
     }
 
