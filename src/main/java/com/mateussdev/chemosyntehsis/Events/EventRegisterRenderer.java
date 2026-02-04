@@ -18,6 +18,7 @@ import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh_Re
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_erythrocyte.HybridErythrocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte.HybridThrombocyte_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.generic.UniversalTethering.TetheredOverlayLayer;
 import com.mateussdev.chemosyntehsis.Entities.met_cow.MetCow_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller_Renderer;
@@ -28,12 +29,22 @@ import com.mateussdev.chemosyntehsis.Entities.Vegetated.vasc_roller.VascularRoll
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb.VegetativeBulb_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_roller.VegetativeRoller_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.util.VeinConnectorEntity_Renderer;
+import com.mateussdev.chemosyntehsis.Util.Models.BulbSingular;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mod.EventBusSubscriber(modid = Chemosynthesis.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class EventRegisterRenderer {
@@ -89,5 +100,28 @@ public class EventRegisterRenderer {
         EntityRenderers.register(ModEntities.VEIN_CONNECTOR.get(), VeinConnectorEntity_Renderer::new);
 
         //Block entities
+    }
+
+    @SubscribeEvent
+    public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
+        for(EntityType<?> type : ForgeRegistries.ENTITY_TYPES.getValues()) {
+            if(type==null) continue;
+            try {
+                if(event.getRenderer((EntityType<? extends LivingEntity>) type) instanceof MobRenderer renderer) {
+                    event.getRenderer((EntityType<? extends LivingEntity>) type)
+                            .addLayer(new TetheredOverlayLayer<>(renderer));
+                }
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(
+                BulbSingular.LAYER_LOCATION,
+                BulbSingular::createBodyLayer
+        );
     }
 }

@@ -9,6 +9,8 @@ import com.mateussdev.chemosyntehsis.Entities.generic.AI.UniversalTetheredAttack
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
+import com.mateussdev.chemosyntehsis.Entities.generic.ITethered;
+import com.mateussdev.chemosyntehsis.Mixin.LivingEntityMixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -141,13 +143,9 @@ public class StaticSiliconiteMethods {
         if(entity instanceof BaseSiliconite) return false;
         if(isMobFromChemosynthesisMod(entity)) return false;
 
-        //Do not target mobs that have a universal tethered attack goal
-        if(entity instanceof Mob mob) {
-            for(WrappedGoal goal : mob.goalSelector.getAvailableGoals()) {
-                if(goal.getGoal() instanceof UniversalTetheredAttackGoal) {
-                    return false;
-                }
-            }
+        //Do not attack universally tethered mobs
+        if(entity instanceof ITethered tethered) {
+            if(tethered.isTethered()) return false;
         }
 
 
@@ -168,9 +166,9 @@ public class StaticSiliconiteMethods {
         EntityType<? extends LivingEntity> tethered_result_type = tetherHashMap.get(tetherTarget.getType());
         if(tethered_result_type==null) {
             //Split into chunks depending on the bounding box size
-            if(boundingBoxVolume(tetherTarget.getBoundingBox()) < 0.5f) {
+            if(boundingBoxVolume(tetherTarget.getBoundingBox()) < 0.1f) {
                 splitIntoChunks(serverLevel, tetherTarget.blockPosition(), Mth.clamp(Mth.ceil(boundingBoxVolume(tetherTarget.getBoundingBox())), 2, 64));
-                tetherTarget.die(tetherTarget.damageSources().drown());
+                tetherTarget.discard();
             } else {
                 spawnTransformationParticle(serverLevel, tetherTarget.blockPosition());
                 serverLevel.playSound(
@@ -204,6 +202,13 @@ public class StaticSiliconiteMethods {
 
     public static void universalTether(ServerLevel slvl, LivingEntity target) {
         if(target instanceof PathfinderMob mob) {
+
+            //Set tethered value via Mixin
+            if (mob instanceof ITethered tethered) {
+                tethered.setTethered(true);
+                debugLog("Made mob tethered");
+            }
+
             //Only affect pathfinder mobs
             mob.setHealth(mob.getMaxHealth());
             //Reset target selectors

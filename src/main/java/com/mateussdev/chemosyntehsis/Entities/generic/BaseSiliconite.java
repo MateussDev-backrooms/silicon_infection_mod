@@ -195,6 +195,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     public boolean doHurtTarget(Entity pEntity) {
         //Check if attacking entity
         if (pEntity instanceof LivingEntity le) {
+            StaticSiliconiteMethods.debugLog(le.getHealth()/le.getMaxHealth()+"hp");
             if(le.getHealth()/le.getMaxHealth() < 0.33f) {
                 if(level() instanceof ServerLevel slvl) {
                     StaticSiliconiteMethods.tetherMob(slvl, le);

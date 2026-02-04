@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.mateussdev.chemosyntehsis.Mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "chemosyntehsis-refmap.json",
+  "mixins": [
+    "LivingEntityMixin"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
