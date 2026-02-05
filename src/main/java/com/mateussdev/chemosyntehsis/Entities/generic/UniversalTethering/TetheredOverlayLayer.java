@@ -3,8 +3,11 @@ package com.mateussdev.chemosyntehsis.Entities.generic.UniversalTethering;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.generic.ITethered;
 import com.mateussdev.chemosyntehsis.Util.Models.BulbSingular;
+import com.mateussdev.chemosyntehsis.Util.Rendering.TriPlanarUVVertexConsumer;
+import com.mateussdev.chemosyntehsis.Util.Rendering.UVScaleableVertexConsumer;
 import com.mateussdev.chemosyntehsis.Util.StaticRenderingMethods;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -20,19 +23,27 @@ import net.minecraft.client.renderer.entity.IronGolemRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import org.joml.Quaternionf;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 
 public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
     // reuse one bulb model instance (baked layer) - lazy init
     private BulbSingular<?> bulbInstance;
+
+    private final RenderLayerParent<T, M> ownerRenderer;
 
     private static final ResourceLocation BULB_TEX = new ResourceLocation(Chemosynthesis.MODID, "textures/util/bulb_singular.png");
     private RenderType bulbRenderType = RenderType.entityCutout(BULB_TEX);
@@ -45,6 +56,7 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
 
     public TetheredOverlayLayer(RenderLayerParent<T, M> renderer) {
         super(renderer);
+        this.ownerRenderer = renderer;
     }
 
     //    @SuppressWarnings("unchecked")
@@ -62,37 +74,67 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
         if (!(entity instanceof ITethered tethered) || !tethered.isTethered()) return;
         //collect all ModelPart instances by reflecting fields
         Set<ModelPart> parts = collectModelParts(this.getParentModel());
+        float uRatio = 1, vRatio = 1;
 
-        VertexConsumer scaledConsumer = new UVScaledVertexConsumer(buffer.getBuffer(TINT_RENDER_TYPE), 4f, 4f);
+        ResourceLocation texLoc = ownerRenderer.getTextureLocation(entity);
+        Resource resource =
+                Minecraft.getInstance()
+                        .getResourceManager()
+                        .getResource(texLoc)
+                        .orElseThrow();
+
+        NativeImage img = null;
+        try {
+            img = NativeImage.read(resource.open());
+        } catch (IOException e) {
+            //Error didn't load texture
+            uRatio =
+        }
+        if(img != null) {
+            int w = img.getWidth();
+            int h = img.getHeight();
+            img.close();
+
+            uRatio = 16/w;
+            vRatio = 16/h;
+        }
+
+
+
+
+        VertexConsumer scaledConsumer = new UVScaleableVertexConsumer(buffer.getBuffer(TINT_RENDER_TYPE), uRatio, vRatio);
         poseStack.pushPose();
         this.getParentModel().renderToBuffer(
                 poseStack,
                 scaledConsumer,
-                packedLight,
-                OverlayTexture.NO_OVERLAY,
-                1.0F,
-                1.0F,
-                1.0F,
-                0.5F
-        );
-        float offset = 1.01f;
-        poseStack.scale(offset, offset, offset);
-        scaledConsumer = new UVScaledVertexConsumer(buffer.getBuffer(TENDRIL_RENDER_TYPE), 4f, 4f);
-        this.getParentModel().renderToBuffer(
-                poseStack,
-                scaledConsumer,
-                packedLight,
+                LightTexture.FULL_BRIGHT,
                 OverlayTexture.NO_OVERLAY,
                 1.0F,
                 1.0F,
                 1.0F,
                 1F
         );
+        float offset = 1.01f;
+        poseStack.scale(offset, offset, offset);
+//        scaledConsumer = new TriPlanarUVVertexConsumer(buffer.getBuffer(RenderType.debugQuads()),
+//                Mth.lerp(partialTick, entity.xOld, entity.xo),
+//                Mth.lerp(partialTick, entity.yOld, entity.yo),
+//                Mth.lerp(partialTick, entity.zOld, entity.zo), true);
+//        this.getParentModel().renderToBuffer(
+//                poseStack,
+//                scaledConsumer,
+//                packedLight,
+//                OverlayTexture.NO_OVERLAY,
+//                1.0F,
+//                1.0F,
+//                1.0F,
+//                1F
+//        );
         poseStack.scale(offset+0.01f, offset+0.01f, offset+0.01f);
+
         poseStack.popPose();
 
         ensureBulbModel();
-
 
         VertexConsumer bulbConsumer = buffer.getBuffer(bulbRenderType);
 
@@ -111,7 +153,7 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
 
             // Optional: Add slight animation/wobble
             float time = age * 0.1f;
-            float wobbleAmount = 0.05f;
+            float wobbleAmount = 0.5f;
             float wobbleX = (float) Math.sin(time + partoffsetX) * wobbleAmount;
             float wobbleY = (float) Math.cos(time + partoffsetY) * wobbleAmount;
             float wobbleZ = (float) Math.sin(time * 1.3f + partoffsetZ) * wobbleAmount;
@@ -206,64 +248,5 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
         float angle = (float) Math.acos(dot);
 
         return new Quaternionf().rotateAxis(angle, axis);
-    }
-
-
-    // Custom VertexConsumer that scales UV coordinates
-    private static class UVScaledVertexConsumer implements VertexConsumer {
-        private final VertexConsumer wrapped;
-        private final float uScale;
-        private final float vScale;
-
-        public UVScaledVertexConsumer(VertexConsumer wrapped, float uScale, float vScale) {
-            this.wrapped = wrapped;
-            this.uScale = uScale;
-            this.vScale = vScale;
-        }
-
-        @Override
-        public VertexConsumer uv(float u, float v) { // Scale UV coordinates to make texture repeat
-            return wrapped.uv(u * uScale, v * vScale);
-        }
-
-        @Override
-        public VertexConsumer vertex(double x, double y, double z) {
-            return wrapped.vertex(x, y, z);
-        }
-
-        @Override
-        public VertexConsumer color(int red, int green, int blue, int alpha) {
-            return wrapped.color(red, green, blue, alpha);
-        }
-
-        @Override
-        public VertexConsumer overlayCoords(int u, int v) {
-            return wrapped.overlayCoords(u, v);
-        }
-
-        @Override
-        public VertexConsumer uv2(int u, int v) {
-            return wrapped.uv2(u, v);
-        }
-
-        @Override
-        public VertexConsumer normal(float x, float y, float z) {
-            return wrapped.normal(x, y, z);
-        }
-
-        @Override
-        public void endVertex() {
-            wrapped.endVertex();
-        }
-
-        @Override
-        public void defaultColor(int r, int g, int b, int a) {
-            wrapped.defaultColor(r, g, b, a);
-        }
-
-        @Override
-        public void unsetDefaultColor() {
-            wrapped.unsetDefaultColor();
-        }
     }
 }

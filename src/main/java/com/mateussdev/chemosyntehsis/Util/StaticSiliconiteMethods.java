@@ -196,7 +196,7 @@ public class StaticSiliconiteMethods {
                     1f);
 
             serverLevel.addFreshEntity(tethered_result);
-            tetherTarget.die(tetherTarget.damageSources().drown());
+            tetherTarget.discard();
         }
     }
 

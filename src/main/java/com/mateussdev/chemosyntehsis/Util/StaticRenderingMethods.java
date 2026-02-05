@@ -2,9 +2,14 @@ package com.mateussdev.chemosyntehsis.Util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class StaticRenderingMethods {
 
@@ -232,6 +237,27 @@ public class StaticRenderingMethods {
         }
     }
 
+    public static void renderText(PoseStack pPoseStack, MultiBufferSource pBuffer, String pText, double pX, double pY, double pZ, int pColor, float pScale, boolean p_270731_, float p_270825_, boolean pTransparent) {
+        Minecraft $$11 = Minecraft.getInstance();
+        Camera $$12 = $$11.gameRenderer.getMainCamera();
+        if ($$12.isInitialized() && $$11.getEntityRenderDispatcher().options != null) {
+            Font $$13 = $$11.font;
+            double $$14 = $$12.getPosition().x;
+            double $$15 = $$12.getPosition().y;
+            double $$16 = $$12.getPosition().z;
+            pPoseStack.pushPose();
+            pPoseStack.translate((float)(pX - $$14), (float)(pY - $$15) + 0.07F, (float)(pZ - $$16));
+            pPoseStack.mulPoseMatrix((new Matrix4f()).rotation($$12.rotation()));
+            pPoseStack.scale(-pScale, -pScale, pScale);
+            float $$17 = p_270731_ ? (float)(-$$13.width(pText)) / 2.0F : 0.0F;
+            $$17 -= p_270825_ / pScale;
+            $$13.drawInBatch(pText, $$17, 0.0F, pColor, false, pPoseStack.last().pose(), pBuffer, pTransparent ? Font.DisplayMode.SEE_THROUGH : Font.DisplayMode.NORMAL, 0, 15728880);
+            pPoseStack.popPose();
+        }
+    }
+
+    // ===== Rendering Maths ===== //
+
     private static float[] calculateNormal(float x1, float y1, float z1,
                                            float x2, float y2, float z2,
                                            float x3, float y3, float z3) {
@@ -270,5 +296,41 @@ public class StaticRenderingMethods {
         vector[0] *= scalar;
         vector[1] *= scalar;
         vector[2] *= scalar;
+    }
+
+    public static Vector3f transformTangentToLocal(Vector3f tangentSpaceVec, Vector3f normal) {
+        Vector3f tangent = new Vector3f(0, 1, 0); // Default up vector
+
+        // If normal is nearly vertical, use a different basis
+        if (Math.abs(normal.dot(tangent)) > 0.999f) {
+            tangent = new Vector3f(1, 0, 0); // Use forward instead
+        }
+
+        // Make tangent orthogonal to normal
+        tangent.sub(new Vector3f(normal).mul(normal.dot(tangent)));
+        tangent.normalize();
+
+        Vector3f bitangent = new Vector3f(normal).cross(tangent);
+
+        Vector3f localVec = new Vector3f(tangent).mul(tangentSpaceVec.x);
+        localVec.add(new Vector3f(bitangent).mul(tangentSpaceVec.y));
+        localVec.add(new Vector3f(normal).mul(tangentSpaceVec.z));
+
+        return localVec;
+    }
+
+    public static Vector3f vectorLerp(float aX, float aY, float aZ, float bX, float bY, float bZ, float alphaX, float alphaY, float alphaZ) {
+        return new Vector3f(
+                aX * (1 - alphaX) + bX * alphaX,
+                aY * (1 - alphaY) + bY * alphaY,
+                aZ * (1 - alphaZ) + bZ * alphaZ
+        );
+    }
+
+    public static Vector3f cheapContrast(float inX, float inY, float inZ, float contrast) {
+        float v1 = 0-contrast;
+        float v2 = contrast+1;
+
+        return vectorLerp(v1, v1, v1, v2, v2, v2, inX, inY, inZ);
     }
 }

@@ -3,7 +3,7 @@
   "minVersion": "0.8.5",
   "package": "com.mateussdev.chemosyntehsis.Mixin",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "mixin.silicon_mod.refmap.json",
+  "refmap": "mixins.silicon_mod.refmap.json",
   "mixins": [
     "LivingEntityMixin"
   ],
