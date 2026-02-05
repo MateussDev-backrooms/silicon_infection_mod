@@ -166,7 +166,7 @@ public class StaticSiliconiteMethods {
         EntityType<? extends LivingEntity> tethered_result_type = tetherHashMap.get(tetherTarget.getType());
         if(tethered_result_type==null) {
             //Split into chunks depending on the bounding box size
-            if(boundingBoxVolume(tetherTarget.getBoundingBox()) < 0.1f) {
+            if(boundingBoxVolume(tetherTarget.getBoundingBox()) < 0f) { //TEMP. TODO: Prevent small mobs from tethering
                 splitIntoChunks(serverLevel, tetherTarget.blockPosition(), Mth.clamp(Mth.ceil(boundingBoxVolume(tetherTarget.getBoundingBox())), 2, 64));
                 tetherTarget.discard();
             } else {
@@ -206,7 +206,6 @@ public class StaticSiliconiteMethods {
             //Set tethered value via Mixin
             if (mob instanceof ITethered tethered) {
                 tethered.setTethered(true);
-                debugLog("Made mob tethered");
             }
 
             //Only affect pathfinder mobs
