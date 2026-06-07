@@ -13,15 +13,16 @@ import java.util.Map;
 
 public class TextureUtilities {
 
-    private static final Map<ResourceLocation, Integer> TEXTURE_WIDTH_CACHE = Map.of();
+    private static final Map<ResourceLocation, Integer> TEXTURE_WIDTH_CACHE = new HashMap<>();
+    private static final Map<ResourceLocation, Integer> TEXTURE_HEIGHT_CACHE = new HashMap<>();
 
-    public TextureUtilities() {
-        TEXTURE_WIDTH_CACHE = new HashMap<>();
-    }
-
-    public static float getUvScaleForTexture(ResourceLocation textureLocation, float baseUvScale, int baseTextureWidth) {
+    public static float getUvWidthScaleForTexture(ResourceLocation textureLocation, float baseUvScale, int baseTextureWidth) {
         int textureWidth = getTextureWidth(textureLocation, baseTextureWidth);
         return calculateUvScale(textureWidth, baseUvScale, baseTextureWidth);
+    }
+    public static float getUvHeightScaleForTexture(ResourceLocation textureLocation, float baseUvScale, int baseTextureHeight) {
+        int textureHeight = getTextureHeight(textureLocation, baseTextureHeight);
+        return calculateUvScale(textureHeight, baseUvScale, baseTextureHeight);
     }
     private static int getTextureWidth(ResourceLocation textureLocation, int defaultWidth) {
         return TEXTURE_WIDTH_CACHE.computeIfAbsent(textureLocation, loc -> {
@@ -33,6 +34,19 @@ public class TextureUtilities {
                 }
             } catch (IOException e) {
                 return defaultWidth;
+            }
+        });
+    }
+    private static int getTextureHeight(ResourceLocation textureLocation, int defaultHeight) {
+        return TEXTURE_HEIGHT_CACHE.computeIfAbsent(textureLocation, loc -> {
+            try {
+                Resource resource = Minecraft.getInstance().getResourceManager().getResourceOrThrow(loc);
+                try (InputStream inputStream = resource.open();
+                     NativeImage image = NativeImage.read(inputStream)) {
+                    return image.getHeight();
+                }
+            } catch (IOException e) {
+                return defaultHeight;
             }
         });
     }

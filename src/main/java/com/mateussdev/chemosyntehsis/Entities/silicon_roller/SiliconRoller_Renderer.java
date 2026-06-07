@@ -18,17 +18,4 @@ public class SiliconRoller_Renderer extends GeoEntityRenderer<SiliconRoller> {
     public SiliconRoller_Renderer(EntityRendererProvider.Context context) {
         super(context, new SiliconRoller_Model());
     }
-
-    private static final ResourceLocation TENDRIL_TEXTURE = new ResourceLocation(Chemosynthesis.MODID, "textures/util/tendril_overlay.png");
-
-    @Override
-    public void render(SiliconRoller entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-
-        VertexConsumer testConsumer = new TriPlanarUVVertexConsumer(bufferSource.getBuffer(RenderType.debugQuads()),
-                Mth.lerp(partialTick, entity.xOld, entity.xo),
-                Mth.lerp(partialTick, entity.yOld, entity.yo),
-                Mth.lerp(partialTick, entity.zOld, entity.zo), true);
-        StaticRenderingMethods.renderDebugCube(testConsumer, poseStack, poseStack.last(), 0, 2, 0, 1, 1, 1, 1, 1, 1, 1, LightTexture.FULL_BRIGHT);
-    }
 }

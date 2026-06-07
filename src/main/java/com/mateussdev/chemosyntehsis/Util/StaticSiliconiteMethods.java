@@ -34,6 +34,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
@@ -45,6 +46,7 @@ import org.joml.Vector4i;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 
+import java.nio.file.Path;
 import java.util.*;
 
 public class StaticSiliconiteMethods {
@@ -201,7 +203,7 @@ public class StaticSiliconiteMethods {
     }
 
     public static void universalTether(ServerLevel slvl, LivingEntity target) {
-        if(target instanceof PathfinderMob mob) {
+        if(target instanceof Mob mob) {
 
             //Set tethered value via Mixin
             if (mob instanceof ITethered tethered) {
@@ -212,26 +214,25 @@ public class StaticSiliconiteMethods {
             mob.setHealth(mob.getMaxHealth());
             //Reset target selectors
             mob.targetSelector.removeAllGoals(e -> true);
-            //Make mob target the same things as
+            //Make mob target the same things as us
             mob.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(mob, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
 
-            //Make sure we use other goals and set up missing ones
-            boolean hasAttackGoal = false;
-            for(WrappedGoal goal : mob.goalSelector.getAvailableGoals()) {
-                if(goal.getGoal() instanceof MeleeAttackGoal) {
-                    hasAttackGoal = true;
-                    break;
+            //Add attack goal to those with no attack damage attribute
+            if(mob.getAttribute(Attributes.ATTACK_DAMAGE) == null) {
+                double attackDamage = 6D;
+                double attackKnockback = 0.5D;
+                if(mob instanceof PathfinderMob pmob) {
+                    mob.goalSelector.addGoal(0, new UniversalTetheredAttackGoal(pmob, 1.5f, attackDamage, attackKnockback, true));
                 }
             }
 
-            if(!hasAttackGoal) {
-                double attackDamage = mob.getAttribute(Attributes.ATTACK_DAMAGE) == null ? 6D : mob.getAttributeValue(Attributes.ATTACK_DAMAGE);
-                double attackKnockback = mob.getAttribute(Attributes.ATTACK_KNOCKBACK) == null ? 0.5D : mob.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-                mob.goalSelector.addGoal(0, new UniversalTetheredAttackGoal(mob, 2.0f, attackDamage, attackKnockback, true));
-            }
-
         } else {
+            if(target instanceof Player player) {
+                if(!player.isCreative()) player.die(player.damageSources().drown());
+                else return;
+            }
             splitIntoChunks(slvl, target.blockPosition(), Mth.clamp(Mth.ceil(boundingBoxVolume(target.getBoundingBox())), 2, 64));
+            target.discard();
         }
     }
 

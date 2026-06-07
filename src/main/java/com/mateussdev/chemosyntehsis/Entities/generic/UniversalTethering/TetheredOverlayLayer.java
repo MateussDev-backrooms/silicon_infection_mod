@@ -3,6 +3,7 @@ package com.mateussdev.chemosyntehsis.Entities.generic.UniversalTethering;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Entities.generic.ITethered;
 import com.mateussdev.chemosyntehsis.Util.Models.BulbSingular;
+import com.mateussdev.chemosyntehsis.Util.Rendering.TextureUtilities;
 import com.mateussdev.chemosyntehsis.Util.Rendering.TriPlanarUVVertexConsumer;
 import com.mateussdev.chemosyntehsis.Util.Rendering.UVScaleableVertexConsumer;
 import com.mateussdev.chemosyntehsis.Util.StaticRenderingMethods;
@@ -11,10 +12,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.model.IronGolemModel;
-import net.minecraft.client.model.SquidModel;
+import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -74,103 +72,139 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
         if (!(entity instanceof ITethered tethered) || !tethered.isTethered()) return;
         //collect all ModelPart instances by reflecting fields
         Set<ModelPart> parts = collectModelParts(this.getParentModel());
-        float uRatio = 1, vRatio = 1;
 
         ResourceLocation texLoc = ownerRenderer.getTextureLocation(entity);
-        Resource resource =
-                Minecraft.getInstance()
-                        .getResourceManager()
-                        .getResource(texLoc)
-                        .orElseThrow();
+        float uvWidth = TextureUtilities.getUvWidthScaleForTexture(texLoc, 4f, 64);
+        float uvHeight = TextureUtilities.getUvHeightScaleForTexture(texLoc, 4f, 64);
 
-        NativeImage img = null;
-        try {
-            img = NativeImage.read(resource.open());
-        } catch (IOException e) {
-            //Error didn't load texture
-            uRatio =
+
+
+        VertexConsumer scaledConsumer = new UVScaleableVertexConsumer(buffer.getBuffer(TINT_RENDER_TYPE), uvWidth, uvHeight);
+        if (this.getParentModel() instanceof VillagerHeadModel headModel) {
+            headModel.hatVisible(false);
         }
-        if(img != null) {
-            int w = img.getWidth();
-            int h = img.getHeight();
-            img.close();
-
-            uRatio = 16/w;
-            vRatio = 16/h;
-        }
-
-
-
-
-        VertexConsumer scaledConsumer = new UVScaleableVertexConsumer(buffer.getBuffer(TINT_RENDER_TYPE), uRatio, vRatio);
-        poseStack.pushPose();
         this.getParentModel().renderToBuffer(
                 poseStack,
                 scaledConsumer,
-                LightTexture.FULL_BRIGHT,
+                packedLight,
+                OverlayTexture.NO_OVERLAY,
+                1.0F,
+                1.0F,
+                1.0F,
+                0.5F
+        );
+        float offset = 1.01f;
+        scaledConsumer = new UVScaleableVertexConsumer(buffer.getBuffer(TENDRIL_RENDER_TYPE), uvWidth, uvHeight);
+        this.getParentModel().renderToBuffer(
+                poseStack,
+                scaledConsumer,
+                packedLight,
                 OverlayTexture.NO_OVERLAY,
                 1.0F,
                 1.0F,
                 1.0F,
                 1F
         );
-        float offset = 1.01f;
-        poseStack.scale(offset, offset, offset);
-//        scaledConsumer = new TriPlanarUVVertexConsumer(buffer.getBuffer(RenderType.debugQuads()),
-//                Mth.lerp(partialTick, entity.xOld, entity.xo),
-//                Mth.lerp(partialTick, entity.yOld, entity.yo),
-//                Mth.lerp(partialTick, entity.zOld, entity.zo), true);
-//        this.getParentModel().renderToBuffer(
-//                poseStack,
-//                scaledConsumer,
-//                packedLight,
-//                OverlayTexture.NO_OVERLAY,
-//                1.0F,
-//                1.0F,
-//                1.0F,
-//                1F
-//        );
-        poseStack.scale(offset+0.01f, offset+0.01f, offset+0.01f);
 
-        poseStack.popPose();
+        if (this.getParentModel() instanceof VillagerHeadModel headModel) {
+            headModel.hatVisible(true);
+        }
 
         ensureBulbModel();
 
         VertexConsumer bulbConsumer = buffer.getBuffer(bulbRenderType);
 
         for (ModelPart part : parts) {
-            poseStack.pushPose();
 
-            float partoffsetX = part.x/16f, partoffsetY = part.y/16f, partoffsetZ = part.z/16f;
+            float largestW = 0, largestH = 0, largestD = 0;
+            float largestMinX = 99999, largestMinY = 99999, largestMinZ = 99999;
+            float largestMaxX = -99999, largestMaxY = -99999, largestMaxZ = -99999;
+
+            float partMinX = 99999, partMinY = 99999, partMinZ = 99999;
+            float partMaxX = -99999, partMaxY = -99999, partMaxZ = -99999;
+
+            List<ModelPart.Cube> cubes = collectCubesFromPart(part);
+            for(ModelPart.Cube cuboid : cubes) {
+                //Update mins and maxes
+                if(cuboid.minX < partMinX) partMinX = cuboid.minX;
+                if(cuboid.minY < partMinY) partMinY = cuboid.minY;
+                if(cuboid.minZ < partMinZ) partMinZ = cuboid.minZ;
+                if(cuboid.maxX > partMaxX) partMaxX = cuboid.maxX;
+                if(cuboid.maxY > partMaxY) partMaxY = cuboid.maxY;
+                if(cuboid.maxZ > partMaxZ) partMaxZ = cuboid.maxZ;
+
+                float sizeX = cuboid.maxX - cuboid.minX;
+                float sizeY = cuboid.maxY - cuboid.minY;
+                float sizeZ = cuboid.maxZ - cuboid.minZ;
 
 
-            // Translate to pivot point
-            poseStack.translate(partoffsetX, partoffsetY, partoffsetZ);
+                if(sizeX*sizeY*sizeZ > largestW*largestD*largestH) {
+                    // Bigger volume
+                    largestW = sizeX;
+                    largestH = sizeY;
+                    largestD = sizeZ;
 
-            // Get rotation to point outward
-            Quaternionf outwardRotation = getOutwardRotation(partoffsetX, partoffsetY, partoffsetZ);
-            poseStack.mulPose(outwardRotation);
+                    largestMinX = cuboid.minX;
+                    largestMinY = cuboid.minY;
+                    largestMinZ = cuboid.minZ;
 
-            // Optional: Add slight animation/wobble
-            float time = age * 0.1f;
-            float wobbleAmount = 0.5f;
-            float wobbleX = (float) Math.sin(time + partoffsetX) * wobbleAmount;
-            float wobbleY = (float) Math.cos(time + partoffsetY) * wobbleAmount;
-            float wobbleZ = (float) Math.sin(time * 1.3f + partoffsetZ) * wobbleAmount;
-            poseStack.mulPose(new Quaternionf().rotateXYZ(wobbleX, wobbleY, wobbleZ));
-
-            if (part.xRot != 0.0F || part.yRot != 0.0F || part.zRot != 0.0F) {
-                poseStack.rotateAround((new Quaternionf()).rotationZYX(part.zRot, part.yRot, part.xRot), 0, 0, 0);
+                    largestMaxX = cuboid.maxX;
+                    largestMaxY = cuboid.maxY;
+                    largestMaxZ = cuboid.maxZ;
+                }
             }
 
-            if (part.xScale != 1.0F || part.yScale != 1.0F || part.zScale != 1.0F) {
-                poseStack.scale(part.xScale, part.yScale, part.zScale);
+            float partSizeX = partMaxX - partMinX;
+            float partSizeY = partMaxY - partMinY;
+            float partSizeZ = partMaxZ - partMinZ;
+
+            float partVolume = partSizeX * partSizeY * partSizeZ;
+
+            float pivotX = part.x/16f;
+            float pivotY = part.y/16f;
+            float pivotZ = part.z/16f;
+
+            float partCenterX = partSizeX/2f/16f;
+            float partCenterY = partSizeY/2f/16f;
+            float partCenterZ = partSizeZ/2f/16f;
+
+            //Do not render if object is too small
+            if(partVolume > 4f) {
+                poseStack.pushPose();
+                //Translate to center point
+
+
+
+                poseStack.translate(partMinX/16f + partCenterX, partMinY/16f + partCenterY, partMinZ/16f + partCenterZ);
+                poseStack.translate(pivotX, pivotY, pivotZ);
+                poseStack.translate(0.5f/16f, 0.5f/16f, 0.5f/16f);
+
+
+                //Apply default rotation of the part:
+                //Apply part rotation
+                if (part.xRot != 0.0F || part.yRot != 0.0F || part.zRot != 0.0F) {
+                    poseStack.rotateAround((new Quaternionf()).rotationZYX(part.zRot, part.yRot, part.xRot), 0, 0, 0);
+                }
+                poseStack.rotateAround((new Quaternionf()).rotationZYX(-part.getInitialPose().zRot, -part.getInitialPose().yRot, -part.getInitialPose().xRot), 0, 0, 0);
+                //Translate bulb to center of
+//                poseStack.translate(pivotX, pivotY, pivotZ);
+
+
+                //Bulb wobble
+                float time = age * 0.1f;
+                float wobbleAmount = 0.1f;
+                float wobbleX = (float) Math.sin(time + pivotX) * wobbleAmount;
+                float wobbleY = (float) Math.cos(time + pivotY) * wobbleAmount;
+                float wobbleZ = (float) Math.sin(time * 1.3f + pivotZ) * wobbleAmount;
+                poseStack.mulPose(new Quaternionf().rotateXYZ(wobbleX, wobbleY, wobbleZ));
+
+                //Weird arbitrary translation
+                poseStack.translate(0f, -1.501F, 0f);
+
+                bulbInstance.renderToBuffer(poseStack, bulbConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
+
+                poseStack.popPose();
             }
-            poseStack.translate(0f, -1.501F, 0f);
-
-            bulbInstance.renderToBuffer(poseStack, bulbConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
-
-            poseStack.popPose();
         }
     }
 
