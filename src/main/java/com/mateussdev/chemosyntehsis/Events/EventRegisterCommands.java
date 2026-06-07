@@ -1,8 +1,8 @@
 package com.mateussdev.chemosyntehsis.Events;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.GlobalWarming.GlobalWarmingCommand;
-import com.mateussdev.chemosyntehsis.Util.TetherCommand;
+import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingCommand;
+import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.TetherCommand;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

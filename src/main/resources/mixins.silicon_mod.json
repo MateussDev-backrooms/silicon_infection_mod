@@ -4,10 +4,10 @@
   "package": "com.mateussdev.chemosyntehsis.Mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "mixins.silicon_mod.refmap.json",
-  "mixins": [
-    "LivingEntityMixin"
+  "mixins": [],
+  "client": [
+    "MixinLivingEntityRenderer"
   ],
-  "client": [],
   "server": [],
   "injectors": {
     "defaultRequire": 1

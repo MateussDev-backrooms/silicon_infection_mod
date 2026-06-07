@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.GlobalWarming;
+package com.mateussdev.chemosyntehsis.Systems.GlobalWarming;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

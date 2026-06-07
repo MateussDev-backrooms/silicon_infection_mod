@@ -4,7 +4,7 @@ import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
-import com.mateussdev.chemosyntehsis.GlobalWarming.GlobalWarmingData;
+import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingData;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -48,15 +48,12 @@ public class BaseTethered extends BaseSiliconite {
             }
 
             return event.setAndContinue(
-                    // If moving, play the walking animation
                     event.isMoving() ? RawAnimation.begin().thenLoop("walk") :
-                            // If not moving, play the idle animation
                             RawAnimation.begin().thenLoop("idle"));
         }));
 
         //Bone wobbling
         controllers.add(new AnimationController<>(this, "reaction_controller", 1, event -> {
-            // Get the current bone being processed
 
             return PlayState.CONTINUE;
         }));

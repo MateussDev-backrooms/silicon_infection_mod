@@ -4,7 +4,9 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjec
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
-import com.mateussdev.chemosyntehsis.GlobalWarming.GlobalWarmingData;
+import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
+import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingData;
+import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.UniversalTethering;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -18,6 +20,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
@@ -122,6 +125,13 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         //prevent drowning
         this.setAirSupply(this.getMaxAirSupply());
 
+        //Prevent targeting tethered mobs
+        if(this.getTarget() != null) {
+            if(this.getTarget() instanceof Mob mob && UniversalTethering.isTethered(mob)) {
+                this.setTarget(null);
+            }
+        }
+
         if (this.level() instanceof ServerLevel slvl) {
             t++;
 
@@ -183,7 +193,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
                 }
 
                 //Blood effect
-                StaticSiliconiteMethods.spawnBloodHit(slvl, this.position());
+                SiliconiteParticles.spawnBloodHit(slvl, this.position());
             }
         }
 
@@ -194,11 +204,10 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     @Override
     public boolean doHurtTarget(Entity pEntity) {
         //Check if attacking entity
-        if (pEntity instanceof LivingEntity le) {
-            StaticSiliconiteMethods.debugLog(le.getHealth()/le.getMaxHealth()+"hp");
-            if(le.getHealth()/le.getMaxHealth() < 0.33f) {
+        if (pEntity instanceof Mob mob) {
+            if(mob.getHealth()/mob.getMaxHealth() < 0.33f) {
                 if(level() instanceof ServerLevel slvl) {
-                    StaticSiliconiteMethods.tetherMob(slvl, le);
+                    UniversalTethering.tryTetherMob(mob, slvl);
                     if (destructiveTether()) {
                         this.remove(RemovalReason.DISCARDED);
                     }

@@ -41,6 +41,7 @@ public class Chemosynthesis
         ModBlockEntities.register(modEventBus);
         ModParticles.register(modEventBus);
         ModSounds.register(modEventBus);
+        ModNetworking.register();
 
         MinecraftForge.EVENT_BUS.register(this);
 

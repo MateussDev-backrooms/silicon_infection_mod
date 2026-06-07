@@ -1,6 +1,6 @@
 package com.mateussdev.chemosyntehsis.Items;
 
-import com.mateussdev.chemosyntehsis.GlobalWarming.GlobalWarmingData;
+import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;

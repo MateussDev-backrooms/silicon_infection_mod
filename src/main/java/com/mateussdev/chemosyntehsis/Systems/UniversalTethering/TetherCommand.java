@@ -1,18 +1,17 @@
-package com.mateussdev.chemosyntehsis.Util;
+package com.mateussdev.chemosyntehsis.Systems.UniversalTethering;
 
 import com.google.common.collect.ImmutableList;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.commands.KillCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -34,8 +33,9 @@ public class TetherCommand {
 
         while(var2.hasNext()) {
             Entity e = (Entity)var2.next();
-            if(e instanceof LivingEntity le)
-            StaticSiliconiteMethods.tetherMob(pSource.getLevel(), le);
+            if(e instanceof Mob le) {
+                UniversalTethering.tryTetherMob(le, pSource.getLevel());
+            }
         }
 
         if (pTargets.size() == 1) {

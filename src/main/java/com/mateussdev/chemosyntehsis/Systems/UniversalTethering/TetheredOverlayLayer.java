@@ -1,39 +1,25 @@
-package com.mateussdev.chemosyntehsis.Entities.generic.UniversalTethering;
+package com.mateussdev.chemosyntehsis.Systems.UniversalTethering;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.Entities.generic.ITethered;
 import com.mateussdev.chemosyntehsis.Util.Models.BulbSingular;
 import com.mateussdev.chemosyntehsis.Util.Rendering.TextureUtilities;
-import com.mateussdev.chemosyntehsis.Util.Rendering.TriPlanarUVVertexConsumer;
 import com.mateussdev.chemosyntehsis.Util.Rendering.UVScaleableVertexConsumer;
-import com.mateussdev.chemosyntehsis.Util.StaticRenderingMethods;
-import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
-import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.IronGolemRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.SimpleTexture;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import org.joml.Quaternionf;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -69,7 +55,11 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
     @Override
     public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight,
                        T entity, float limbSwing, float limbSwingAmount, float partialTick, float age, float headYaw, float headPitch) {
-        if (!(entity instanceof ITethered tethered) || !tethered.isTethered()) return;
+
+        //only render if the mob is universally tethered
+        if (entity instanceof Mob mob) {
+            if(!UniversalTethering.isTethered(mob)) return;
+        }
         //collect all ModelPart instances by reflecting fields
         Set<ModelPart> parts = collectModelParts(this.getParentModel());
 
@@ -123,6 +113,8 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
             float partMinX = 99999, partMinY = 99999, partMinZ = 99999;
             float partMaxX = -99999, partMaxY = -99999, partMaxZ = -99999;
 
+
+
             List<ModelPart.Cube> cubes = collectCubesFromPart(part);
             for(ModelPart.Cube cuboid : cubes) {
                 //Update mins and maxes
@@ -160,6 +152,10 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
 
             float partVolume = partSizeX * partSizeY * partSizeZ;
 
+            float faceXSize = partSizeZ*partSizeY;
+            float faceYSize = partSizeX*partSizeZ;
+            float faceZSize = partSizeX*partSizeY;
+
             float pivotX = part.x/16f;
             float pivotY = part.y/16f;
             float pivotZ = part.z/16f;
@@ -170,40 +166,111 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
 
             //Do not render if object is too small
             if(partVolume > 4f) {
-                poseStack.pushPose();
-                //Translate to center point
+
+                //Calculate how many bulbs will fit on the face in terms of U and V
+                int cntU = 0;
+                int cntV = 0;
+
+                float spacing = 10f;
+
+                //Add bulbs to all faces
+                for(int i=0; i<6; i++) {
+
+                    switch(i) {
+                        case 0, 3:
+                            cntU = Math.max(1, Mth.floor(partSizeZ / spacing));
+                            cntV = Math.max(1, Mth.floor(partSizeY / spacing));
+                            break;
+                        case 1, 4:
+                            cntU = Math.max(1, Mth.floor(partSizeZ / spacing));
+                            cntV = Math.max(1, Mth.floor(partSizeX / spacing));
+                            break;
+                        case 2, 5:
+                            cntU = Math.max(1, Mth.floor(partSizeX / spacing));
+                            cntV = Math.max(1, Mth.floor(partSizeY / spacing));
+                            break;
+                    }
+
+                    int dir = i>2 ? 1 : -1;
+
+                    //Render grid with two for loops
+                    for(int u=0; u<cntU; u++) {
+                        for(int v=0; v<cntV; v++) {
+
+                            poseStack.pushPose();
+                            //Translate to center point
+
+                            float offsetX = 0;
+                            float offsetY = 0;
+                            float offsetZ = 0;
+
+                            //Apply offset depending on domAxis
+                            switch (i) {
+                                case 0, 3:
+                                    offsetX = partSizeX/2f/16f * dir;
+                                    offsetZ = (u*spacing/16f) - (partSizeZ/2f/16f);
+                                    offsetY = (v*spacing/16f) - (partSizeY/2f/16f);
+                                    break;
+                                case 1, 4:
+                                    offsetY = partSizeY/2f/16f * dir;
+                                    offsetZ = (u*spacing/16f) - (partSizeZ/2f/16f);
+                                    offsetX = (v*spacing/16f) - (partSizeX/2f/16f);
+                                    break;
+                                case 2, 5:
+                                    offsetZ = partSizeZ/2f/16f * dir;
+                                    offsetX = (u*spacing/16f) - (partSizeX/2f/16f);
+                                    offsetY = (v*spacing/16f) - (partSizeY/2f/16f);
+                                    break;
+                            }
+
+                            poseStack.translate(pivotX, pivotY, pivotZ);
+                            //Apply default rotation of the part:
+                            //Apply part rotation
+                            if (part.xRot != 0.0F || part.yRot != 0.0F || part.zRot != 0.0F) {
+                                poseStack.rotateAround((new Quaternionf()).rotationZYX(part.zRot, part.yRot, part.xRot), 0, 0, 0);
+                            }
+                            poseStack.rotateAround((new Quaternionf()).rotationZYX(-part.getInitialPose().zRot, -part.getInitialPose().yRot, -part.getInitialPose().xRot), 0, 0, 0);
+                            //Translate bulb
+                            poseStack.translate(partMinX/16f + partCenterX + offsetX, partMinY/16f + partCenterY + offsetY, partMinZ/16f + partCenterZ + offsetZ);
+
+                            //middle of pixel
+                            poseStack.translate(0.5f/16f, 0.5f/16f, 0.5f/16f);
+
+                            //center of cell
 
 
 
-                poseStack.translate(partMinX/16f + partCenterX, partMinY/16f + partCenterY, partMinZ/16f + partCenterZ);
-                poseStack.translate(pivotX, pivotY, pivotZ);
-                poseStack.translate(0.5f/16f, 0.5f/16f, 0.5f/16f);
+            //                poseStack.translate(pivotX, pivotY, pivotZ);
+
+                            Quaternionf normalRot = switch (i) {
+                                case 0 -> new Quaternionf().rotationY( -(float) Math.PI / 2f);   // -Z to -X
+                                case 3 -> new Quaternionf().rotationY((float) Math.PI / 2f);   // -Z to +X
+                                case 1 -> new Quaternionf().rotationX((float) Math.PI / 2f);   // -Z to -Y
+                                case 4 -> new Quaternionf().rotationX( -(float) Math.PI / 2f);   // -Z to +Y
+                                case 2 -> new Quaternionf().rotationY( (float) Math.PI);        // -Z to +Z
+                                case 5 -> new Quaternionf();                                      //Keep as is
+                                default -> new Quaternionf();
+                            };
+                            poseStack.mulPose(normalRot);
 
 
-                //Apply default rotation of the part:
-                //Apply part rotation
-                if (part.xRot != 0.0F || part.yRot != 0.0F || part.zRot != 0.0F) {
-                    poseStack.rotateAround((new Quaternionf()).rotationZYX(part.zRot, part.yRot, part.xRot), 0, 0, 0);
+                            //Bulb wobble
+                            float time = age * 0.1f;
+                            float wobbleAmount = 0.1f;
+                            float wobbleX = (float) Math.sin(time + u*148571) * wobbleAmount;
+                            float wobbleY = (float) Math.cos(time + v*368368) * wobbleAmount;
+                            float wobbleZ = (float) Math.sin(time * 1.3f + u*24627) * wobbleAmount;
+                            poseStack.mulPose(new Quaternionf().rotateXYZ(wobbleX, wobbleY, wobbleZ));
+
+                            //Weird arbitrary translation
+                            poseStack.translate(0f, -1.501F, 0f);
+
+                            bulbInstance.renderToBuffer(poseStack, bulbConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
+
+                            poseStack.popPose();
+                        }
+                    }
                 }
-                poseStack.rotateAround((new Quaternionf()).rotationZYX(-part.getInitialPose().zRot, -part.getInitialPose().yRot, -part.getInitialPose().xRot), 0, 0, 0);
-                //Translate bulb to center of
-//                poseStack.translate(pivotX, pivotY, pivotZ);
-
-
-                //Bulb wobble
-                float time = age * 0.1f;
-                float wobbleAmount = 0.1f;
-                float wobbleX = (float) Math.sin(time + pivotX) * wobbleAmount;
-                float wobbleY = (float) Math.cos(time + pivotY) * wobbleAmount;
-                float wobbleZ = (float) Math.sin(time * 1.3f + pivotZ) * wobbleAmount;
-                poseStack.mulPose(new Quaternionf().rotateXYZ(wobbleX, wobbleY, wobbleZ));
-
-                //Weird arbitrary translation
-                poseStack.translate(0f, -1.501F, 0f);
-
-                bulbInstance.renderToBuffer(poseStack, bulbConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
-
-                poseStack.popPose();
             }
         }
     }
@@ -244,43 +311,5 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
             //Failed to get cubes
         }
         return cubes;
-    }
-
-    private Quaternionf getOutwardRotation(float x, float y, float z) {
-        // Create direction vector from center (0,0,0) to pivot point (x,y,z)
-        Vector3f direction = new Vector3f(x, y, z);
-
-        // Normalize the direction vector
-        float length = direction.length();
-        if (length > 0.0001f) {
-            direction.div(length);
-        } else {
-            // If pivot is at center, default to pointing up
-            direction.set(0, 1, 0);
-        }
-
-        // Default forward direction for most Minecraft models is (0, 0, 1)
-        Vector3f forward = new Vector3f(0, 0, 1);
-
-        // Calculate the rotation needed to rotate forward to direction
-        // Using axis-angle rotation
-        float dot = forward.dot(direction);
-
-        // If vectors are nearly parallel
-        if (Math.abs(dot) > 0.9999f) {
-            if (dot > 0) {
-                // Same direction, no rotation needed
-                return new Quaternionf();
-            } else {
-                // Opposite direction, rotate 180 degrees around Y
-                return new Quaternionf().rotateY((float) Math.PI);
-            }
-        }
-
-        // Calculate rotation axis and angle
-        Vector3f axis = new Vector3f(forward).cross(direction).normalize();
-        float angle = (float) Math.acos(dot);
-
-        return new Quaternionf().rotateAxis(angle, axis);
     }
 }

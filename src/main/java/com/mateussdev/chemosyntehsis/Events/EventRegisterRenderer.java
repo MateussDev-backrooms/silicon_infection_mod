@@ -1,7 +1,6 @@
 package com.mateussdev.chemosyntehsis.Events;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.Core.ModBlockEntities;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_converter.AmalConverter_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar.AmalRadar_Renderer;
@@ -18,7 +17,7 @@ import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh_Re
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_erythrocyte.HybridErythrocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte.HybridThrombocyte_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.generic.UniversalTethering.TetheredOverlayLayer;
+import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.TetheredOverlayLayer;
 import com.mateussdev.chemosyntehsis.Entities.met_cow.MetCow_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller_Renderer;
@@ -30,10 +29,7 @@ import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb.VegetativeBulb_
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_roller.VegetativeRoller_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.util.VeinConnectorEntity_Renderer;
 import com.mateussdev.chemosyntehsis.Util.Models.BulbSingular;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,9 +38,6 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Mod.EventBusSubscriber(modid = Chemosynthesis.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class EventRegisterRenderer {

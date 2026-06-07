@@ -5,16 +5,12 @@ import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.UniversalTetheredAttackGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
-import com.mateussdev.chemosyntehsis.Entities.generic.ITethered;
-import com.mateussdev.chemosyntehsis.Mixin.LivingEntityMixin;
+import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.UniversalTethering;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -30,9 +26,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -46,26 +39,13 @@ import org.joml.Vector4i;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 
-import java.nio.file.Path;
 import java.util.*;
 
 public class StaticSiliconiteMethods {
 
     // ===== Static Vars ===== //
 
-    public static Map<EntityType<?>, EntityType<? extends BaseTethered>> tetherHashMap =
-            //Defines all tetherable mobs and their tether result
-            //the key is the target mob and the value is the tether result
-            Map.of(
-                //Define all tether pairs here
-                    EntityType.ZOMBIE, ModEntities.TETH_ZOMBIE.get(),
-                    EntityType.HUSK, ModEntities.TETH_ZOMBIE.get(),
-                    EntityType.DROWNED, ModEntities.TETH_ZOMBIE.get(),
-                    EntityType.COW, ModEntities.TETH_COW.get(),
-                    EntityType.SKELETON, ModEntities.TETH_SKELETON.get(),
-                    EntityType.STRAY, ModEntities.TETH_SKELETON.get(),
-                    EntityType.ENDERMAN, ModEntities.TETH_ENDERMAN.get()
-            );
+
 
     public static final Map<Block, Block> infectionConversionMap = Map.ofEntries(
             //Surface
@@ -146,9 +126,7 @@ public class StaticSiliconiteMethods {
         if(isMobFromChemosynthesisMod(entity)) return false;
 
         //Do not attack universally tethered mobs
-        if(entity instanceof ITethered tethered) {
-            if(tethered.isTethered()) return false;
-        }
+        if(entity instanceof Mob mob && UniversalTethering.isTethered(mob)) return false;
 
 
         return !BLACKLISTED_MOBS.contains(entity.getType());
@@ -164,8 +142,9 @@ public class StaticSiliconiteMethods {
 
     // ===== Gameplay ===== //
 
+    @Deprecated
     public static void tetherMob(ServerLevel serverLevel, LivingEntity tetherTarget) {
-        EntityType<? extends LivingEntity> tethered_result_type = tetherHashMap.get(tetherTarget.getType());
+        EntityType<? extends LivingEntity> tethered_result_type = UniversalTethering.handmadeTetheredMobs.get(tetherTarget.getType());
         if(tethered_result_type==null) {
             //Split into chunks depending on the bounding box size
             if(boundingBoxVolume(tetherTarget.getBoundingBox()) < 0f) { //TEMP. TODO: Prevent small mobs from tethering
@@ -201,29 +180,27 @@ public class StaticSiliconiteMethods {
             tetherTarget.discard();
         }
     }
-
+    @Deprecated
     public static void universalTether(ServerLevel slvl, LivingEntity target) {
         if(target instanceof Mob mob) {
 
             //Set tethered value via Mixin
-            if (mob instanceof ITethered tethered) {
-                tethered.setTethered(true);
-            }
 
             //Only affect pathfinder mobs
             mob.setHealth(mob.getMaxHealth());
             //Reset target selectors
-            mob.targetSelector.removeAllGoals(e -> true);
+            mob.targetSelector.removeAllGoals((e) -> {return true;});
+            StaticSiliconiteMethods.debugLog(mob.targetSelector.getAvailableGoals().size()+" - targeting goal count");
+            mob.setTarget(null);
             //Make mob target the same things as us
             mob.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(mob, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
 
             //Add attack goal to those with no attack damage attribute
+            double attackDamage = 6D;
+            double attackKnockback = 0.5D;
             if(mob.getAttribute(Attributes.ATTACK_DAMAGE) == null) {
-                double attackDamage = 6D;
-                double attackKnockback = 0.5D;
-                if(mob instanceof PathfinderMob pmob) {
-                    mob.goalSelector.addGoal(0, new UniversalTetheredAttackGoal(pmob, 1.5f, attackDamage, attackKnockback, true));
-                }
+                attackDamage = 6D;
+                attackKnockback = 0.5D;
             }
 
         } else {
@@ -265,10 +242,12 @@ public class StaticSiliconiteMethods {
     }
 
     public static boolean isTetherable(LivingEntity entity) {
-        return tetherHashMap.containsKey(entity.getType());
+        return UniversalTethering.handmadeTetheredMobs.containsKey(entity.getType());
     }
 
-    public static boolean isTetherable(EntityType<LivingEntity> entityType) {return tetherHashMap.containsKey(entityType);}
+    public static boolean isTetherable(EntityType<LivingEntity> entityType) {
+        return UniversalTethering.handmadeTetheredMobs.containsKey(entityType);
+    }
 
     public static boolean isMobFromChemosynthesisMod(LivingEntity entity) {
         ResourceLocation entityTypeKey = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
@@ -349,7 +328,7 @@ public class StaticSiliconiteMethods {
     }
 
     public static double boundingBoxVolume(AABB box) {
-        return box.getXsize() * box.getXsize() * box.getZsize();
+        return box.getXsize() * box.getYsize() * box.getZsize();
     }
 
     // ===== Gecko Functions ===== //
@@ -433,7 +412,7 @@ public class StaticSiliconiteMethods {
     }
 
     // ===== Particles ===== //
-
+    @Deprecated
     public static void spawnBloodBurst(ServerLevel slvl, BlockPos blockPos) {
         DustParticleOptions blood = new DustParticleOptions(new Vector3f(0.8f, 0.0f, 0.0f), 3.0f);
         DustParticleOptions smallBlood = new DustParticleOptions(new Vector3f(0.7f, 0.1f, 0.1f), 1.5f);
@@ -462,7 +441,7 @@ public class StaticSiliconiteMethods {
                 0.15
         );
     }
-
+    @Deprecated
     public static void spawnBloodHit(ServerLevel slvl, Vec3 blockPos) {
         DustParticleOptions blood = new DustParticleOptions(new Vector3f(0.8f, 0.0f, 0.0f), 1.3f);
         DustParticleOptions darkBlood = new DustParticleOptions(new Vector3f(0.6f, 0.0f, 0.0f), 1.5f);
@@ -491,7 +470,7 @@ public class StaticSiliconiteMethods {
                 0.4
         );
     }
-
+    @Deprecated
     public static void spawnTransformationParticle(ServerLevel slvl, BlockPos pos) {
         slvl.sendParticles(
                 ParticleTypes.EXPLOSION,
