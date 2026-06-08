@@ -30,7 +30,7 @@ public class BulbHarpoonEntity_Model extends GeoModel<BulbHarpoonEntity> {
     public void setCustomAnimations(BulbHarpoonEntity animatable, long instanceId, AnimationState<BulbHarpoonEntity> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
 
-        var head = this.getBone("appendage9"); // Replace with your model bone name
+        var head = this.getBone("appendage9");
 
         if (head != null) {
             float pitch = animatable.xRotO+90;

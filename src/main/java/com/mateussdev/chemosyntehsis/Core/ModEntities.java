@@ -1,14 +1,16 @@
 package com.mateussdev.chemosyntehsis.Core;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_converter.AmalConverter;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar.AmalRadar;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_converter.AmalConverter;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_radar.AmalRadar;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_spawner.AmalSpawner;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_turret.AmalTurret;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.genome.GenomeCarrier;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.homunculus_t1.HomunculusNucleusT1;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_zombie.AmalZombie;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
@@ -25,7 +27,6 @@ import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_cow.TethCow;
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.vasc_roller.VascularRoller;
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb.VegetativeBulb;
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_roller.VegetativeRoller;
-import com.mateussdev.chemosyntehsis.Entities.util.BaseGraphNodeEntity;
 import com.mateussdev.chemosyntehsis.Entities.util.VeinConnectorEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -56,6 +57,11 @@ public class ModEntities {
             ENTITIES.register("cluster_of_flesh", () -> EntityType.Builder.of(ClusterOfFlesh::new, MobCategory.MONSTER)
                     .sized(1.4f, 1.4f)
                     .build("cluster_of_flesh"));
+
+    public static final RegistryObject<EntityType<GenomeCarrier>> GENOME_CARRIER =
+            ENTITIES.register("genome_carrier", () -> EntityType.Builder.of(GenomeCarrier::new, MobCategory.MONSTER)
+                    .sized(0.7f, 0.6f)
+                    .build("genome_carrier"));
 
     //Tethered mobs
 
@@ -102,7 +108,12 @@ public class ModEntities {
                     .sized(0.7f, 1.8f)
                     .build("vasc_roller"));
 
-    //Amalgamations
+    //Amalgamations [T1 homunculus]
+    public static final RegistryObject<EntityType<HomunculusNucleusT1>> HOMUNCULUS_T1 =
+            ENTITIES.register("homunculus_t1", () -> EntityType.Builder.of(HomunculusNucleusT1::new, MobCategory.MONSTER)
+                    .sized(1.2f, 3f)
+                    .build("homunculus_t1"));
+
     public static final RegistryObject<EntityType<AmalZombie>> AMAL_ZOMBIE =
             ENTITIES.register("amal_zombie", () -> EntityType.Builder.of(AmalZombie::new, MobCategory.MONSTER)
                     .sized(1.2f, 3f)

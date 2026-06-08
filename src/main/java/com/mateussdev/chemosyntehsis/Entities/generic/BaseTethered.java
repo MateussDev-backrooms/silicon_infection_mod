@@ -1,9 +1,15 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
+import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Core.ModNetworking;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Gene;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IGenomeModifiable;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationSyncPacket;
 import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingData;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.server.level.ServerLevel;
@@ -14,24 +20,33 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.network.PacketDistributor;
 import org.joml.Vector3f;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BaseTethered extends BaseSiliconite {
+public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     protected BaseTethered(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
     }
 
     protected int globalWarmingRate = 64;
     protected int chunk_count = 5;
+
+    //Genome system
+    public Gene currentGene = null;
+    private Gene _oldGene = null;
+    protected int metamorphosisTime = 40;
+
+    public int fitnessPoints = 0;
 
     protected boolean explodeOnDeath() {
         return true;
@@ -58,6 +73,8 @@ public class BaseTethered extends BaseSiliconite {
             return PlayState.CONTINUE;
         }));
     }
+
+
 
     @Override
     protected boolean destructiveTether() {
@@ -91,6 +108,13 @@ public class BaseTethered extends BaseSiliconite {
             Vector3f currBone = boneWobble.get(boneName);
             if(currBone != null) {
                 currBone.lerp(new Vector3f(0), 0.2f);
+            }
+        }
+
+        //Run the onTick for each mutation in the genome
+        if(currentGene != null) {
+            for(Mutation mutation : currentGene.mutations) {
+                mutation.onTick(this);
             }
         }
 
@@ -204,5 +228,61 @@ public class BaseTethered extends BaseSiliconite {
             }
             setDeltaMovement(getDeltaMovement().add(wobbleDir.x, wobbleDir.y, wobbleDir.z));
         }
+    }
+
+    // ===== Gene system interaction ===== //
+
+    @Override
+    public boolean applyGene(Gene gene) {
+        this.currentGene = gene;
+        if(this.level() instanceof ServerLevel slvl) {
+            slvl.playSound(null, blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.HOSTILE);
+
+            //Apply RenderLayers from all Gene mutations
+
+            var server = this.getServer();
+            if (server != null) {
+                server.execute(() -> {
+//                    StaticSiliconiteMethods.debugLog("Executing send block for gene mutations: {}"+ gene.mutations.size());
+                    for (Mutation mutation : gene.mutations) {
+//                        StaticSiliconiteMethods.debugLog("Checking mutation: {}"+ mutation.getClass().getSimpleName());
+                        GeoRenderLayer layer = mutation.getMutationRenderLayer(null);
+                        mutation.onAiRegisterGoals(this);
+//                        StaticSiliconiteMethods.debugLog("Layer returned: {}"+ layer);
+                        if (layer != null) {
+//                            StaticSiliconiteMethods.debugLog("Sending packet for {}"+ mutation.getClass().getSimpleName());
+                            ModNetworking.CHANNEL.send(
+                                    PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this),
+                                    new MutationSyncPacket(this.getId(), mutation.getClass().getSimpleName())
+                            );
+                        }
+                    }
+                });
+            }
+        }
+
+
+        //Success
+        return true;
+    }
+
+    @Override
+    public Gene getGene() {
+        return currentGene;
+    }
+
+    @Override
+    public void clearAllGenes() {
+
+    }
+
+    @Override
+    public void addFitnessPoints(int deltaPoints) {
+
+    }
+
+    @Override
+    public void removeFitnessPoints(int deltaPoints) {
+
     }
 }

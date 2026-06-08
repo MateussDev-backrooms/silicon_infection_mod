@@ -2,8 +2,6 @@ package com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.CollectGibGoal;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.DeliverGibToBulbGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.LungeGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseGib;

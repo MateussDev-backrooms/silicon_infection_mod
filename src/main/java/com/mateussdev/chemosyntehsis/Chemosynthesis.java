@@ -23,7 +23,7 @@ public class Chemosynthesis
     // Define mod id in a common place for everything to reference
     public static final String MODID = "silicon_mod";
     // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     // A thread-safe map to store which Entity IDs are infected on the Client
     public static final ConcurrentHashMap<Integer, Boolean> INFECTED_CACHE = new ConcurrentHashMap<>();

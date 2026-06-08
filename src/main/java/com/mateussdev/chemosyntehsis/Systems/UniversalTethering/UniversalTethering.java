@@ -2,6 +2,8 @@ package com.mateussdev.chemosyntehsis.Systems.UniversalTethering;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Core.ModNetworking;
+import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
+import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
 import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
 import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CapabilityStuffs.TetheredCapability;
@@ -22,6 +24,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 public class UniversalTethering {
@@ -153,8 +156,11 @@ public class UniversalTethering {
             mob.goalSelector.addGoal(1, new TetheredGenericMeleeAttackGoal(pm));
         }
 
+        if(mob instanceof PathfinderMob pm) {
+           mob.targetSelector.addGoal(1, new HurtByNonSiliconiteGoal(pm).setAlertOthers(new Class[]{BaseSiliconite.class}));
+        }
         // Inject tethered targeting
-        mob.targetSelector.addGoal(1, new TetheredNearestAttackableTargetGoal(mob));
+        mob.targetSelector.addGoal(2, new TetheredNearestAttackableTargetGoal(mob));
         mob.goalSelector.addGoal(2, new SpreadInfectionGoal(mob));
     }
 }

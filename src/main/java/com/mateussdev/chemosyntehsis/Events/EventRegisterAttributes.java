@@ -3,11 +3,12 @@ package com.mateussdev.chemosyntehsis.Events;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_converter.AmalConverter;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar.AmalRadar;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_converter.AmalConverter;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_radar.AmalRadar;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_spawner.AmalSpawner;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_turret.AmalTurret;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_zombie.AmalZombie;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.genome.GenomeCarrier;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
@@ -36,6 +37,8 @@ public class EventRegisterAttributes {
         event.put(ModEntities.SILICON_ROLLER.get(), SiliconRoller.createAttributes().build());
         event.put(ModEntities.CHUNK_OF_FLESH.get(), ChunkOfFlesh.createAttributes().build());
         event.put(ModEntities.CLUSTER_OF_FLESH.get(), ClusterOfFlesh.createAttributes().build());
+
+        event.put(ModEntities.GENOME_CARRIER.get(), GenomeCarrier.createAttributes().build());
 
 
         //Tethered mobs

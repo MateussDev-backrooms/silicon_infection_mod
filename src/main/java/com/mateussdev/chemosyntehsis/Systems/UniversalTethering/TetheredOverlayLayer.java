@@ -29,6 +29,8 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
 
     private final RenderLayerParent<T, M> ownerRenderer;
 
+    private static final Map<Class<?>, Set<ModelPart>> MODEL_PARTS_CACHE = new HashMap<>();
+
     private static final ResourceLocation BULB_TEX = new ResourceLocation(Chemosynthesis.MODID, "textures/util/bulb_singular.png");
     private RenderType bulbRenderType = RenderType.entityCutout(BULB_TEX);
 
@@ -60,8 +62,11 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
         if (entity instanceof Mob mob) {
             if(!UniversalTethering.isTethered(mob)) return;
         }
-        //collect all ModelPart instances by reflecting fields
-        Set<ModelPart> parts = collectModelParts(this.getParentModel());
+        //collect all ModelPart instances by reflecting fields. Use cache if available
+        Set<ModelPart> parts = MODEL_PARTS_CACHE.computeIfAbsent(
+                this.getParentModel().getClass(),
+                cls -> collectModelParts(this.getParentModel())
+        );
 
         ResourceLocation texLoc = ownerRenderer.getTextureLocation(entity);
         float uvWidth = TextureUtilities.getUvWidthScaleForTexture(texLoc, 4f, 64);
@@ -114,8 +119,9 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
             float partMaxX = -99999, partMaxY = -99999, partMaxZ = -99999;
 
 
-
+            //Get cubes from model part
             List<ModelPart.Cube> cubes = collectCubesFromPart(part);
+
             for(ModelPart.Cube cuboid : cubes) {
                 //Update mins and maxes
                 if(cuboid.minX < partMinX) partMinX = cuboid.minX;
@@ -204,22 +210,42 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
                             float offsetY = 0;
                             float offsetZ = 0;
 
-                            //Apply offset depending on domAxis
+                            float remU, remV, startU, startV = 0;
+
+                            //Apply offset depending on axis
                             switch (i) {
                                 case 0, 3:
                                     offsetX = partSizeX/2f/16f * dir;
-                                    offsetZ = (u*spacing/16f) - (partSizeZ/2f/16f);
-                                    offsetY = (v*spacing/16f) - (partSizeY/2f/16f);
+                                    //U
+                                    remU = partSizeZ - (cntU * spacing);
+                                    startU = -partSizeZ / 2f + remU / 2f + spacing / 2f;
+                                    offsetZ = (startU + u * spacing) / 16f;
+                                    //V
+                                    remV = partSizeY - (cntV * spacing);
+                                    startV = -partSizeY / 2f + remV / 2f + spacing / 2f;
+                                    offsetY = (startV + v * spacing) / 16f;
                                     break;
                                 case 1, 4:
                                     offsetY = partSizeY/2f/16f * dir;
-                                    offsetZ = (u*spacing/16f) - (partSizeZ/2f/16f);
-                                    offsetX = (v*spacing/16f) - (partSizeX/2f/16f);
+                                    //U
+                                    remU = partSizeZ - (cntU * spacing);
+                                    startU = -partSizeZ / 2f + remU / 2f + spacing / 2f;
+                                    offsetZ = (startU + u * spacing) / 16f;
+                                    //V
+                                    remV = partSizeX - (cntV * spacing);
+                                    startV = -partSizeX / 2f + remV / 2f + spacing / 2f;
+                                    offsetX = (startV + v * spacing) / 16f;
                                     break;
                                 case 2, 5:
                                     offsetZ = partSizeZ/2f/16f * dir;
-                                    offsetX = (u*spacing/16f) - (partSizeX/2f/16f);
-                                    offsetY = (v*spacing/16f) - (partSizeY/2f/16f);
+                                    //U
+                                    remU = partSizeX - (cntU * spacing);
+                                    startU = -partSizeX / 2f + remU / 2f + spacing / 2f;
+                                    offsetX = (startU + u * spacing) / 16f;
+                                    //V
+                                    remV = partSizeY - (cntV * spacing);
+                                    startV = -partSizeY / 2f + remV / 2f + spacing / 2f;
+                                    offsetY = (startV + v * spacing) / 16f;
                                     break;
                             }
 
@@ -279,7 +305,7 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
     private Set<ModelPart> collectModelParts(EntityModel<?> model) {
         Set<ModelPart> parts = new LinkedHashSet<>();
         Class<?> cls = model.getClass();
-        while (cls != null && cls != EntityModel.class && cls != Object.class) {
+        while (cls != null && cls != Object.class) {
             for (Field f : cls.getDeclaredFields()) {
                 f.setAccessible(true);
                 try {

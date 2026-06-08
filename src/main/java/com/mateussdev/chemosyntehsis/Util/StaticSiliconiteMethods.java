@@ -21,10 +21,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
@@ -250,6 +247,11 @@ public class StaticSiliconiteMethods {
     }
 
     public static boolean isMobFromChemosynthesisMod(LivingEntity entity) {
+        ResourceLocation entityTypeKey = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+        return entityTypeKey.getNamespace().equals(Chemosynthesis.MODID);
+    }
+
+    public static boolean isEntityFromChemosynthesisMod(Entity entity) {
         ResourceLocation entityTypeKey = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
         return entityTypeKey.getNamespace().equals(Chemosynthesis.MODID);
     }

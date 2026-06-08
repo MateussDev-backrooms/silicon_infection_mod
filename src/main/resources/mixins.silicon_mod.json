@@ -6,6 +6,7 @@
   "refmap": "mixins.silicon_mod.refmap.json",
   "mixins": [],
   "client": [
+    "MixinGeoEntityRenderer",
     "MixinLivingEntityRenderer"
   ],
   "server": [],

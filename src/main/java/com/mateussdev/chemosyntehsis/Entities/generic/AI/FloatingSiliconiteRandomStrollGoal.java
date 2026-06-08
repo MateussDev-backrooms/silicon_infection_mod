@@ -8,6 +8,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.util.AirAndWaterRandomPos;
+import net.minecraft.world.entity.ai.util.HoverRandomPos;
+import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.level.block.GlowLichenBlock;
 import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.phys.Vec3;
@@ -29,48 +32,24 @@ public class FloatingSiliconiteRandomStrollGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (cooldown > 0) {
-            cooldown--;
-            return false;
-        }
-
-        // Don't wander when we have a target
-        if (siliconite.getTarget() != null) {
-            return false;
-        }
-
-        // Don't wander when dashing
-        if (siliconite instanceof HybridPerfocyte perfocyte && perfocyte.isDashing()) {
-            return false;
-        }
-
-        return siliconite.getRandom().nextInt(20) == 0;
+        return siliconite.getNavigation().isDone() && siliconite.getRandom().nextInt(10) == 0;
     }
 
     @Override
     public boolean canContinueToUse() {
-        return siliconite.getMoveControl().hasWanted() &&
+        return siliconite.getNavigation().isInProgress() &&
                 siliconite.getTarget() == null;
     }
 
     @Override
     public void start() {
         RandomSource rng = siliconite.getRandom();
-        double targetX = siliconite.getX() + (rng.nextDouble() - 0.5) * horizontal_range;
-        double targetY = siliconite.getY() + (rng.nextDouble() - 0.5) * vertical_range;
-        double targetZ = siliconite.getZ() + (rng.nextDouble() - 0.5) * horizontal_range;
+        Vec3 viewVector = siliconite.getViewVector(0.0F);
+        Vec3 target = HoverRandomPos.getPos(siliconite, Mth.floor(horizontal_range), Mth.floor(vertical_range), viewVector.x, viewVector.z, ((float)Math.PI / 2F), 3, 1);
+        if(target == null) {
+            target = AirAndWaterRandomPos.getPos(siliconite, Mth.floor(horizontal_range), Mth.floor(vertical_range), -2, viewVector.x, viewVector.z, ((float)Math.PI / 2F));
+        }
 
-        // Clamp Y to reasonable bounds
-        targetY = Mth.clamp(targetY, siliconite.level().getMinBuildHeight() + 4,
-                siliconite.level().getMaxBuildHeight() - 4);
-
-        siliconite.getMoveControl().setWantedPosition(targetX, targetY, targetZ, 0.5);
-        cooldown = 100 + rng.nextInt(100); // Wait before next wander
-    }
-
-    @Override
-    public void stop() {
-        siliconite.getMoveControl().setWantedPosition(
-                siliconite.getX(), siliconite.getY(), siliconite.getZ(), 0);
+        siliconite.getNavigation().moveTo(siliconite.getNavigation().createPath(BlockPos.containing(target), 1), 0.5f);
     }
 }

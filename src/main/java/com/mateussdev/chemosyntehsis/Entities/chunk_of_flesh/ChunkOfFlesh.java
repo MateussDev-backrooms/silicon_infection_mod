@@ -4,7 +4,6 @@ import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.SeekAndEatBiomushGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseHybrid;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;

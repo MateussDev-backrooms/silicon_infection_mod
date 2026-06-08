@@ -84,6 +84,21 @@ public class StandardTetheredBehavior implements ITetheredHook {
         SiliconiteParticles.spawnBloodHit(slvl, mob.position());
         slvl.playSound(null, mob.blockPosition(),
                 SoundEvents.SLIME_SQUISH_SMALL, SoundSource.HOSTILE, 2f, 0.8f);
+
+        //Alert other tethered if attacker is valid (Nasty)
+        if(attacker != null && StaticSiliconiteMethods.shouldAttackMob(attacker)) {
+            var nearbyMobs = mob.level().getEntitiesOfClass(
+                    Mob.class,
+                    mob.getBoundingBox().inflate(32),
+                    nearby -> nearby != mob && nearby.getTarget() == mob
+            );
+
+            for (Mob nearby : nearbyMobs) {
+                if (UniversalTethering.isTethered(nearby)) {
+                    nearby.setTarget(attacker);
+                }
+            }
+        }
     }
 
     @Override

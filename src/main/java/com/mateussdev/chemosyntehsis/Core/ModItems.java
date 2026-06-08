@@ -39,6 +39,9 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_CLUSTER_OF_FLESH =
             ITEMS.register("spawn_cluster_of_flesh",
                     () -> new ForgeSpawnEggItem(ModEntities.CLUSTER_OF_FLESH, 0x823431, 0x2e2b2a, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_GENOME_CARRIER =
+            ITEMS.register("spawn_genome_carrier",
+                    () -> new ForgeSpawnEggItem(ModEntities.GENOME_CARRIER, 0xD3AD4D, 0xC345B8, new Item.Properties()));
 
     //Tethered mobs
     public static final RegistryObject<Item> SPAWN_TETH_ZOMBIE =

@@ -7,6 +7,8 @@ import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CapabilityStuffs
 import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CapabilityStuffs.TetheredSyncPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -17,6 +19,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 import static com.mateussdev.chemosyntehsis.Systems.UniversalTethering.UniversalTethering.*;
 
@@ -66,10 +69,18 @@ public class EventTetherHandling {
         // Check capability — if it was tethered before the chunk unloaded, re-inject goals
         mob.getCapability(TetheredCapabilityProvider.TETHERED_CAP).ifPresent(cap -> {
             if (cap.isTethered()) {
-                injectTetheredGoals(mob);
-                // Re-sync to client on world load
+
+                //Re-add the siliconite functionality
+                StandardTetheredBehavior behavior = new StandardTetheredBehavior();
+                cap.addHook(behavior);
+                behavior.onTether(mob);
+
+                //Inject the new AI
+                UniversalTethering.injectTetheredGoals(mob);
+
+                //Re-sync to client on world load
                 ModNetworking.CHANNEL.send(
-                        net.minecraftforge.network.PacketDistributor.TRACKING_ENTITY.with(() -> mob),
+                        PacketDistributor.TRACKING_ENTITY.with(() -> mob),
                         new TetheredSyncPacket(mob.getId(), true)
                 );
             }
@@ -120,9 +131,9 @@ public class EventTetherHandling {
         if (!UniversalTethering.isTethered(mob)) return;
 
         var source = event.getSource();
-        if (source.is(net.minecraft.tags.DamageTypeTags.IS_FIRE)
-                || source.is(net.minecraft.tags.DamageTypeTags.BURNS_ARMOR_STANDS)
-                || source.is(net.minecraft.tags.DamageTypeTags.IGNITES_ARMOR_STANDS)) {
+        if (source.is(DamageTypeTags.IS_FIRE)
+                || source.is(DamageTypeTags.BURNS_ARMOR_STANDS)
+                || source.is(DamageTypeTags.IGNITES_ARMOR_STANDS)) {
             event.setAmount(event.getAmount() * 0.1f);
         }
 
@@ -134,7 +145,7 @@ public class EventTetherHandling {
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event) {
         if (!(event.getTarget() instanceof Mob mob)) return;
-        if (!(event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player)) return;
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
         mob.getCapability(TetheredCapabilityProvider.TETHERED_CAP).ifPresent(cap -> {
             if (cap.isTethered()) {

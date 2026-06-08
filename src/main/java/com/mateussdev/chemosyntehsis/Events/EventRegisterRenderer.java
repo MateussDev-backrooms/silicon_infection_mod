@@ -2,15 +2,16 @@ package com.mateussdev.chemosyntehsis.Events;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_converter.AmalConverter_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_radar.AmalRadar_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_spawner.AmalSpawner_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_turret.AmalTurret_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_converter.AmalConverter_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_radar.AmalRadar_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_spawner.AmalSpawner_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_turret.AmalTurret_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.genome.GenomeCarrier_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity_Render;
-import com.mateussdev.chemosyntehsis.Entities.Amalgamations.amal_zombie.AmalZombie_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_zombie.AmalZombie_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh_Renderer;
@@ -47,6 +48,8 @@ public class EventRegisterRenderer {
         EntityRenderers.register(ModEntities.SILICON_ROLLER.get(), SiliconRoller_Renderer::new);
         EntityRenderers.register(ModEntities.CHUNK_OF_FLESH.get(), ChunkOfFlesh_Renderer::new);
         EntityRenderers.register(ModEntities.CLUSTER_OF_FLESH.get(), ClusterOfFlesh_Renderer::new);
+
+        EntityRenderers.register(ModEntities.GENOME_CARRIER.get(), GenomeCarrier_Renderer::new);
 
         //Tethered mobs
         EntityRenderers.register(ModEntities.TETH_ZOMBIE.get(), TethZombie_Renderer::new);

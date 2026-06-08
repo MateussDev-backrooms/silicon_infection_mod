@@ -4,10 +4,12 @@ import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Core.ModSounds;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseGib;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
+import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.UniversalTethering;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb.VegetativeBulb;
 import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -150,6 +152,9 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
 
     @Override
     protected boolean canHitEntity(Entity p_36743_) {
+        if(p_36743_ instanceof Mob mob) {
+            if(UniversalTethering.isTethered(mob)) return false;
+        }
         return p_36743_ != getOwner() && !(p_36743_ instanceof AbstractArrow) && !(p_36743_ instanceof BaseOrganelle) && !(p_36743_ instanceof BaseGib);
     }
 

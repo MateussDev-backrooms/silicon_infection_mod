@@ -1,11 +1,14 @@
 package com.mateussdev.chemosyntehsis.Core;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationSyncPacket;
 import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CapabilityStuffs.TetheredSyncPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
+
+import java.util.Optional;
 
 public class ModNetworking {
     private static final String PROTOCOL = "1";
@@ -23,7 +26,15 @@ public class ModNetworking {
                 TetheredSyncPacket::encode,
                 TetheredSyncPacket::new,
                 TetheredSyncPacket::handle,
-                java.util.Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
+        CHANNEL.registerMessage(
+                1,
+                MutationSyncPacket.class,
+                MutationSyncPacket::encode,
+                MutationSyncPacket::new,
+                MutationSyncPacket::handle,
+                Optional.empty()
         );
     }
 }
