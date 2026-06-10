@@ -22,19 +22,15 @@ public class EventMutationHandling {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
         //Readd the layers on reload
-        if(mob instanceof IGenomeModifiable genmod) {
-            if(genmod.getGene() != null && !genmod.getGene().mutations.isEmpty()) {
-                // Delay by one tick — connection must be fully established
+        if (mob instanceof IGenomeModifiable genmod) {
+            if (genmod.getGene() != null && !genmod.getGene().mutations.isEmpty()) {
                 mob.getServer().execute(() -> {
-
-                    // Also guard here in case the player disconnected in the meantime
                     if (!player.isAlive() || player.hasDisconnected()) return;
-
                     for (Mutation mutation : genmod.getGene().mutations) {
-                        if (mutation.getMutationRenderLayer(null) != null) {
+                        if (mutation.hasRenderLayer()) {
                             ModNetworking.CHANNEL.send(
-                                    PacketDistributor.PLAYER.with(() -> player),
-                                    new MutationSyncPacket(mob.getId(), mutation.getClass().getSimpleName())
+                                    PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> mob),
+                                    new MutationSyncPacket(mob.getId(), mutation.getTypeId())
                             );
                         }
                     }

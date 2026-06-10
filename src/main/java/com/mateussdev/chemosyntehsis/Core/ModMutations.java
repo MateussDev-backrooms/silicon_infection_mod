@@ -1,0 +1,30 @@
+package com.mateussdev.chemosyntehsis.Core;
+
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationFlight.MutationFlight;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
+
+import static com.mateussdev.chemosyntehsis.Chemosynthesis.MODID;
+
+public class ModMutations {
+    public static final DeferredRegister<MutationType> MUTATION_TYPES =
+            DeferredRegister.create(ModRegistries.MUTATION_TYPE_REGISTRY_KEY, MODID);
+
+    public static final RegistryObject<MutationType> FLIGHT = MUTATION_TYPES.register("flight",
+            () -> new MutationType(new ResourceLocation(MODID, "flight"),
+                    () -> new MutationFlight(new ResourceLocation(MODID, "flight"), 0)));
+
+    public static void register(IEventBus eventBus) {
+        MUTATION_TYPES.register(eventBus);
+    }
+
+    public static RegistryObject<MutationType> findMutationType(ResourceLocation id) {
+        for(RegistryObject<MutationType> ro : MUTATION_TYPES.getEntries()) {
+            if(ro.getId().equals(id)) return ro;
+        }
+        return null;
+    }
+}

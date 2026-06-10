@@ -1,6 +1,5 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
-import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Core.ModNetworking;
@@ -9,6 +8,7 @@ import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Gene;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IGenomeModifiable;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationLayerRegistry;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationSyncPacket;
 import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingData;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
@@ -27,7 +27,6 @@ import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +71,8 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
 
             return PlayState.CONTINUE;
         }));
+
+//        MutationLayerRegistry.registerAllMutationAnimControllers(this, controllers);
     }
 
 
@@ -235,25 +236,19 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     @Override
     public boolean applyGene(Gene gene) {
         this.currentGene = gene;
-        if(this.level() instanceof ServerLevel slvl) {
-            slvl.playSound(null, blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.HOSTILE);
 
-            //Apply RenderLayers from all Gene mutations
+        if (this.level() instanceof ServerLevel slvl) {
+            slvl.playSound(null, blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.HOSTILE);
 
             var server = this.getServer();
             if (server != null) {
                 server.execute(() -> {
-//                    StaticSiliconiteMethods.debugLog("Executing send block for gene mutations: {}"+ gene.mutations.size());
                     for (Mutation mutation : gene.mutations) {
-//                        StaticSiliconiteMethods.debugLog("Checking mutation: {}"+ mutation.getClass().getSimpleName());
-                        GeoRenderLayer layer = mutation.getMutationRenderLayer(null);
-                        mutation.onAiRegisterGoals(this);
-//                        StaticSiliconiteMethods.debugLog("Layer returned: {}"+ layer);
-                        if (layer != null) {
-//                            StaticSiliconiteMethods.debugLog("Sending packet for {}"+ mutation.getClass().getSimpleName());
+                        mutation.onInit(this);
+                        if (mutation.hasRenderLayer()) {
                             ModNetworking.CHANNEL.send(
                                     PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this),
-                                    new MutationSyncPacket(this.getId(), mutation.getClass().getSimpleName())
+                                    new MutationSyncPacket(this.getId(), mutation.getTypeId()) // add getTypeId() to Mutation
                             );
                         }
                     }
@@ -261,8 +256,6 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
             }
         }
 
-
-        //Success
         return true;
     }
 

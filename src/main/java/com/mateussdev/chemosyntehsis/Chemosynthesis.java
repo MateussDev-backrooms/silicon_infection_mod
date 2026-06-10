@@ -43,6 +43,8 @@ public class Chemosynthesis
         ModSounds.register(modEventBus);
         ModNetworking.register();
 
+        ModMutations.register(modEventBus);
+
         MinecraftForge.EVENT_BUS.register(this);
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us

@@ -1,77 +1,94 @@
 package com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation;
 
-import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CapabilityStuffs.TetheredCapabilityProvider;
+import com.mateussdev.chemosyntehsis.Core.ModMutations;
+import com.mateussdev.chemosyntehsis.Core.ModRegistries;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryObject;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.function.Supplier;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 public class MutationSyncPacket {
-    public final int entityId;
-    public final String mutationClassName;
+    private final int entityId;
+    private final ResourceLocation mutationTypeId;
 
-    public MutationSyncPacket(int entityId, String mutationClassName) {
+    public MutationSyncPacket(int entityId, ResourceLocation mutationTypeId) {
         this.entityId = entityId;
-        this.mutationClassName = mutationClassName;
+        this.mutationTypeId = mutationTypeId;
     }
 
     public MutationSyncPacket(FriendlyByteBuf buf) {
         this.entityId = buf.readInt();
-        this.mutationClassName = buf.readUtf(256);
+        this.mutationTypeId = buf.readResourceLocation();
     }
 
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(entityId);
-        buf.writeUtf(mutationClassName, 256);
+        buf.writeResourceLocation(mutationTypeId);
     }
 
-    // Client-side packet handler
     public static void handle(MutationSyncPacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-
             if (ctx.get().getDirection().getReceptionSide().isClient()) {
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(packet));
+                ClientHandler.handleClient(packet);
             }
         });
         ctx.get().setPacketHandled(true);
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void handleClient(MutationSyncPacket packet) {
-        Minecraft mc = Minecraft.getInstance();
-        Entity entity = mc.level.getEntity(packet.entityId);
+    private static class ClientHandler {
+        public static void handleClient(MutationSyncPacket packet) {
+            try {
+                Minecraft mc = Minecraft.getInstance();
+                Entity entity = mc.level.getEntity(packet.entityId);
+                if (!(entity instanceof Mob mob)) return;
 
-//        Chemosynthesis.LOGGER.debug("MutationSyncPacket sent");
+                EntityRenderer<?> renderer = mc.getEntityRenderDispatcher().getRenderer(mob);
+                if (!(renderer instanceof GeoEntityRenderer geoRenderer)) {
+                    return;
+                }
 
-        if (!(entity instanceof Mob mob)) return;
+                // ----- METHOD 1: Use static registry field from ModRegistries -----
+                IForgeRegistry<MutationType> registry = ModRegistries.MUTATION_TYPE_REGISTRY;
+                MutationType type = null;
+                if (registry != null) {
+                    type = registry.getValue(packet.mutationTypeId);
+                }
 
-        EntityRenderer<?> rawRenderer = mc.getEntityRenderDispatcher().getRenderer(entity);
-//        Chemosynthesis.LOGGER.debug("Entity: "+entity);
+                // ----- METHOD 2: Fallback to DeferredRegister (always works) -----
+                if (type == null) {
+                    RegistryObject<MutationType> ro = ModMutations.findMutationType(packet.mutationTypeId);
+                    if (ro != null) {
+                        type = ro.get();
+                    } else {
+                        return;
+                    }
+                }
 
-
-
-        if (!(rawRenderer instanceof GeoEntityRenderer geoRenderer)) return;
-//        Chemosynthesis.LOGGER.debug("GeoRenderer: "+geoRenderer);
-
-        // Resolve which layer to add based on mutation class name
-        GeoRenderLayer layer = MutationLayerRegistry.createLayer(packet.mutationClassName, geoRenderer);
-        if (layer != null) {
-//            Chemosynthesis.LOGGER.debug("Successfully added the render layer");
-//            StaticSiliconiteMethods.debugLog("successfully added the layer!");
-            geoRenderer.addRenderLayer(layer);
+                Mutation clientMutation = type.createClientSide();
+                GeoRenderLayer<?> layer = clientMutation.createRenderLayer(geoRenderer);
+                geoRenderer.addRenderLayer(layer);
+            } catch (Exception e) {
+                StaticSiliconiteMethods.debugLog("Exception in ClientHandler: " + e);
+                e.printStackTrace();
+            }
         }
+    }
+
+    private static GeoRenderLayer<?> createLayerForMutation(GeoEntityRenderer renderer,
+                                                            Mutation mutation) {
+        return new MutationBaseRenderLayer<>(renderer, mutation);
     }
 }

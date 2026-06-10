@@ -6,6 +6,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.AI.ImprovedFlyingMoveContr
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -16,16 +17,34 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.lang.reflect.Field;
 
-public class MutationFlight<T extends Mob & GeoAnimatable> extends Mutation {
-    @Override
-    public GeoRenderLayer getMutationRenderLayer(GeoRenderer renderer) {
-        return new MutationFlight_Layer<>(renderer);
+public class MutationFlight extends Mutation {
+
+    public MutationFlight(ResourceLocation typeId, int mutation_id) {
+        super(typeId, mutation_id);
     }
+
+    private final GeoModel<MutationFlight> model = new MutationFlight_Model();
+    private final GeoRenderer<MutationFlight> renderer = new MutationFlight_Renderer(model);
+
+    @Override public boolean hasRenderLayer() { return true; }
+    @Override public String getAttachBoneName() { return "body"; }
+
+    @Override
+    public GeoRenderLayer<?> createRenderLayer(GeoRenderer<?> hostRenderer) {
+        return new MutationFlight_Layer<>(hostRenderer, this);
+    }
+
+    @Override public GeoModel<? extends Mutation> getModel() { return model; }
+    @Override public GeoRenderer<? extends Mutation> getRenderer() { return renderer; }
 
     @Override
     public void onTick(Mob mob) {
@@ -46,7 +65,7 @@ public class MutationFlight<T extends Mob & GeoAnimatable> extends Mutation {
     }
 
     @Override
-    public void onAiRegisterGoals(Mob mob) {
+    public void onInit(Mob mob) {
         mob.setNoGravity(true);
         //Add floating AI functionality
         try {
@@ -60,6 +79,14 @@ public class MutationFlight<T extends Mob & GeoAnimatable> extends Mutation {
         } catch (Exception e) {
             Chemosynthesis.LOGGER.error("Failed to set flying navigation", e);
         }
+
         mob.goalSelector.addGoal(1, new FloatingSiliconiteRandomStrollGoal((BaseSiliconite) mob, 7f, 4f));
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "mutation_flight", 5, event -> {
+            return event.setAndContinue(RawAnimation.begin().thenLoop("active"));
+        }));
     }
 }

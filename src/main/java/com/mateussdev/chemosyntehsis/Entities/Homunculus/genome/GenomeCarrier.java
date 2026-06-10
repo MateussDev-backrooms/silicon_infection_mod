@@ -2,6 +2,7 @@ package com.mateussdev.chemosyntehsis.Entities.Homunculus.genome;
 
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Core.ModMutations;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.IHomunculus;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.SeekAndEatBiomushGoal;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
@@ -151,7 +152,7 @@ public class GenomeCarrier extends BaseSiliconite {
         if(target instanceof IGenomeModifiable genmod) {
 
             //TEMP DEBUG - add a set MutationFlight
-            carriedGene.addMutation(new MutationFlight());
+            carriedGene.addMutation(new MutationFlight(ModMutations.FLIGHT.getId(), random.nextInt(999999999)));
 
             genmod.applyGene(carriedGene);
 
