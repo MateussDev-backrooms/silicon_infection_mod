@@ -1,7 +1,13 @@
 package com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation;
 
+import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Core.ModMutations;
+import com.mateussdev.chemosyntehsis.Core.ModRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Mob;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.NotImplementedException;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -47,6 +53,9 @@ public abstract class Mutation implements GeoAnimatable {
         //Useful for adding and removing goals
     }
 
+    //Condition for applying mutation. Usually for masking certain mobs
+    public abstract boolean canMutateMob(Mob mob);
+
     // ===== Graphics ===== //
 
     public boolean hasRenderLayer() { return false; }
@@ -80,4 +89,29 @@ public abstract class Mutation implements GeoAnimatable {
     public ResourceLocation getTypeId() {
         return typeId;
     };
+
+    // ===== Saving loading ===== //
+    public CompoundTag serialize() {
+        CompoundTag tag = new CompoundTag();
+        tag.putString("typeId", getTypeId().toString());
+        tag.putInt("mutationId", id);   // the integer ID passed in constructor
+        return tag;
+    }
+
+    public static Mutation deserialize(CompoundTag tag) {
+        String typeIdStr = tag.getString("typeId");
+        ResourceLocation typeId = new ResourceLocation(typeIdStr);
+        int mutationId = tag.getInt("mutationId");
+
+        // Look up from DeferredRegister – always works after mod init
+        RegistryObject<MutationType> ro = ModMutations.findMutationType(typeId);
+        if (ro == null) {
+            Chemosynthesis.LOGGER.error("Unknown mutation type: " + typeId);
+            return null;
+        }
+        MutationType type = ro.get();
+        return type.create(mutationId);
+    }
+
+
 }

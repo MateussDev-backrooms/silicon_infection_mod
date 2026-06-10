@@ -23,17 +23,8 @@ public class MutationBaseRenderLayer<T extends Mob & GeoAnimatable> extends GeoR
 
     @Override
     public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-        if(!hasMutation(animatable)) return;
+        if (animatable instanceof IGenomeModifiable genmod && !(genmod.hasMutationType(mutationReference.getTypeId()))) return;
 
         super.render(poseStack, animatable, bakedModel, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
-    }
-
-    private boolean hasMutation(T animatable) {
-        if (animatable instanceof IGenomeModifiable genmod && genmod.getGene() != null) {
-            // Compare by mutation type ID (ResourceLocation)
-            return genmod.getGene().mutations.stream()
-                    .anyMatch(m -> m.getTypeId().equals(mutationReference.getTypeId()));
-        }
-        return false;
     }
 }

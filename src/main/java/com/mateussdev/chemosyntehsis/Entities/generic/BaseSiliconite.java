@@ -313,20 +313,6 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         //Override functionality here
     }
 
-    public void tether(LivingEntity target) {
-        //This runs when the siliconite wishes to tether a mob
-        //Default functionality is to tether the mob and discard if destructiveTether is true
-        //Override when necessary
-        if (level() instanceof ServerLevel slvl) {
-            StaticSiliconiteMethods.tetherMob(slvl, target);
-            //discard if destructive
-            if (destructiveTether()) {
-                this.discard();
-            }
-        }
-
-    }
-
     //##### ===== #####//
 
 

@@ -2,17 +2,25 @@ package com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation;
 
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class MutationType {
     private final ResourceLocation id;
-    private final Supplier<Mutation> clientFactory; // only used on client
+    private final Function<Integer, Mutation> factory; // now takes mutationId
 
-    public MutationType(ResourceLocation id, Supplier<Mutation> clientFactory) {
+    public MutationType(ResourceLocation id, Function<Integer, Mutation> factory) {
         this.id = id;
-        this.clientFactory = clientFactory;
+        this.factory = factory;
     }
 
     public ResourceLocation getId() { return id; }
-    public Mutation createClientSide() { return clientFactory.get(); }
+
+    public Mutation create(int mutationId) {
+        return factory.apply(mutationId);
+    }
+
+    public Mutation createClientSide() {
+        return factory.apply(0);
+    }
 }

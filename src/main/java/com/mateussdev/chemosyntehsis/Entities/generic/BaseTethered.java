@@ -5,13 +5,18 @@ import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Core.ModNetworking;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
+import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Gene;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IGenomeModifiable;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
-import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationLayerRegistry;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationSyncPacket;
 import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingData;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -28,6 +33,7 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -210,7 +216,7 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
 
             if (level() instanceof ServerLevel slvl) {
                 slvl.playSound(null, blockPosition(), SoundEvents.SLIME_SQUISH_SMALL, SoundSource.HOSTILE, 1f, 0.8f);
-                StaticSiliconiteMethods.spawnBloodHit(slvl, position());
+                SiliconiteParticles.spawnBloodHit(slvl, position());
             }
         }
 
@@ -233,6 +239,9 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
 
     // ===== Gene system interaction ===== //
 
+    private static final EntityDataAccessor<CompoundTag> MUTATION_TYPES =
+            SynchedEntityData.defineId(BaseTethered.class, EntityDataSerializers.COMPOUND_TAG);
+
     @Override
     public boolean applyGene(Gene gene) {
         this.currentGene = gene;
@@ -240,15 +249,27 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         if (this.level() instanceof ServerLevel slvl) {
             slvl.playSound(null, blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.HOSTILE);
 
+            List<ResourceLocation> mutationTypeIds = new ArrayList<>();
+            for (Mutation mutation : gene.mutations) {
+                if(mutation.canMutateMob(this)) {
+                    mutation.onInit(this);
+                    if (mutation.hasRenderLayer()) {
+                        mutationTypeIds.add(mutation.getTypeId());
+                    }
+                }
+            }
+            this.updateMutationTypes(mutationTypeIds);
+
             var server = this.getServer();
             if (server != null) {
                 server.execute(() -> {
                     for (Mutation mutation : gene.mutations) {
-                        mutation.onInit(this);
+                        if(!mutation.canMutateMob(this)) continue;
+
                         if (mutation.hasRenderLayer()) {
                             ModNetworking.CHANNEL.send(
                                     PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this),
-                                    new MutationSyncPacket(this.getId(), mutation.getTypeId()) // add getTypeId() to Mutation
+                                    new MutationSyncPacket(this.getId(), mutation.getTypeId())
                             );
                         }
                     }
@@ -277,5 +298,80 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     @Override
     public void removeFitnessPoints(int deltaPoints) {
 
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(MUTATION_TYPES, new CompoundTag());
+    }
+
+    public void updateMutationTypes(List<ResourceLocation> types) {
+        CompoundTag tag = new CompoundTag();
+        // Store count and each ID as string
+        tag.putInt("count", types.size());
+        for (int i = 0; i < types.size(); i++) {
+            tag.putString("type_" + i, types.get(i).toString());
+        }
+        this.entityData.set(MUTATION_TYPES, tag);
+    }
+
+    @Override
+    public boolean hasMutationType(ResourceLocation typeId) {
+        CompoundTag tag = this.entityData.get(MUTATION_TYPES);
+        int count = tag.getInt("count");
+        for (int i = 0; i < count; i++) {
+            String stored = tag.getString("type_" + i);
+            if (stored.equals(typeId.toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // ===== Saving loading ===== //
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        if(currentGene != null) {
+            tag.put("genome", currentGene.serialize());
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.contains("genome")) {
+            currentGene = Gene.deserialize(tag.getCompound("genome"));
+            if (currentGene != null) {
+                // Prepare list of mutation type IDs for synced entity data
+                List<ResourceLocation> types = new ArrayList<>();
+                for (Mutation mutation : currentGene.mutations) {
+                    mutation.onInit(this);               // re‑apply server‑side behaviour
+                    if (mutation.hasRenderLayer()) {
+                        types.add(mutation.getTypeId());
+                    }
+                }
+                // Update the entity data – this syncs automatically to clients
+                updateMutationTypes(types);
+
+                // Re‑send packets to add render layers on clients
+                if (!level().isClientSide) {   // server side only
+                    ServerLevel serverLevel = (ServerLevel) level();
+                    // Use server.execute to avoid concurrency issues (optional)
+                    serverLevel.getServer().execute(() -> {
+                        for (Mutation mutation : currentGene.mutations) {
+                            if (mutation.hasRenderLayer()) {
+                                ModNetworking.CHANNEL.send(
+                                        PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this),
+                                        new MutationSyncPacket(this.getId(), mutation.getTypeId())
+                                );
+                            }
+                        }
+                    });
+                }
+            }
+        }
     }
 }

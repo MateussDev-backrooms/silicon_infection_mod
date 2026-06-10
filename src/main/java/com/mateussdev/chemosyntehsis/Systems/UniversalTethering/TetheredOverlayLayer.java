@@ -1,6 +1,8 @@
 package com.mateussdev.chemosyntehsis.Systems.UniversalTethering;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Mixin.AgeableListModelAccessor;
+import com.mateussdev.chemosyntehsis.Mixin.ModelPartAccessor;
 import com.mateussdev.chemosyntehsis.Util.Models.BulbSingular;
 import com.mateussdev.chemosyntehsis.Util.Rendering.TextureUtilities;
 import com.mateussdev.chemosyntehsis.Util.Rendering.UVScaleableVertexConsumer;
@@ -18,10 +20,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import org.joml.Quaternionf;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
     // reuse one bulb model instance (baked layer) - lazy init
@@ -57,6 +61,8 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
     @Override
     public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight,
                        T entity, float limbSwing, float limbSwingAmount, float partialTick, float age, float headYaw, float headPitch) {
+        //Don't render if player
+        if (entity instanceof Player) return;
 
         //only render if the mob is universally tethered
         if (entity instanceof Mob mob) {
@@ -65,7 +71,7 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
         //collect all ModelPart instances by reflecting fields. Use cache if available
         Set<ModelPart> parts = MODEL_PARTS_CACHE.computeIfAbsent(
                 this.getParentModel().getClass(),
-                cls -> collectModelParts(this.getParentModel())
+                cls -> collectAllParts(this.getParentModel())
         );
 
         ResourceLocation texLoc = ownerRenderer.getTextureLocation(entity);
@@ -120,7 +126,7 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
 
 
             //Get cubes from model part
-            List<ModelPart.Cube> cubes = collectCubesFromPart(part);
+            List<ModelPart.Cube> cubes = getCubes(part);
 
             for(ModelPart.Cube cuboid : cubes) {
                 //Update mins and maxes
@@ -301,41 +307,43 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
         }
     }
 
-    // Collect model parts via reflection
-    private Set<ModelPart> collectModelParts(EntityModel<?> model) {
-        Set<ModelPart> parts = new LinkedHashSet<>();
-        Class<?> cls = model.getClass();
-        while (cls != null && cls != Object.class) {
-            for (Field f : cls.getDeclaredFields()) {
-                f.setAccessible(true);
-                try {
-                    Object val = f.get(model);
-                    if (val instanceof ModelPart mp) {
-                        parts.add(mp);
-                    } else if (val instanceof ModelPart[] arr) {
-                        Collections.addAll(parts, arr);
-                    } else if (val instanceof Iterable<?> it) {
-                        for (Object o : it) if (o instanceof ModelPart mp2) parts.add(mp2);
-                    }
-                } catch (IllegalAccessException ignored) {
-                }
-            }
-            cls = cls.getSuperclass();
+    private Set<ModelPart> collectAllParts(EntityModel<?> model) {
+        // Collect starting roots depending on model type
+        Collection<ModelPart> roots = new ArrayList<>();
+
+        if (model instanceof HierarchicalModel<?> hmodel) {
+            ModelPart root = hmodel.root();
+            if (root != null) roots.add(root);
         }
-        return parts;
+        else if (model instanceof AgeableListModel<?> ageable) {
+            AgeableListModelAccessor accessor = (AgeableListModelAccessor) ageable;
+            // headParts and bodyParts are Iterable<ModelPart>
+            for (ModelPart part : accessor.callHeadParts()) roots.add(part);
+            for (ModelPart part : accessor.callBodyParts()) roots.add(part);
+        }
+        else if (model instanceof ListModel<?> listModel) {
+            for (ModelPart part : listModel.parts()) roots.add(part);
+        }
+        else {
+            Chemosynthesis.LOGGER.warn("Unsupported model type for bulbs: {}", model.getClass().getName());
+            return Collections.emptySet();
+        }
+
+        Set<ModelPart> allParts = new LinkedHashSet<>();
+        for (ModelPart root : roots) {
+            collectPartsRecursive(root, allParts);
+        }
+        return allParts;
     }
 
-
-    //Collect the cubes from the model part :melvin:
-    private List<ModelPart.Cube> collectCubesFromPart(ModelPart part) {
-        List<ModelPart.Cube> cubes = new ArrayList<>();
-        try {
-            Field f = ModelPart.class.getDeclaredField("cubes");
-            f.setAccessible(true);
-            cubes = (List<ModelPart.Cube>) f.get(part);
-        } catch (Exception e) {
-            //Failed to get cubes
+    private void collectPartsRecursive(ModelPart part, Set<ModelPart> out) {
+        out.add(part);
+        for (ModelPart child : ((ModelPartAccessor) (Object) part).getChildren().values()) {
+            collectPartsRecursive(child, out);
         }
-        return cubes;
+    }
+
+    private List<ModelPart.Cube> getCubes(ModelPart part) {
+        return ((ModelPartAccessor) (Object) part).getCubes();
     }
 }

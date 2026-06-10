@@ -1,6 +1,7 @@
 package com.mateussdev.chemosyntehsis.Events;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.GenomeCommand;
 import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingCommand;
 import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.TetherCommand;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -13,5 +14,6 @@ public class EventRegisterCommands {
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         GlobalWarmingCommand.register(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection());
         TetherCommand.register(event.getDispatcher());
+        GenomeCommand.register(event);
     }
 }

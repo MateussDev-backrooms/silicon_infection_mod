@@ -6,12 +6,14 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.AbstractHarpoonProject
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassContainer;
+import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.UniversalTethering;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -62,16 +64,13 @@ public class BulbHarpoonEntity extends AbstractHarpoonProjectile implements GeoA
     @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
-        if (result.getEntity() instanceof LivingEntity target) {
-            target.hurt(damageSources().arrow(this, this.getOwner()), 4.0F);
+        if (result.getEntity() instanceof Mob mob) {
+            mob.hurt(damageSources().arrow(this, this.getOwner()), 4.0F);
 
-            if(target.getHealth() / target.getMaxHealth() < 0.33f) {
+            if (mob.getHealth() / mob.getMaxHealth() < 0.33f) {
                 //Only tether if the mob has under 1/3 HP
-                if(level() instanceof ServerLevel slvl) {
-                    if(StaticSiliconiteMethods.isTetherable(target)) {
-                        StaticSiliconiteMethods.tetherMob(slvl, target);
-                        target.discard();
-                    }
+                if (level() instanceof ServerLevel slvl) {
+                    UniversalTethering.tryTetherMob(mob, slvl);
                 }
             }
         }

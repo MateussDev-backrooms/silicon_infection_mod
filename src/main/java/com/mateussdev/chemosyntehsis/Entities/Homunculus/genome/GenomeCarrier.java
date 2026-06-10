@@ -60,12 +60,6 @@ public class GenomeCarrier extends BaseSiliconite {
     public Gene carriedGene = new Gene();
     public UUID hostHomunculus = null;
 
-    private static final List<EntityType<? extends BaseHybrid>> HYBRID_EVOLUTION_RESULTS = List.of(
-            ModEntities.THROMBOCYTE.get(),
-            ModEntities.ERYTHROCYTE.get(),
-            ModEntities.ASTROCYTE.get()
-    );
-
     //##### Entity setup and stats #####//
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
@@ -153,6 +147,8 @@ public class GenomeCarrier extends BaseSiliconite {
 
             //TEMP DEBUG - add a set MutationFlight
             carriedGene.addMutation(new MutationFlight(ModMutations.FLIGHT.getId(), random.nextInt(999999999)));
+            carriedGene.addMutation(new MutationFlight(ModMutations.SWIMMING.getId(), random.nextInt(999999999)));
+            carriedGene.addMutation(new MutationFlight(ModMutations.HARPOON.getId(), random.nextInt(999999999)));
 
             genmod.applyGene(carriedGene);
 

@@ -238,14 +238,6 @@ public class StaticSiliconiteMethods {
             }
     }
 
-    public static boolean isTetherable(LivingEntity entity) {
-        return UniversalTethering.handmadeTetheredMobs.containsKey(entity.getType());
-    }
-
-    public static boolean isTetherable(EntityType<LivingEntity> entityType) {
-        return UniversalTethering.handmadeTetheredMobs.containsKey(entityType);
-    }
-
     public static boolean isMobFromChemosynthesisMod(LivingEntity entity) {
         ResourceLocation entityTypeKey = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
         return entityTypeKey.getNamespace().equals(Chemosynthesis.MODID);

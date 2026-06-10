@@ -79,16 +79,20 @@ public class MutationSyncPacket {
 
                 Mutation clientMutation = type.createClientSide();
                 GeoRenderLayer<?> layer = clientMutation.createRenderLayer(geoRenderer);
-                geoRenderer.addRenderLayer(layer);
+                boolean alreadyExists = geoRenderer.getRenderLayers().stream()
+                        .anyMatch(l -> {
+                            if (l instanceof MutationBaseRenderLayer<?> baseLayer) {
+                                return baseLayer.mutationReference.getTypeId().equals(packet.mutationTypeId);
+                            }
+                            return false;
+                        });
+
+                if (!alreadyExists) {
+                    geoRenderer.addRenderLayer(layer);
+                }
             } catch (Exception e) {
-                StaticSiliconiteMethods.debugLog("Exception in ClientHandler: " + e);
                 e.printStackTrace();
             }
         }
-    }
-
-    private static GeoRenderLayer<?> createLayerForMutation(GeoEntityRenderer renderer,
-                                                            Mutation mutation) {
-        return new MutationBaseRenderLayer<>(renderer, mutation);
     }
 }

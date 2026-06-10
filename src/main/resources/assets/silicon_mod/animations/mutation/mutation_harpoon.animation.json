@@ -1,0 +1,60 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"idle": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"trachea": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 12.5],
+							"easing": "easeInOutQuad"
+						},
+						"2.0": {
+							"vector": [0, 0, 0],
+							"easing": "easeInOutQuad"
+						}
+					},
+					"scale": {
+						"0.0": {
+							"vector": [1, 1, 1]
+						},
+						"0.5": {
+							"vector": [1, 1.1, 1]
+						},
+						"1.0": {
+							"vector": [1, 1, 1]
+						},
+						"1.5": {
+							"vector": [1, 1.1, 1]
+						},
+						"2.0": {
+							"vector": [1, 1, 1]
+						}
+					}
+				},
+				"stem": {
+					"rotation": {
+						"0.0": {
+							"vector": [0.99, -11.3, -0.1]
+						},
+						"0.25": {
+							"vector": [1.312, -14.943, -0.0926]
+						},
+						"1.25": {
+							"vector": [-0.8866, 9.9616, -0.1304],
+							"easing": "easeInOutSine"
+						},
+						"2.0": {
+							"vector": [0.99, -11.3, -0.1]
+						}
+					}
+				}
+			}
+		}
+	}
+}

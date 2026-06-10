@@ -4,6 +4,7 @@ import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Core.ModSounds;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseGib;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
+import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
 import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.UniversalTethering;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_bulb.VegetativeBulb;
@@ -123,7 +124,7 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
             this.discard();
         } else {
             slvl.playSound(null, blockPosition(), ModSounds.BULB_SHATTER.get(), SoundSource.AMBIENT, 0.3f, 1f);
-            StaticSiliconiteMethods.spawnBloodHit(slvl, this.position());
+            SiliconiteParticles.spawnBloodHit(slvl, this.position());
             this.discard();
         }
     }
@@ -132,14 +133,11 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
         result.getEntity().invulnerableTime = 3;
-        if (result.getEntity() instanceof LivingEntity livingEntity) {
-            if (livingEntity.getHealth() / livingEntity.getMaxHealth() < 0.33f) {
+        if (result.getEntity() instanceof Mob mob) {
+            if (mob.getHealth() / mob.getMaxHealth() < 0.33f) {
                 //Only tether if the mob has under 1/3 HP
                 if (level() instanceof ServerLevel slvl) {
-                    if (StaticSiliconiteMethods.isTetherable(livingEntity)) {
-                        StaticSiliconiteMethods.tetherMob(slvl, livingEntity);
-                        livingEntity.discard();
-                    }
+                    UniversalTethering.tryTetherMob(mob, slvl);
                 }
             }
         }
@@ -195,7 +193,7 @@ public class BulbProjectileEntity extends AbstractArrow implements GeoAnimatable
         if (level() instanceof ServerLevel slvl) {
             if (level().random.nextFloat() < 0.6f || !GlobalMobCap.canSpawnUnique(slvl, ModEntities.BULB_PROJECTILE.get(), blockPosition(), 128, 128)) {
                 slvl.playSound(null, blockPosition(), ModSounds.BULB_SHATTER.get(), SoundSource.AMBIENT, 0.3f, 1f);
-                StaticSiliconiteMethods.spawnBloodHit(slvl, this.position());
+                SiliconiteParticles.spawnBloodHit(slvl, this.position());
                 this.discard();
             }
         }

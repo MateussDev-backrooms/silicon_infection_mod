@@ -12,6 +12,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -28,6 +29,7 @@ public class EventTetherHandling {
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         if (!(event.getObject() instanceof Mob)) return;
+        if (event.getObject() instanceof Player) return;
 
         TetheredCapabilityProvider provider = new TetheredCapabilityProvider();
         event.addCapability(

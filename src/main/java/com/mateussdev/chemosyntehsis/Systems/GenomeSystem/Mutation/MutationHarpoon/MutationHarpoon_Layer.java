@@ -1,14 +1,15 @@
-package com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationFlight;
+package com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationHarpoon;
 
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IGenomeModifiable;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationBaseRenderLayer;
-import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.Mob;
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3d;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -16,20 +17,16 @@ import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
-import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-import software.bernie.geckolib.util.RenderUtils;
 
-import java.lang.Math;
+public class MutationHarpoon_Layer<T extends Mob & GeoAnimatable> extends MutationBaseRenderLayer<T> {
 
-public class MutationFlight_Layer<T extends Mob & GeoAnimatable> extends MutationBaseRenderLayer<T> {
+    private final GeoModel<MutationHarpoon> mutationModel;
+    private final GeoRenderer<MutationHarpoon> mutationRenderer;
 
-    private final GeoModel<MutationFlight> mutationModel;
-    private final GeoRenderer<MutationFlight> mutationRenderer;
-
-    public MutationFlight_Layer(GeoRenderer<?> entityRendererIn, MutationFlight mutation) {
+    public MutationHarpoon_Layer(GeoRenderer<?> entityRendererIn, MutationHarpoon mutation) {
         super((GeoEntityRenderer<?>) entityRendererIn, mutation);
-        this.mutationModel = new MutationFlight_Model();
-        this.mutationRenderer = new MutationFlight_Renderer(mutationModel);
+        this.mutationModel = new MutationHarpoon_Model();
+        this.mutationRenderer = new MutationHarpoon_Renderer(mutationModel);
     }
 
     @Override
@@ -38,7 +35,7 @@ public class MutationFlight_Layer<T extends Mob & GeoAnimatable> extends Mutatio
         if (animatable instanceof IGenomeModifiable genmod && !(genmod.hasMutationType(mutationReference.getTypeId()))) return;
 
         //Cast to the actual mutation here instead of using the generic one:
-        MutationFlight castedMutationRef = (MutationFlight) mutationReference;
+        MutationHarpoon castedMutationRef = (MutationHarpoon) mutationReference;
 
         //Get socket bone
         GeoModel<T> hostModel = getRenderer().getGeoModel();

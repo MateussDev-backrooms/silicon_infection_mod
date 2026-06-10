@@ -1,6 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.generic;
 
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
+import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -64,7 +65,7 @@ public class BaseAmalgamation extends BaseOrganelle{
                             } else {
                                 slvl.setBlock(pos, ModBlocks.AMALGAMATED_FLESH_BLOCK.get().defaultBlockState(), 3);
                             }
-                            StaticSiliconiteMethods.spawnBloodHit(slvl, pos.getCenter());
+                            SiliconiteParticles.spawnBloodHit(slvl, pos.getCenter());
                             blocksPlaced++;
                             break;
                         }

@@ -1,6 +1,8 @@
 package com.mateussdev.chemosyntehsis.Core;
 
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationFlight.MutationFlight;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationHarpoon.MutationHarpoon;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationSwimming.MutationSwimming;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -14,8 +16,20 @@ public class ModMutations {
             DeferredRegister.create(ModRegistries.MUTATION_TYPE_REGISTRY_KEY, MODID);
 
     public static final RegistryObject<MutationType> FLIGHT = MUTATION_TYPES.register("flight",
-            () -> new MutationType(new ResourceLocation(MODID, "flight"),
-                    () -> new MutationFlight(new ResourceLocation(MODID, "flight"), 0)));
+            () -> new MutationType(
+                    new ResourceLocation(MODID, "flight"),
+                    (mutationId) -> new MutationFlight(new ResourceLocation(MODID, "flight"), mutationId)
+            ));
+    public static final RegistryObject<MutationType> SWIMMING = MUTATION_TYPES.register("swimming",
+            () -> new MutationType(
+                    new ResourceLocation(MODID, "swimming"),
+                    (mutationId) -> new MutationSwimming(new ResourceLocation(MODID, "swimming"), mutationId)
+            ));
+    public static final RegistryObject<MutationType> HARPOON = MUTATION_TYPES.register("harpoon",
+            () -> new MutationType(
+                    new ResourceLocation(MODID, "harpoon"),
+                    (mutationId) -> new MutationHarpoon(new ResourceLocation(MODID, "harpoon"), mutationId)
+            ));
 
     public static void register(IEventBus eventBus) {
         MUTATION_TYPES.register(eventBus);
