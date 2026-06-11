@@ -53,6 +53,7 @@ public class ModCreativeTabs {
                         pOutput.accept(ModItems.SPAWN_VEG_ROLLER.get());
                         pOutput.accept(ModItems.SPAWN_VASC_ROLLER.get());
 
+                        pOutput.accept(ModItems.SPAWN_HOMUNCULUS_T1.get());
                         pOutput.accept(ModItems.SPAWN_AMAL_ZOMBIE.get());
                         pOutput.accept(ModItems.SPAWN_AMAL_SPAWNER.get());
                         pOutput.accept(ModItems.SPAWN_AMAL_TURRET.get());

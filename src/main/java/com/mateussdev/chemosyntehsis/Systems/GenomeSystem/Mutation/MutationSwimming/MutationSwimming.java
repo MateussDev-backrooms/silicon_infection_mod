@@ -6,6 +6,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.AI.FloatingSiliconiteRando
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ImprovedFlyingMoveControl;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationFlight.MutationFlight;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -20,6 +21,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Random;
 
 public class MutationSwimming extends Mutation {
 
@@ -74,5 +76,10 @@ public class MutationSwimming extends Mutation {
         controllers.add(new AnimationController<>(this, "mutation_swimming", 5, event -> {
             return event.setAndContinue(RawAnimation.begin().thenLoop("active"));
         }));
+    }
+
+    @Override
+    public Mutation copy(Random rng) {
+        return new MutationSwimming(this.getTypeId(), rng.nextInt(Integer.MAX_VALUE));
     }
 }

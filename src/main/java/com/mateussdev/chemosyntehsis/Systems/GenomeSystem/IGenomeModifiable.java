@@ -6,6 +6,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface IGenomeModifiable {
 
@@ -13,8 +14,9 @@ public interface IGenomeModifiable {
     Gene getGene();
     void clearAllGenes();
 
-    void addFitnessPoints(int deltaPoints);
-    void removeFitnessPoints(int deltaPoints);
+    void setGeneOrigin(UUID homunculusId);
+    UUID getGeneOrigin();
+    void reportFitness(float points);
 
     boolean hasMutationType(ResourceLocation typeID);
 

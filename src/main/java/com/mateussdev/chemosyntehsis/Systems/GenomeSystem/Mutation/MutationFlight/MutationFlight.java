@@ -27,6 +27,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Random;
 
 public class MutationFlight extends Mutation {
 
@@ -109,5 +110,10 @@ public class MutationFlight extends Mutation {
         controllers.add(new AnimationController<>(this, "mutation_flight", 5, event -> {
             return event.setAndContinue(RawAnimation.begin().thenLoop("active"));
         }));
+    }
+
+    @Override
+    public Mutation copy(Random rng) {
+        return new MutationFlight(this.getTypeId(), rng.nextInt(Integer.MAX_VALUE));
     }
 }

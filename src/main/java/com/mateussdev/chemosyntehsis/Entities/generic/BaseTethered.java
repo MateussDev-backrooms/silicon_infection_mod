@@ -8,6 +8,7 @@ import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Gene;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IGenomeModifiable;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IHomunculus;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationSyncPacket;
 import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingData;
@@ -21,7 +22,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -33,14 +39,13 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     protected BaseTethered(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
+        defaultGoals = this.goalSelector.getAvailableGoals().stream().toList();
+        targetingGoals = this.targetSelector.getAvailableGoals().stream().toList();
     }
 
     protected int globalWarmingRate = 64;
@@ -52,6 +57,9 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     protected int metamorphosisTime = 40;
 
     public int fitnessPoints = 0;
+
+    private List<WrappedGoal> defaultGoals = new ArrayList<>();
+    private List<WrappedGoal> targetingGoals = new ArrayList<>();
 
     protected boolean explodeOnDeath() {
         return true;
@@ -148,6 +156,13 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         } else {
             super.tickDeath();
         }
+
+        //Run the onTickDeath for each mutation in the genome
+        if(currentGene != null) {
+            for(Mutation mutation : currentGene.mutations) {
+                mutation.onTickDeath(this);
+            }
+        }
     }
 
     public void turnIntoBiomush() {
@@ -192,7 +207,7 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
 
     @Override
     protected int evolvesAtMetabolism() {
-        return 100;
+        return 300;
     }
 
     public final Map<String, Vector3f> boneWobble = new HashMap<>();
@@ -208,17 +223,29 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     public boolean hurt(DamageSource pSource, float pAmount) {
         if(isDeadOrDying()) return false;
 
-        boolean hurtResult = super.hurt(pSource, pAmount);
-
-            triggerHitReaction(pSource, pAmount);
-        if(hurtResult) {
-//            wobbleBoneName = wobblyBones().get(random.nextInt(wobblyBones().size()));
-
-            if (level() instanceof ServerLevel slvl) {
-                slvl.playSound(null, blockPosition(), SoundEvents.SLIME_SQUISH_SMALL, SoundSource.HOSTILE, 1f, 0.8f);
-                SiliconiteParticles.spawnBloodHit(slvl, position());
+        //Calculate the actual damage received
+        float culminativeDamageMultiplier = 1.0f;
+        if(currentGene != null) {
+            for(Mutation mutation : currentGene.mutations) {
+                culminativeDamageMultiplier *= mutation.onHurt(this, pSource, pAmount);
             }
         }
+        boolean hurtResult = culminativeDamageMultiplier > 0 ? super.hurt(pSource, pAmount*culminativeDamageMultiplier) : false;
+
+        if(culminativeDamageMultiplier > 0) {
+            triggerHitReaction(pSource, pAmount);
+            if(hurtResult) {
+    //            wobbleBoneName = wobblyBones().get(random.nextInt(wobblyBones().size()));
+
+                if (level() instanceof ServerLevel slvl) {
+                    slvl.playSound(null, blockPosition(), SoundEvents.SLIME_SQUISH_SMALL, SoundSource.HOSTILE, 1f, 0.8f);
+                    SiliconiteParticles.spawnBloodHit(slvl, position());
+                }
+            }
+        }
+
+        //Penalty for getting damaged
+        reportFitness(-pAmount*culminativeDamageMultiplier/2);
 
         return hurtResult;
     }
@@ -241,6 +268,8 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
 
     private static final EntityDataAccessor<CompoundTag> MUTATION_TYPES =
             SynchedEntityData.defineId(BaseTethered.class, EntityDataSerializers.COMPOUND_TAG);
+    private static final EntityDataAccessor<Optional<UUID>> GENE_ORIGIN =
+            SynchedEntityData.defineId(BaseTethered.class, EntityDataSerializers.OPTIONAL_UUID);
 
     @Override
     public boolean applyGene(Gene gene) {
@@ -249,6 +278,15 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         if (this.level() instanceof ServerLevel slvl) {
             slvl.playSound(null, blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.HOSTILE);
 
+            //Reset AI back to default
+            this.goalSelector.removeAllGoals((goal) -> true);
+            this.targetSelector.removeAllGoals((goal) -> true);
+
+            //readd goals
+            for(WrappedGoal wrappedGoal : defaultGoals) this.goalSelector.addGoal(wrappedGoal.getPriority(), wrappedGoal.getGoal());
+            for(WrappedGoal wrappedGoal : targetingGoals) this.targetSelector.addGoal(wrappedGoal.getPriority(), wrappedGoal.getGoal());
+
+            //Then change the AI by running onInit()
             List<ResourceLocation> mutationTypeIds = new ArrayList<>();
             for (Mutation mutation : gene.mutations) {
                 if(mutation.canMutateMob(this)) {
@@ -291,19 +329,35 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     }
 
     @Override
-    public void addFitnessPoints(int deltaPoints) {
-
+    public void setGeneOrigin(UUID homunculusId) {
+        if(homunculusId != null) {
+            this.entityData.set(GENE_ORIGIN, Optional.of(homunculusId));
+        }
     }
 
     @Override
-    public void removeFitnessPoints(int deltaPoints) {
+    public UUID getGeneOrigin() {
+        return this.entityData.get(GENE_ORIGIN).orElse(null);
+    }
 
+    @Override
+    public void reportFitness(float points) {
+        if (!(level() instanceof ServerLevel slvl)) return;
+
+        UUID originId = getGeneOrigin();
+        if (originId == null) return;
+
+        Entity homunculus = slvl.getEntity(originId);
+        if (homunculus instanceof IHomunculus he) {
+            he.getHomunculusBrain().addFitnessToGene(this.currentGene.id, points);
+        }
     }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(MUTATION_TYPES, new CompoundTag());
+        this.entityData.define(GENE_ORIGIN, Optional.of(UUID.randomUUID()));
     }
 
     public void updateMutationTypes(List<ResourceLocation> types) {
@@ -336,19 +390,27 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         super.addAdditionalSaveData(tag);
         if(currentGene != null) {
             tag.put("genome", currentGene.serialize());
+            tag.putUUID("origin_homunculus", this.entityData.get(GENE_ORIGIN).get());
         }
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+
+        //Save the AI for mutation reloading
+        defaultGoals = this.goalSelector.getAvailableGoals().stream().toList();
+        targetingGoals = this.targetSelector.getAvailableGoals().stream().toList();
+
+        //Load
         if (tag.contains("genome")) {
             currentGene = Gene.deserialize(tag.getCompound("genome"));
+            this.entityData.set(GENE_ORIGIN, Optional.of(tag.getUUID("origin_homunculus")));
             if (currentGene != null) {
                 // Prepare list of mutation type IDs for synced entity data
                 List<ResourceLocation> types = new ArrayList<>();
                 for (Mutation mutation : currentGene.mutations) {
-                    mutation.onInit(this);               // re‑apply server‑side behaviour
+                    mutation.onInit(this);
                     if (mutation.hasRenderLayer()) {
                         types.add(mutation.getTypeId());
                     }
@@ -357,7 +419,7 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
                 updateMutationTypes(types);
 
                 // Re‑send packets to add render layers on clients
-                if (!level().isClientSide) {   // server side only
+                if (!level().isClientSide) {
                     ServerLevel serverLevel = (ServerLevel) level();
                     // Use server.execute to avoid concurrency issues (optional)
                     serverLevel.getServer().execute(() -> {
@@ -373,5 +435,23 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
                 }
             }
         }
+    }
+
+    //Adding fitness
+
+    @Override
+    public boolean doHurtTarget(Entity pEntity) {
+        //Give fitness point to the amount of damage the mob dealt to another mob
+        reportFitness((float) getAttribute(Attributes.ATTACK_DAMAGE).getValue());
+        return super.doHurtTarget(pEntity);
+    }
+
+    @Override
+    public void awardKillScore(Entity pKilled, int pScoreValue, DamageSource pSource) {
+        if(pKilled instanceof LivingEntity le) {
+            //Add tons of fitness points on kill
+            reportFitness(le.getMaxHealth()*2);
+        }
+        super.awardKillScore(pKilled, pScoreValue, pSource);
     }
 }

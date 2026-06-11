@@ -1,11 +1,16 @@
 package com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationHarpoon;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.AbstractHarpoonProjectile;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationFlight.MutationFlight;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
@@ -14,6 +19,7 @@ import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.List;
+import java.util.Random;
 
 public class MutationHarpoon extends Mutation {
 
@@ -23,6 +29,8 @@ public class MutationHarpoon extends Mutation {
 
     private final GeoModel<MutationHarpoon> model = new MutationHarpoon_Model();
     private final GeoRenderer<MutationHarpoon> renderer = new MutationHarpoon_Renderer(model);
+
+    public BulbHarpoonEntity harpoonEntity;
 
     @Override public boolean hasRenderLayer() { return true; }
     @Override public String getAttachBoneName() { return "head"; }
@@ -35,16 +43,26 @@ public class MutationHarpoon extends Mutation {
     @Override public GeoModel<? extends Mutation> getModel() { return model; }
     @Override public GeoRenderer<? extends Mutation> getRenderer() { return renderer; }
 
+    private int t = 0;
     @Override
     public void onTick(Mob mob) {
         if(mob.level() instanceof ServerLevel slvl) {
-
         }
     }
 
     @Override
     public void onInit(Mob mob) {
-        //TODO Make swimming mutation create fast swimmers
+        mob.goalSelector.addGoal(-1, new RangedHarpoonAIGoal(mob, 1.5f, 100, 16, this));
+    }
+
+    @Override
+    public float onHurt(Mob mob, DamageSource source, float amount) {
+        if(harpoonEntity != null) {
+            harpoonEntity.setAttached(false);
+            harpoonEntity.setTarget(null);
+            harpoonEntity.setCurrentAttachType(AbstractHarpoonProjectile.AttachTypes.Reeling);
+        }
+        return super.onHurt(mob, source, amount);
     }
 
     @Override
@@ -69,5 +87,10 @@ public class MutationHarpoon extends Mutation {
         controllers.add(new AnimationController<>(this, "mutation_harpoon", 5, event -> {
             return event.setAndContinue(RawAnimation.begin().thenLoop("idle"));
         }));
+    }
+
+    @Override
+    public Mutation copy(Random rng) {
+        return new MutationHarpoon(this.getTypeId(), rng.nextInt(Integer.MAX_VALUE));
     }
 }

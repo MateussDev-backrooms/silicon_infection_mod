@@ -5,6 +5,7 @@ import com.mateussdev.chemosyntehsis.Core.ModMutations;
 import com.mateussdev.chemosyntehsis.Core.ModRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
@@ -19,7 +20,9 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.util.RenderUtils;
 
-public abstract class Mutation implements GeoAnimatable {
+import java.util.Random;
+
+public abstract class Mutation implements GeoAnimatable, Cloneable {
 
     private final AnimatableInstanceCache cache =
             GeckoLibUtil.createInstanceCache(this);
@@ -53,26 +56,42 @@ public abstract class Mutation implements GeoAnimatable {
         //Useful for adding and removing goals
     }
 
-    //Condition for applying mutation. Usually for masking certain mobs
+    public void onTickDeath(Mob mob) {
+        //Triggers when the mob is in the dying phase
+        //Useful for post-mortum functionality
+    }
+
+    public float onHurt(Mob mob, DamageSource source, float amount) {
+        //Triggers when the mob is hurt
+        //return is the multiplier for the damage received
+        return 1.0f;
+    }
+
+    //Condition for applying mutation. Usually for masking certain mobs, or requiring certain prerequisites for the mob's mutation
     public abstract boolean canMutateMob(Mob mob);
 
     // ===== Graphics ===== //
 
+    //Boolean that enables or disables any visuals for the mutation. Could be used to mask mutations for certain mobs while applying their benefits
     public boolean hasRenderLayer() { return false; }
+
+    //Returns the name of the bone to which the mutation should be attached to
     public String getAttachBoneName() { return "body"; }
+
+    //This function is ran by the MutationSyncPacket to instantiate and add a render layer to the model of a mob
     public GeoRenderLayer<?> createRenderLayer(GeoRenderer<?> hostRenderer) {
-        // Default – may be overridden by mutations that have custom rendering
         return new MutationBaseRenderLayer<>((GeoEntityRenderer<?>) hostRenderer, this);
     }
 
-    /** Provide the GeoModel instance used for this mutation's addon geometry */
+    //Returns the GeoModel of the mutation
     public abstract GeoModel<? extends Mutation> getModel();
 
-    /** Provide the GeoRenderer instance used for this mutation (lightweight, can be shared) */
+    //Returns the GeoRenderer of the mutation
     public abstract GeoRenderer<? extends Mutation> getRenderer();
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        //Allows for full-blown animation functionality for the mutation, like state machines, conditional animations and etc.
         throw new NotImplementedException();
     }
 
@@ -81,20 +100,28 @@ public abstract class Mutation implements GeoAnimatable {
         return cache;
     }
 
+    //Ticks the animation. Needed backend for the animations to work
     @Override
     public double getTick(Object object) {
         return RenderUtils.getCurrentTick();
     }
 
+    //Gets the MutationType ID
     public ResourceLocation getTypeId() {
         return typeId;
     };
 
+    //Gets the int ID of the mutation instance
+    public int getId() {
+        return id;
+    };
+
     // ===== Saving loading ===== //
+
     public CompoundTag serialize() {
         CompoundTag tag = new CompoundTag();
         tag.putString("typeId", getTypeId().toString());
-        tag.putInt("mutationId", id);   // the integer ID passed in constructor
+        tag.putInt("mutationId", id);
         return tag;
     }
 
@@ -103,7 +130,6 @@ public abstract class Mutation implements GeoAnimatable {
         ResourceLocation typeId = new ResourceLocation(typeIdStr);
         int mutationId = tag.getInt("mutationId");
 
-        // Look up from DeferredRegister – always works after mod init
         RegistryObject<MutationType> ro = ModMutations.findMutationType(typeId);
         if (ro == null) {
             Chemosynthesis.LOGGER.error("Unknown mutation type: " + typeId);
@@ -113,5 +139,8 @@ public abstract class Mutation implements GeoAnimatable {
         return type.create(mutationId);
     }
 
+    // ===== Cloning ===== //
 
+
+    public abstract Mutation copy(Random rng);
 }

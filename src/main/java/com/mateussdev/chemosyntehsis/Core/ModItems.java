@@ -77,6 +77,9 @@ public class ModItems {
                     () -> new ForgeSpawnEggItem(ModEntities.VASC_ROLLER, 0x22201f, 0x855d36, new Item.Properties()));
 
     //Amalgamations
+    public static final RegistryObject<Item> SPAWN_HOMUNCULUS_T1 =
+            ITEMS.register("spawn_homunculus_t1",
+                    () -> new ForgeSpawnEggItem(ModEntities.HOMUNCULUS_T1, 0x933b3b, 0x614558, new Item.Properties()));
     public static final RegistryObject<Item> SPAWN_AMAL_ZOMBIE =
             ITEMS.register("spawn_amal_zombie",
                     () -> new ForgeSpawnEggItem(ModEntities.AMAL_ZOMBIE, 0x933b3b, 0x614558, new Item.Properties()));

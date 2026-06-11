@@ -113,7 +113,6 @@ public class ModEntities {
             ENTITIES.register("homunculus_t1", () -> EntityType.Builder.of(HomunculusNucleusT1::new, MobCategory.MONSTER)
                     .sized(1.2f, 3f)
                     .build("homunculus_t1"));
-
     public static final RegistryObject<EntityType<AmalZombie>> AMAL_ZOMBIE =
             ENTITIES.register("amal_zombie", () -> EntityType.Builder.of(AmalZombie::new, MobCategory.MONSTER)
                     .sized(1.2f, 3f)

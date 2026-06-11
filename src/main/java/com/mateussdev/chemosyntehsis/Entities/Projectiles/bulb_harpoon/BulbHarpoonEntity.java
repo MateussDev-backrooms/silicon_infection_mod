@@ -49,12 +49,24 @@ public class BulbHarpoonEntity extends AbstractHarpoonProjectile implements GeoA
 
         //Biomass collection
         if(this.level() != null && this.level() instanceof ServerLevel slvl) {
-            if(getTarget() instanceof LivingEntity LE && LE.isAlive()) {
-                if(getOwner() instanceof IBiomassContainer biomassContainer) {
-                    if (++damageTick % 15 == 0) {
-                        LE.hurt(damageSources().starve(), 1f);
-                        biomassContainer.addBiomass(1);
+            if(getTarget() instanceof LivingEntity LE) {
+                if(LE.isAlive()) {
+                    if(getOwner() instanceof IBiomassContainer biomassContainer) {
+                        if (++damageTick % 15 == 0) {
+                            LE.hurt(damageSources().starve(), 1f);
+                            biomassContainer.addBiomass(1);
+                        }
+                    } else {
+                        if (++damageTick % 15 == 0) {
+                            if(getOwner() instanceof Mob mob) {
+                                mob.doHurtTarget(LE);
+                            }
+                        }
                     }
+                } else {
+                    setAttached(false);
+                    setTarget(null);
+                    setCurrentAttachType(AttachTypes.Reeling);
                 }
             }
         }

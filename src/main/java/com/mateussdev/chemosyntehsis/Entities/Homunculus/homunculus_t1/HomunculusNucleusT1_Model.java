@@ -31,13 +31,13 @@ public class HomunculusNucleusT1_Model extends GeoModel<HomunculusNucleusT1> {
     public void setCustomAnimations(HomunculusNucleusT1 animatable, long instanceId, AnimationState<HomunculusNucleusT1> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
 
-        var root = this.getBone("root");
-        Vec3 rot = animatable.getNormalRot();
-        if(rot != null) {
-            root.get().setRotX((float) rot.x * Mth.PI / 180f);
-            root.get().setRotY((float) rot.y * Mth.PI / 180f);
-            root.get().setRotZ((float) rot.z * Mth.PI / 180f);
-        }
+//        var root = this.getBone("root");
+//        Vec3 rot = animatable.getNormalRot();
+//        if(rot != null) {
+//            root.get().setRotX((float) rot.x * Mth.PI / 180f);
+//            root.get().setRotY((float) rot.y * Mth.PI / 180f);
+//            root.get().setRotZ((float) rot.z * Mth.PI / 180f);
+//        }
 
     }
 }

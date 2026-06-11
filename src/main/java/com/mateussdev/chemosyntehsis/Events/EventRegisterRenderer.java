@@ -8,6 +8,8 @@ import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_spaw
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_turret.AmalTurret_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.genome.GenomeCarrier_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.homunculus_t1.HomunculusNucleusT1;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.homunculus_t1.HomunculusNucleusT1_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity_Render;
@@ -68,6 +70,7 @@ public class EventRegisterRenderer {
         EntityRenderers.register(ModEntities.VASC_ROLLER.get(), VascularRoller_Renderer::new);
 
         //Amalgamations
+        EntityRenderers.register(ModEntities.HOMUNCULUS_T1.get(), HomunculusNucleusT1_Renderer::new);
         EntityRenderers.register(ModEntities.AMAL_ZOMBIE.get(), AmalZombie_Renderer::new);
         EntityRenderers.register(ModEntities.AMAL_SPAWNER.get(), AmalSpawner_Renderer::new);
         EntityRenderers.register(ModEntities.AMAL_TURRET.get(), AmalTurret_Renderer::new);
