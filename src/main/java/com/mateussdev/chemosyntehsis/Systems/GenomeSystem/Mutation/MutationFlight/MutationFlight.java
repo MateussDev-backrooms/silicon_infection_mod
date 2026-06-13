@@ -5,6 +5,7 @@ import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.FloatingSiliconiteRandomStrollGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ImprovedFlyingMoveControl;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
+import com.mateussdev.chemosyntehsis.Mixin.MobAccessor;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -71,19 +72,9 @@ public class MutationFlight extends Mutation {
     public void onInit(Mob mob) {
         mob.setNoGravity(true);
         //Add floating AI functionality
-        try {
+        ((MobAccessor)mob).setNavigation(new FlyingPathNavigation(mob, mob.level()));
 
-            //I don't care about your privacy bitchass field you're getting lobotomised
-            Field navField = Mob.class.getDeclaredField("navigation");
-            navField.setAccessible(true);
-            navField.set(mob, new FlyingPathNavigation(mob, mob.level()));
-
-            Field moveControlField = Mob.class.getDeclaredField("moveControl");
-            moveControlField.setAccessible(true);
-            moveControlField.set(mob, new ImprovedFlyingMoveControl((BaseSiliconite) mob, 1f, true));
-        } catch (Exception e) {
-            Chemosynthesis.LOGGER.error("Failed to set flying navigation", e);
-        }
+        ((MobAccessor)mob).setMoveControl(new ImprovedFlyingMoveControl((BaseSiliconite) mob, 1f, true));
 
         mob.goalSelector.addGoal(1, new FloatingSiliconiteRandomStrollGoal((BaseSiliconite) mob, 7f, 4f));
     }
