@@ -1,8 +1,10 @@
-package com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation;
+package com.mateussdev.chemosyntehsis.Util.Packets;
 
 import com.mateussdev.chemosyntehsis.Core.ModMutations;
 import com.mateussdev.chemosyntehsis.Core.ModRegistries;
-import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationBaseRenderLayer;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.network.FriendlyByteBuf;

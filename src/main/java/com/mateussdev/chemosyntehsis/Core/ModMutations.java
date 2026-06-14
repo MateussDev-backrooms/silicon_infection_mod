@@ -1,5 +1,6 @@
 package com.mateussdev.chemosyntehsis.Core;
 
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationBurrowing.MutationBurrowing;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationFlight.MutationFlight;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationHarpoon.MutationHarpoon;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationSwimming.MutationSwimming;
@@ -29,6 +30,11 @@ public class ModMutations {
             () -> new MutationType(
                     new ResourceLocation(MODID, "harpoon"),
                     (mutationId) -> new MutationHarpoon(new ResourceLocation(MODID, "harpoon"), mutationId)
+            ));
+    public static final RegistryObject<MutationType> BURROWING = MUTATION_TYPES.register("burrowing",
+            () -> new MutationType(
+                    new ResourceLocation(MODID, "burrowing"),
+                    (mutationId) -> new MutationBurrowing(new ResourceLocation(MODID, "burrowing"), mutationId)
             ));
 
     public static void register(IEventBus eventBus) {

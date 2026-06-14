@@ -67,6 +67,11 @@ public abstract class Mutation implements GeoAnimatable, Cloneable {
         return 1.0f;
     }
 
+    public void onRemove(Mob mob) {
+        //Triggers when the mutation must be removed
+        //Should revert the changes done in onInit
+    }
+
     //Condition for applying mutation. Usually for masking certain mobs, or requiring certain prerequisites for the mob's mutation
     public abstract boolean canMutateMob(Mob mob);
 

@@ -15,7 +15,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 //Empty CUZ I want creative control :P
 public class MutationBaseRenderLayer<T extends Mob & GeoAnimatable> extends GeoRenderLayer<T> {
-    protected final Mutation mutationReference;
+    public final Mutation mutationReference;
     public MutationBaseRenderLayer(GeoEntityRenderer<?> entityRendererIn, Mutation mutation) {
         super((GeoRenderer<T>) entityRendererIn);
         this.mutationReference = mutation;

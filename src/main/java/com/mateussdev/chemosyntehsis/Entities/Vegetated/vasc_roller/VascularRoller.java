@@ -189,7 +189,7 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
                 if(getBiomass() > 30) {
                     if (amalgams.isEmpty()) {
                         //choose random non-mob based amalgamation
-                        chooseAndSpawnAmalgamation(slvl);
+                        chooseAndSpawnAmalgamation(slvl, 10);
                     } else {
                         //Release the biomass
                         for (int i = 0; i < 10; i++) {
@@ -213,7 +213,8 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
         }
     }
 
-    private void chooseAndSpawnAmalgamation(ServerLevel slvl) {
+    private void chooseAndSpawnAmalgamation(ServerLevel slvl, int attempts) {
+        if(attempts <= 0) return;
         AmalgamationDefinition definition = default_amalgamations.get(random.nextInt(default_amalgamations.size()));
         if(GlobalMobCap.canSpawnUnique(slvl, definition.amalgamation, blockPosition(), 1, definition.minRadius)) {
             BaseAmalgamation amalgamation = definition.amalgamation.create(slvl);
@@ -221,7 +222,7 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
             slvl.addFreshEntity(amalgamation);
             this.discard();
         } else {
-            chooseAndSpawnAmalgamation(slvl);
+            chooseAndSpawnAmalgamation(slvl, attempts-1);
         }
     }
 
@@ -248,7 +249,9 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
 
     protected void retractHarpoon() {
         targetedEntity = null;
-        harpoon.RetractHarpoon();
+        if(harpoon != null) {
+            harpoon.RetractHarpoon();
+        }
         entityData.set(HARPOON_ATTACHED, false);
         harpoon_cooldown = random.nextInt(160);
     }

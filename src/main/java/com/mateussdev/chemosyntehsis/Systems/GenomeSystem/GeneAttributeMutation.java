@@ -29,7 +29,7 @@ public class GeneAttributeMutation {
     public float followRange_attackDamage = 1f;
     public float followRange_speed = 1f;
 
-    public void applyAttributesSequentially(Mob mob, UUID geneUUID) {
+    public void applyAttributesSequentially(Mob mob) {
         //First, calculate the exact multipliers of the attributes
         //For a given ratio between attrA_attrB, we add a multiplier to the variables here
         //If the attribute is on the left side (attrA), we add its square root
@@ -59,6 +59,17 @@ public class GeneAttributeMutation {
         AttributeInstance knockbackResistance = mob.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
         AttributeInstance followRange = mob.getAttribute(Attributes.FOLLOW_RANGE);
 
+        //Reset the existing modifiers
+        health.removeModifiers();
+        speed.removeModifiers();
+        armor.removeModifiers();
+        armorToughness.removeModifiers();
+        attackDmg.removeModifiers();
+        attackSpeed.removeModifiers();
+        attackKnockback.removeModifiers();
+        knockbackResistance.removeModifiers();
+        followRange.removeModifiers();
+
         //Apply a +1 to attributes that are zero by default
         applyBaselineToNullAttribute(mob, health, 1f, _id1);
         applyBaselineToNullAttribute(mob, speed, 1f, _id1);
@@ -72,7 +83,7 @@ public class GeneAttributeMutation {
 
         //Apply modifier multipliers
         applyMultiplierToAttribute(mob, health, healthMult, _id2);
-        applyMultiplierToAttribute(mob, speed, speedMult, _id2);
+        applyMultiplierToAttribute(mob, speed, speedMult/3, _id2); //nerf speed cuz what the hell
         applyMultiplierToAttribute(mob, armor, armorMult, _id2);
         applyMultiplierToAttribute(mob, armorToughness, armorToughnessMult, _id2);
         applyMultiplierToAttribute(mob, attackDmg, attackDamageMult, _id2);

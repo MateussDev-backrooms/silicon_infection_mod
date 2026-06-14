@@ -13,6 +13,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 public class TethEndermanCarryMobGoal extends Goal {
+    //TODO: COMPLETE REWRITE THIS CODE IS SHEEEIIIIT
     private final TethEnderman enderman;
     private LivingEntity mainTarget; // The player/enemy we are attacking
     private LivingEntity mobToCarry; // The projectile we are picking up

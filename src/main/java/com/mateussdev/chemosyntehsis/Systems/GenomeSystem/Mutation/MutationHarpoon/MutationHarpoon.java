@@ -46,8 +46,7 @@ public class MutationHarpoon extends Mutation {
     private int t = 0;
     @Override
     public void onTick(Mob mob) {
-        if(mob.level() instanceof ServerLevel slvl) {
-        }
+
     }
 
     @Override

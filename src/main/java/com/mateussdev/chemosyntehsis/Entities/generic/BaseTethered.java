@@ -10,7 +10,7 @@ import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Gene;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IGenomeModifiable;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IHomunculus;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
-import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationSyncPacket;
+import com.mateussdev.chemosyntehsis.Util.Packets.MutationSyncPacket;
 import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingData;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.nbt.CompoundTag;
@@ -26,7 +26,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
@@ -185,7 +184,7 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
                     1f);
 
             //Particles
-            StaticSiliconiteMethods.spawnBloodBurst(slvl, blockPosition());
+            SiliconiteParticles.spawnBloodBurst(slvl, blockPosition());
 
             //Spawn chunks
             for (int i = 0; i < count; i++) {
@@ -273,18 +272,33 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
 
     @Override
     public boolean applyGene(Gene gene) {
-        this.currentGene = gene;
-
         if (this.level() instanceof ServerLevel slvl) {
             slvl.playSound(null, blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.HOSTILE);
 
-            //Reset AI back to default
-            this.goalSelector.removeAllGoals((goal) -> true);
-            this.targetSelector.removeAllGoals((goal) -> true);
+            if(currentGene != null) {
+                //Reset AI back to default
+                this.goalSelector.removeAllGoals((goal) -> true);
+                this.targetSelector.removeAllGoals((goal) -> true);
+                //readd goals
+                for(WrappedGoal wrappedGoal : defaultGoals) this.goalSelector.addGoal(wrappedGoal.getPriority(), wrappedGoal.getGoal());
+                for(WrappedGoal wrappedGoal : targetingGoals) this.targetSelector.addGoal(wrappedGoal.getPriority(), wrappedGoal.getGoal());
 
-            //readd goals
-            for(WrappedGoal wrappedGoal : defaultGoals) this.goalSelector.addGoal(wrappedGoal.getPriority(), wrappedGoal.getGoal());
-            for(WrappedGoal wrappedGoal : targetingGoals) this.targetSelector.addGoal(wrappedGoal.getPriority(), wrappedGoal.getGoal());
+                //Run onRemove to reset any other values
+                for (Mutation mutation : currentGene.mutations) {
+                    if(mutation.canMutateMob(this)) {
+                        mutation.onRemove(this);
+                    }
+                }
+            }
+
+            this.currentGene = gene;
+
+
+            //Change attributes
+            gene.attributeMutation.applyAttributesSequentially(this);
+
+            //Sync health to max health
+            this.setHealth(this.getMaxHealth());
 
             //Then change the AI by running onInit()
             List<ResourceLocation> mutationTypeIds = new ArrayList<>();

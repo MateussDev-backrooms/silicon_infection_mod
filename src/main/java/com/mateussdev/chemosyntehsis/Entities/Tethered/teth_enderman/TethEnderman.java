@@ -62,14 +62,20 @@ public class TethEnderman extends BaseTethered {
 
     //##### Entity setup and stats #####//
     public static AttributeSupplier.Builder createAttributes() {
+        //40HP; 7dmg; .40 mvmnt
         return Animal.createLivingAttributes()
+                //Basics
                 .add(Attributes.MAX_HEALTH, 40D)
-                .add(Attributes.MOVEMENT_SPEED, 0.45D)
-                .add(Attributes.FOLLOW_RANGE, 30D)
-                .add(Attributes.ARMOR_TOUGHNESS, 3D)
+                .add(Attributes.MOVEMENT_SPEED, 0.40D)
+                .add(Attributes.FOLLOW_RANGE, 25D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0d)
+                //Attack
                 .add(Attributes.ATTACK_KNOCKBACK, 0.5D)
                 .add(Attributes.ATTACK_SPEED, 2D)
-                .add(Attributes.ATTACK_DAMAGE, 7D);
+                .add(Attributes.ATTACK_DAMAGE, 6D)
+                //Armor
+                .add(Attributes.ARMOR, 0d)
+                .add(Attributes.ARMOR_TOUGHNESS, 0D);
     }
 
     // ===== AI ===== //
@@ -161,11 +167,11 @@ public class TethEnderman extends BaseTethered {
 
         if (getTarget() instanceof Player) {
             if (!this.isSilent()) {
+                angerSoundT++;
                 if (angerSoundT % 400 == 0) {
                     this.level().playLocalSound(this.getX(), this.getEyeY(), this.getZ(), SoundEvents.ENDERMAN_STARE, this.getSoundSource(), 2.5F, 1.0F, false);
                     angerSoundT = 0;
                 }
-                angerSoundT++;
             }
         }
 
@@ -196,7 +202,7 @@ public class TethEnderman extends BaseTethered {
             level().playSound(null, blockPosition(), SoundEvents.SHULKER_SHOOT, SoundSource.HOSTILE);
             return false;
         } else {
-            if (random.nextFloat() < 0.7f) {
+            if (random.nextFloat() < 0.6f) {
                 double angle = random.nextDouble() * Math.PI * 2;
                 double distance = 8 + random.nextDouble() * 12;
                 double x = blockPosition().getX() + Math.cos(angle) * distance;
@@ -241,7 +247,7 @@ public class TethEnderman extends BaseTethered {
                 double x = teleportPosition.x + ((random.nextFloat() * 2 - 1) * i);
                 double y = teleportPosition.y + ((random.nextFloat() * 2 - 1) * i);
                 double z = teleportPosition.z + ((random.nextFloat() * 2 - 1) * i);
-                boolean teleportSuccessful = checkTeleportPosition(teleportPosition, slvl);
+                boolean teleportSuccessful = checkTeleportPosition(new Vec3(x, y, z), slvl);
                 if (teleportSuccessful) {
                     this.playSound(SoundEvents.ENDERMAN_TELEPORT, 1f, 0.75f);
                     this.playSound(SoundEvents.ENDERMAN_HURT, 0.75f, 1f);
@@ -341,9 +347,10 @@ public class TethEnderman extends BaseTethered {
                 this.playSound(SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR);
                 level().playSound(null, player.blockPosition(), SoundEvents.ANVIL_FALL, SoundSource.HOSTILE, 1f, 1f);
                 player.setDeltaMovement(this.getLookAngle().normalize().add(0, 0.2f, 0).scale(0.5f));
+                this.setDeltaMovement(player.getLookAngle().normalize().add(0, 0.2f, 0).scale(0.5f));
                 stopAllAnimations();
                 this.triggerAnim("scream_controller", "scream");
-                stunT = 60;
+                stunT = 120;
             } else {
                 target.setDeltaMovement(this.getLookAngle().normalize().add(0, 0.2f, 0).scale(5f));
                 playSound(SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR);

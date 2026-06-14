@@ -85,6 +85,7 @@ public class HomunculusCommand {
             for (Gene gene : examples) {
                 source.sendSuccess(() -> Component.literal("> Gene " + gene.id.toString().substring(0,8) + "... : F: N/A")
                         .withStyle(ChatFormatting.YELLOW), false);
+                appendGeneAttributeModification(source, gene);
                 appendMutations(source, gene);
             }
         }
@@ -116,5 +117,22 @@ public class HomunculusCommand {
                 source.sendSuccess(() -> Component.literal("  > " + mutName).withStyle(ChatFormatting.DARK_PURPLE), false);
             }
         }
+    }
+
+    private static void appendGeneAttributeModification(CommandSourceStack source, Gene gene) {
+        source.sendSuccess(() -> Component.literal("---Attribute mutation ratios:---").withStyle(ChatFormatting.BLUE), false);
+        source.sendSuccess(() -> Component.literal("   (higher number -> more biased towards attribute A)").withStyle(ChatFormatting.DARK_BLUE), false);
+        source.sendSuccess(() -> Component.literal("   (smaller number -> more biased towards attribute B)").withStyle(ChatFormatting.DARK_BLUE), false);
+        source.sendSuccess(() -> Component.literal("-------------------------------").withStyle(ChatFormatting.DARK_BLUE), false);
+        GeneAttributeMutation genmut = gene.attributeMutation;
+        source.sendSuccess(() -> Component.literal("[ health/speed = "+genmut.health_speed+" ]").withStyle(ChatFormatting.BLUE), false);
+        source.sendSuccess(() -> Component.literal("[ health/armor = "+genmut.health_armor+" ]").withStyle(ChatFormatting.BLUE), false);
+        source.sendSuccess(() -> Component.literal("[ armor/attack damage = "+genmut.armor_attackDamage+" ]").withStyle(ChatFormatting.BLUE), false);
+        source.sendSuccess(() -> Component.literal("[ armor toughness/armor = "+genmut.armorToughness_armor+" ]").withStyle(ChatFormatting.BLUE), false);
+        source.sendSuccess(() -> Component.literal("[ attack speed/attack damage = "+genmut.attackSpeed_attackDamage+" ]").withStyle(ChatFormatting.BLUE), false);
+        source.sendSuccess(() -> Component.literal("[ attack speed/attack knockback = "+genmut.attackSpeed_attackKnockback+" ]").withStyle(ChatFormatting.BLUE), false);
+        source.sendSuccess(() -> Component.literal("[ speed/knockbackResistance = "+genmut.speed_knockbackResistance+" ]").withStyle(ChatFormatting.BLUE), false);
+        source.sendSuccess(() -> Component.literal("[ follow range/attack damage = "+genmut.followRange_attackDamage+" ]").withStyle(ChatFormatting.BLUE), false);
+        source.sendSuccess(() -> Component.literal("[ follow range/speed = "+genmut.followRange_speed+" ]").withStyle(ChatFormatting.BLUE), false);
     }
 }

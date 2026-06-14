@@ -4,6 +4,7 @@ import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie;
+import net.minecraft.world.entity.Mob;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.server.level.ServerLevel;
@@ -21,14 +22,21 @@ public class TethZombie extends BaseTethered {
 
     //##### Entity setup and stats #####//
     public static AttributeSupplier.Builder createAttributes() {
-        return Animal.createLivingAttributes()
+        return Mob.createLivingAttributes()
+                //Basics
                 .add(Attributes.MAX_HEALTH, 20D)
                 .add(Attributes.MOVEMENT_SPEED, 0.22D)
                 .add(Attributes.FOLLOW_RANGE, 25D)
-                .add(Attributes.ARMOR_TOUGHNESS, 3D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0d)
+                //Attack
                 .add(Attributes.ATTACK_KNOCKBACK, 0.5D)
                 .add(Attributes.ATTACK_SPEED, 2D)
-                .add(Attributes.ATTACK_DAMAGE, 6D);
+                .add(Attributes.ATTACK_DAMAGE, 6D)
+                //Armor
+                .add(Attributes.ARMOR, 0d)
+                .add(Attributes.ARMOR_TOUGHNESS, 0D)
+
+                ;
     }
 
     // ===== Bulb setup ===== //

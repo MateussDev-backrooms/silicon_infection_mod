@@ -1,5 +1,6 @@
-package com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CapabilityStuffs;
+package com.mateussdev.chemosyntehsis.Util.Packets;
 
+import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CapabilityStuffs.TetheredCapabilityProvider;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Mob;
 import net.minecraftforge.network.NetworkEvent;

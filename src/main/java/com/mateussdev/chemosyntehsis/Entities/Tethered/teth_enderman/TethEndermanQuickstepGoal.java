@@ -14,7 +14,7 @@ public class TethEndermanQuickstepGoal extends Goal {
     private int teleportCount = 0;
     private int localTick = 0; // Use a local tick instead of entity tickCount
     private static final int CHARGE_DURATION = 10;
-    private static final int MAX_TELEPORTS = 15;
+    private static final int MAX_TELEPORTS = 4;
 
     public TethEndermanQuickstepGoal(TethEnderman enderman) {
         this.enderman = enderman;
@@ -66,7 +66,7 @@ public class TethEndermanQuickstepGoal extends Goal {
                 enderman.teleport(target.position());
                 enderman.triggerAnim("quickstep_controller", "quickstep_end");
                 enderman.ramIntoTarget(target);
-                enderman.quickstepCooldown = 200;
+                enderman.quickstepCooldown = 400;
             }
         }
     }
@@ -87,10 +87,5 @@ public class TethEndermanQuickstepGoal extends Goal {
 
         Vec3 teleportPos = new Vec3(x, y, z);
         enderman.teleport(teleportPos);
-
-        // Try to attack after teleport
-        if (enderman.distanceToSqr(target) < 4.0D) {
-            enderman.doHurtTarget(target);
-        }
     }
 }

@@ -8,7 +8,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
 import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
 import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CapabilityStuffs.TetheredCapability;
 import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CapabilityStuffs.TetheredCapabilityProvider;
-import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CapabilityStuffs.TetheredSyncPacket;
+import com.mateussdev.chemosyntehsis.Util.Packets.TetheredSyncPacket;
 import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CustomAI.SpreadInfectionGoal;
 import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CustomAI.TetheredGenericMeleeAttackGoal;
 import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CustomAI.TetheredNearestAttackableTargetGoal;
@@ -24,7 +24,6 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 
-import java.nio.file.Path;
 import java.util.Map;
 
 public class UniversalTethering {

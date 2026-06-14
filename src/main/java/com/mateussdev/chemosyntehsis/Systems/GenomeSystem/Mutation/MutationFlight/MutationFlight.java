@@ -13,7 +13,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.control.JumpControl;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
@@ -38,6 +40,11 @@ public class MutationFlight extends Mutation {
 
     private final GeoModel<MutationFlight> model = new MutationFlight_Model();
     private final GeoRenderer<MutationFlight> renderer = new MutationFlight_Renderer(model);
+
+    //AI revert vars//
+    private MoveControl oldMoveControl;
+    private PathNavigation oldNavigation ;
+    private boolean oldGravity;
 
     @Override public boolean hasRenderLayer() { return true; }
     @Override public String getAttachBoneName() { return "body"; }
@@ -70,13 +77,26 @@ public class MutationFlight extends Mutation {
 
     @Override
     public void onInit(Mob mob) {
-        mob.setNoGravity(true);
-        //Add floating AI functionality
-        ((MobAccessor)mob).setNavigation(new FlyingPathNavigation(mob, mob.level()));
+        //Save the to-be changed values
+        oldGravity = mob.isNoGravity();
+        oldMoveControl = ((MobAccessor)mob).getMoveControl();
+        oldNavigation = ((MobAccessor)mob).getNavigation();
 
+        //Add floating AI functionality
+        mob.setNoGravity(true);
+        ((MobAccessor)mob).setNavigation(new FlyingPathNavigation(mob, mob.level()));
         ((MobAccessor)mob).setMoveControl(new ImprovedFlyingMoveControl((BaseSiliconite) mob, 1f, true));
 
+        //Add floating goal
         mob.goalSelector.addGoal(1, new FloatingSiliconiteRandomStrollGoal((BaseSiliconite) mob, 7f, 4f));
+    }
+
+    @Override
+    public void onRemove(Mob mob) {
+        //Reset values
+        mob.setNoGravity(oldGravity);
+        ((MobAccessor)mob).setNavigation(oldNavigation);
+        ((MobAccessor)mob).setMoveControl(oldMoveControl);
     }
 
     @Override

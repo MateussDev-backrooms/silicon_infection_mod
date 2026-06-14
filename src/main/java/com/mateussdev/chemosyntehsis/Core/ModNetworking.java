@@ -1,8 +1,8 @@
 package com.mateussdev.chemosyntehsis.Core;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
-import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationSyncPacket;
-import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.CapabilityStuffs.TetheredSyncPacket;
+import com.mateussdev.chemosyntehsis.Util.Packets.MutationSyncPacket;
+import com.mateussdev.chemosyntehsis.Util.Packets.TetheredSyncPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;

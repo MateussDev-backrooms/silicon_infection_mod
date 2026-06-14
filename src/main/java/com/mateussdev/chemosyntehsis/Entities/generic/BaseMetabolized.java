@@ -16,6 +16,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib.core.object.PlayState;
 
 public class BaseMetabolized extends BaseTethered{
     protected BaseMetabolized(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -35,23 +36,15 @@ public class BaseMetabolized extends BaseTethered{
                 return event.setAndContinue(RawAnimation.begin().then("death", Animation.LoopType.PLAY_ONCE));
             }
 
-            if(isDodging) {
-                switch(dodgeAnim) {
-                    case 0:
-                        return event.setAndContinue(RawAnimation.begin().then("dodge_1", Animation.LoopType.PLAY_ONCE));
-                    case 1:
-                        return event.setAndContinue(RawAnimation.begin().then("dodge_2", Animation.LoopType.PLAY_ONCE));
-                }
-            }
-
-
-
             return event.setAndContinue(
                     // If moving, play the walking animation
                     event.isMoving() ? RawAnimation.begin().thenLoop("walk"):
                             // If not moving, play the idle animation
                             RawAnimation.begin().thenLoop("idle"));
         }));
+        controllers.add(new AnimationController<>(this, "dodge_ctrl", 0, state -> {
+            return PlayState.STOP;
+        }).triggerableAnim("dodge", dodgeAnim == 0 ? RawAnimation.begin().thenPlay("dodge_1") : RawAnimation.begin().thenPlay("dodge_2")));
     }
 
     ///DOOOODGE mechanic
@@ -82,6 +75,7 @@ public class BaseMetabolized extends BaseTethered{
         }
 
         dodgeAnim = random.nextBoolean() ? 0 : 1;
+        triggerAnim("dodge_ctrl", "dodge");
 
         dodgeTick = 0;
 
@@ -93,8 +87,6 @@ public class BaseMetabolized extends BaseTethered{
             pushDir = this.getLookAngle().scale(-1);
         }
 
-        this.getAnimatableInstanceCache()
-                .getManagerForId(this.getId()).getAnimationControllers().get("movement").forceAnimationReset();
         this.setDeltaMovement(pushDir.scale(1.05));
         this.level().playSound(null, this.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.HOSTILE);
         if(this.level() instanceof ServerLevel slvl) {

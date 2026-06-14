@@ -20,7 +20,7 @@ public class HomunculusBrain{
 
     // ===== Config ===== //
     public static int CYCLE_DURATION_TICKS = 600;
-    public static int BASE_GENE_POOL_POINTS = 10;
+    public static int BASE_GENE_POOL_POINTS = 50;
     public static float MUTATION_DEVIATION = 0.2f;
     public static int MAX_MUTATIONS_PER_GENE = 3;
 
@@ -148,11 +148,15 @@ public class HomunculusBrain{
 
         //Create new random ratio for each
         GeneAttributeMutation attributeMutation = gene.attributeMutation;
-        attributeMutation.health_speed = randomRatio(rand, 5f);
-        attributeMutation.armor_attackDamage = randomRatio(rand, 5f);
-        attributeMutation.attackSpeed_attackKnockback = randomRatio(rand, 5f);
-        attributeMutation.followRange_attackDamage = randomRatio(rand, 5f);
-        attributeMutation.speed_knockbackResistance = randomRatio(rand, 5f);
+        attributeMutation.health_speed = randomRatio(rand, 3f);
+        attributeMutation.health_armor = randomRatio(rand, 3f);
+        attributeMutation.armor_attackDamage = randomRatio(rand, 3f);
+        attributeMutation.armorToughness_armor = randomRatio(rand, 3f);
+        attributeMutation.attackSpeed_attackDamage = randomRatio(rand, 3f);
+        attributeMutation.attackSpeed_attackKnockback = randomRatio(rand, 3f);
+        attributeMutation.speed_knockbackResistance = randomRatio(rand, 3f);
+        attributeMutation.followRange_attackDamage = randomRatio(rand, 3f);
+        attributeMutation.followRange_speed = randomRatio(rand, 3f);
 
         int numMutations = rand.nextInt(MAX_MUTATIONS_PER_GENE + 1);
         List<MutationType> allTypes = ModMutations.MUTATION_TYPES.getEntries().stream()
@@ -176,11 +180,15 @@ public class HomunculusBrain{
         //Mutate slightly each ratio
         GeneAttributeMutation attributeMutation = mutated.attributeMutation;
         //Add a random amount between 0 and deviation, and have uniform 50/50 for it to get added or get subtracted
-        attributeMutation.health_speed += rand.nextFloat()*MUTATION_DEVIATION*(rand.nextBoolean() ? 1 : -1);
-        attributeMutation.armor_attackDamage += rand.nextFloat()*MUTATION_DEVIATION*(rand.nextBoolean() ? 1 : -1);
-        attributeMutation.attackSpeed_attackKnockback += rand.nextFloat()*MUTATION_DEVIATION*(rand.nextBoolean() ? 1 : -1);
-        attributeMutation.followRange_attackDamage += rand.nextFloat()*MUTATION_DEVIATION*(rand.nextBoolean() ? 1 : -1);
-        attributeMutation.speed_knockbackResistance += rand.nextFloat()*MUTATION_DEVIATION*(rand.nextBoolean() ? 1 : -1);
+        attributeMutation.health_speed += mutateRatio(rand, attributeMutation.health_speed);
+        attributeMutation.health_armor += mutateRatio(rand, attributeMutation.health_armor);
+        attributeMutation.armor_attackDamage += mutateRatio(rand, attributeMutation.armor_attackDamage);
+        attributeMutation.armorToughness_armor += mutateRatio(rand, attributeMutation.armorToughness_armor);
+        attributeMutation.attackSpeed_attackDamage += mutateRatio(rand, attributeMutation.attackSpeed_attackDamage);
+        attributeMutation.attackSpeed_attackKnockback += mutateRatio(rand, attributeMutation.attackSpeed_attackKnockback);
+        attributeMutation.speed_knockbackResistance += mutateRatio(rand, attributeMutation.speed_knockbackResistance);
+        attributeMutation.followRange_attackDamage += mutateRatio(rand, attributeMutation.followRange_attackDamage);
+        attributeMutation.followRange_speed += mutateRatio(rand, attributeMutation.followRange_speed);
 
         if (rand.nextFloat() < 0.3f && mutated.mutations.size() < MAX_MUTATIONS_PER_GENE) {
             RegistryObject<MutationType> randomType = ModMutations.MUTATION_TYPES.getEntries().stream().toList()
@@ -194,9 +202,16 @@ public class HomunculusBrain{
         return mutated;
     }
 
+    private float mutateRatio(Random rand, float value) {
+        //Since ratios are not linear but logarithmic, adjust
+        float log = (float) Math.log(Math.max(value, 1e-6f));
+        log += rand.nextFloat() * MUTATION_DEVIATION * (rand.nextBoolean() ? 1 : -1);
+        return (float) Math.exp(log);
+    }
+
     private float randomRatio(Random rng, float maxDiff) {
-        float sideA = rng.nextFloat()*maxDiff; //generate random float between 0 and max
-        float sideB = rng.nextFloat()*maxDiff; //generate random float between 0 and max
+        float sideA = Math.max(rng.nextFloat()*maxDiff, 0.00001f); //generate random float between 0 and max
+        float sideB = Math.max(rng.nextFloat()*maxDiff, 0.00001f); //generate random float between 0 and max
 
         return sideA/sideB;
     }
