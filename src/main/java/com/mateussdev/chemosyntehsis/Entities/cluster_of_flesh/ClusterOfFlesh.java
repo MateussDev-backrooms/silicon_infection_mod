@@ -28,6 +28,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.model.GeoModel;
 
 public class ClusterOfFlesh extends BaseSiliconite {
     public ClusterOfFlesh(EntityType<? extends Monster> p_33002_, Level p_33003_) {
@@ -63,6 +65,11 @@ public class ClusterOfFlesh extends BaseSiliconite {
         //Seek out
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
+    }
+
+    @Override
+    public GeoBone[] getBulbsArray(GeoModel<?> model) {
+        return new GeoBone[0];
     }
 
     @Override

@@ -50,6 +50,8 @@ public class FloatingSiliconiteRandomStrollGoal extends Goal {
             target = AirAndWaterRandomPos.getPos(siliconite, Mth.floor(horizontal_range), Mth.floor(vertical_range), -2, viewVector.x, viewVector.z, ((float)Math.PI / 2F));
         }
 
-        siliconite.getNavigation().moveTo(siliconite.getNavigation().createPath(BlockPos.containing(target), 1), 0.5f);
+        if(target != null) {
+            siliconite.getNavigation().moveTo(siliconite.getNavigation().createPath(BlockPos.containing(target), 1), 0.5f);
+        }
     }
 }

@@ -20,7 +20,7 @@ public class TethZombie extends BaseTethered {
         super(p_33002_, p_33003_);
     }
 
-    //##### Entity setup and stats #####//
+    // ===== Entity setup and stats ===== //
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createLivingAttributes()
                 //Basics

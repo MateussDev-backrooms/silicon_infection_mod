@@ -6,7 +6,7 @@ import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_rada
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_spawner.AmalSpawner;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_turret.AmalTurret;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.genome.GenomeCarrier;
-import com.mateussdev.chemosyntehsis.Entities.Homunculus.homunculus_t1.HomunculusNucleusT1;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.homunculus_t1.HomunculusNucleusT1;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;

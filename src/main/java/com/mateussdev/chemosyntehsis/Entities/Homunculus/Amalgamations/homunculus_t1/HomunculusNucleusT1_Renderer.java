@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.Entities.Homunculus.homunculus_t1;
+package com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.homunculus_t1;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;

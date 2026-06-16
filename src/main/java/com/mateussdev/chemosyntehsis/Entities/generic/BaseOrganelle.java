@@ -2,6 +2,9 @@ package com.mateussdev.chemosyntehsis.Entities.generic;
 
 import com.mateussdev.chemosyntehsis.Blocks.TendrilBlock;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPThreshold;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPType;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.IDspReceptor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -23,7 +26,11 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import static net.minecraft.world.level.block.MultifaceBlock.getFaceProperty;
 
@@ -34,6 +41,8 @@ public abstract class BaseOrganelle extends BaseSiliconite {
         this.setNoGravity(true);
         this.setYBodyRot(0);
     }
+
+
 
     public static final EntityDataAccessor<Direction> ALIGNMENT = SynchedEntityData.defineId(BaseOrganelle.class, EntityDataSerializers.DIRECTION);
     protected boolean hasSettled = false;
@@ -53,6 +62,16 @@ public abstract class BaseOrganelle extends BaseSiliconite {
             Direction.SOUTH, new Vec3(-90, 0, 0),
             Direction.EAST,  new Vec3(0, 0, 90),
             Direction.WEST,  new Vec3(0, 0, -90)
+    );
+
+    //Set up the calculation of the hitbox to be static
+    private static final Map<Direction, BiFunction<Double, Double, AABB>> HITBOX_ORIENTATION = Map.of(
+            Direction.UP, (w, h) -> new AABB(-w/2, 0, -w/2, w - w/2, h, w - w/2),
+            Direction.DOWN, (w, h) -> new AABB(-w/2, -h/2, -w/2, w - w/2, h - h/2, w - w/2),
+            Direction.EAST, (w, h) -> new AABB(-w/2, 0, -w/2, h - w/2, w, w - w/2),
+            Direction.WEST, (w, h) -> new AABB(-h - w/2, 0, -w/2, h - (h - w/2), w, w - w/2),
+            Direction.NORTH, (w, h) -> new AABB(-w/2, 0, -w/2, w - w/2, w, h - w/2),
+            Direction.SOUTH, (w, h) -> new AABB(-w/2, 0, h - w/2, w - w/2, w, h - (h - w/2))
     );
     protected Direction chosenDir = Direction.UP;
 
@@ -160,62 +179,66 @@ public abstract class BaseOrganelle extends BaseSiliconite {
     protected AABB makeBoundingBox() {
         double w = this.getType().getWidth();
         double h = this.getType().getHeight();
+        Direction alignment = entityData.get(ALIGNMENT);
 
-        double real_x = w;
-        double real_y = h;
-        double real_z = w;
+        //TEMP keeping this if the static map doesn't work
+//        double real_x = w;
+//        double real_y = h;
+//        double real_z = w;
+//
+//        double off_x = w/2;
+//        double off_y = 0;
+//        double off_z = w/2;
+//
+//        if(entityData.get(ALIGNMENT) == Direction.DOWN) {
+//            real_x = w;
+//            real_y = h;
+//            real_z = w;
+//
+//            off_x = w/2;
+//            off_y = h/2;
+//            off_z = w/2;
+//        } else if(entityData.get(ALIGNMENT) == Direction.EAST) {
+//            real_x = h;
+//            real_y = w;
+//            real_z = w;
+//
+//            off_x = w/2;
+//            off_y = 0;
+//            off_z = w/2;
+//        } else if(entityData.get(ALIGNMENT) == Direction.WEST) {
+//            real_x = h;
+//            real_y = w;
+//            real_z = w;
+//
+//            off_x = h - w/2;
+//            off_y = 0;
+//            off_z = w/2;
+//        } else if(entityData.get(ALIGNMENT) == Direction.SOUTH) {
+//            real_x = w;
+//            real_y = w;
+//            real_z = h;
+//
+//            off_x = w/2;
+//            off_y = 0;
+//            off_z = w/2;
+//        } else if(entityData.get(ALIGNMENT) == Direction.NORTH) {
+//            real_x = w;
+//            real_y = w;
+//            real_z = h;
+//
+//            off_x = w/2;
+//            off_y = 0;
+//            off_z = h - w/2;
+//        }
+//
+//
+//
+//        return new AABB(0, 0, 0, real_x, real_y, real_z).move(this.getX() - off_x, this.getY() - off_y, this.getZ() - off_z);
 
-        double off_x = w/2;
-        double off_y = 0;
-        double off_z = w/2;
-
-        if(entityData.get(ALIGNMENT) == Direction.DOWN) {
-            real_x = w;
-            real_y = h;
-            real_z = w;
-
-            off_x = w/2;
-            off_y = h/2;
-            off_z = w/2;
-        } else if(entityData.get(ALIGNMENT) == Direction.EAST) {
-            real_x = h;
-            real_y = w;
-            real_z = w;
-
-            off_x = w/2;
-            off_y = 0;
-            off_z = w/2;
-        } else if(entityData.get(ALIGNMENT) == Direction.WEST) {
-            real_x = h;
-            real_y = w;
-            real_z = w;
-
-            off_x = h - w/2;
-            off_y = 0;
-            off_z = w/2;
-        } else if(entityData.get(ALIGNMENT) == Direction.SOUTH) {
-            real_x = w;
-            real_y = w;
-            real_z = h;
-
-            off_x = w/2;
-            off_y = 0;
-            off_z = w/2;
-        } else if(entityData.get(ALIGNMENT) == Direction.NORTH) {
-            real_x = w;
-            real_y = w;
-            real_z = h;
-
-            off_x = w/2;
-            off_y = 0;
-            off_z = h - w/2;
-        }
-
-
-
-        return new AABB(0, 0, 0, real_x, real_y, real_z).move(this.getX() - off_x, this.getY() - off_y, this.getZ() - off_z);
-
-
+        return HITBOX_ORIENTATION.getOrDefault(alignment, HITBOX_ORIENTATION.get(Direction.UP))
+                .apply(w, h)
+                .move(this.getX(), this.getY(), this.getZ());
     }
     // ===== Organelle properties ===== //
     public boolean shouldSpawnTendrils() { return false; }

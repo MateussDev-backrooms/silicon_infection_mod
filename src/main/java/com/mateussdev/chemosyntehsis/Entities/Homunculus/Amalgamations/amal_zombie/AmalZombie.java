@@ -3,7 +3,7 @@ package com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_zom
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_zombie.TethZombie;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
-import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassGenerator;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Interfaces.IBiomassGenerator;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
 import net.minecraft.server.level.ServerLevel;

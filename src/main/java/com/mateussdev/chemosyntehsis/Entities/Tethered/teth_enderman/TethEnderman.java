@@ -60,7 +60,7 @@ public class TethEnderman extends BaseTethered {
 
     private int angerSoundT = 0;
 
-    //##### Entity setup and stats #####//
+    // ===== Entity setup and stats ===== //
     public static AttributeSupplier.Builder createAttributes() {
         //40HP; 7dmg; .40 mvmnt
         return Animal.createLivingAttributes()
@@ -80,16 +80,16 @@ public class TethEnderman extends BaseTethered {
 
     // ===== AI ===== //
 
-
     @Override
-    protected void registerGoals() {
-        // Priority order: higher number = lower priority
+    public void registerDefaultGoals() {
+        this.goalSelector.removeAllGoals(g -> true);
+        this.targetSelector.removeAllGoals(g -> true);
+
         this.goalSelector.addGoal(0, new TethEndermanQuickstepGoal(this));
-//        this.goalSelector.addGoal(3, new TethEndermanChaseGoal(this));
-        this.goalSelector.addGoal(1, new TethEndermanCarryMobGoal(this));
+//        this.goalSelector.addGoal(1, new TethEndermanCarryMobGoal(this));
         this.goalSelector.addGoal(2, new TethEndermanTeleportWhenSeen(this));
 
-//        this.goalSelector.addGoal(2, new TethEndermanScreamGoal(this));
+
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0f, true));
 
         //Avoid water
@@ -99,7 +99,7 @@ public class TethEnderman extends BaseTethered {
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 3f));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
-        // - TARGETS
+
         this.targetSelector.addGoal(1, new HurtByNonSiliconiteGoal(this));
 
         //Seek out
@@ -139,11 +139,6 @@ public class TethEnderman extends BaseTethered {
     @Override
     public void evolve() {
         if (this.level() instanceof ServerLevel slvl) {
-//            MetZombie metZombie = ModEntities.MET_ZOMBIE.get().create(slvl);
-//            metZombie.moveTo(blockPosition().getCenter());
-//            slvl.addFreshEntity(metZombie);
-//            StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
-//            this.discard();
 
         }
     }
@@ -220,19 +215,17 @@ public class TethEnderman extends BaseTethered {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         super.registerControllers(controllers);
         controllers.add(new AnimationController<>(this, "parry_controller", state -> PlayState.STOP)
-                .triggerableAnim("parry1", RawAnimation.begin().thenPlay("parry_projectile_1")).triggerableAnim("parry2", RawAnimation.begin().thenPlay("parry_projectile_2")).setAnimationSpeed(1.4f));
+                .triggerableAnim("parry1", RawAnimation.begin().thenPlay("parry_projectile_1"))
+                .triggerableAnim("parry2", RawAnimation.begin().thenPlay("parry_projectile_2"))
+                .setAnimationSpeed(1.4f));
 
-        controllers.add(new AnimationController<>(this, "quickstep_controller", 5, state -> {
-            return PlayState.CONTINUE;
-        }).triggerableAnim("quickstep_begin", RawAnimation.begin().thenPlay("quickstep_begin")).triggerableAnim("quickstep_end", RawAnimation.begin().thenPlay("quickstep_end")));
+        controllers.add(new AnimationController<>(this, "quickstep_controller", 5, state -> PlayState.CONTINUE)
+                .triggerableAnim("quickstep_begin", RawAnimation.begin().thenPlay("quickstep_begin")).triggerableAnim("quickstep_end", RawAnimation.begin().thenPlay("quickstep_end")));
 
-        controllers.add(new AnimationController<>(this, "scream_controller", 5, state -> {
-            return PlayState.STOP;
-        }).triggerableAnim("scream", RawAnimation.begin().thenPlay("scream")));
+        controllers.add(new AnimationController<>(this, "scream_controller", 5, state -> PlayState.STOP)
+                .triggerableAnim("scream", RawAnimation.begin().thenPlay("scream")));
 
-        controllers.add(new AnimationController<>(this, "teleport_controller", 0, state -> {
-            return PlayState.STOP;
-        }).triggerableAnim("teleport1", RawAnimation.begin().thenPlay("teleport_1"))
+        controllers.add(new AnimationController<>(this, "teleport_controller", 0, state -> PlayState.STOP).triggerableAnim("teleport1", RawAnimation.begin().thenPlay("teleport_1"))
                 .triggerableAnim("teleport2", RawAnimation.begin().thenPlay("teleport_2"))
                 .triggerableAnim("teleport3", RawAnimation.begin().thenPlay("teleport_3")));
     }

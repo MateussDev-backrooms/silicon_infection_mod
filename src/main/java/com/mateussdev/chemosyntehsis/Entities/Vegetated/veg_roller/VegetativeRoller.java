@@ -13,6 +13,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.model.GeoModel;
 
 import java.util.List;
 
@@ -21,6 +23,11 @@ public class VegetativeRoller extends BaseOrganelle {
         super(p_33002_, p_33003_);
         this.setNoGravity(true);
         this.setYBodyRot(0);
+    }
+
+    @Override
+    public GeoBone[] getBulbsArray(GeoModel<?> model) {
+        return new GeoBone[0];
     }
 
     // ##### Entity setup and stats ##### //

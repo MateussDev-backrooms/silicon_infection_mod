@@ -25,7 +25,7 @@ public class TethSkeleton extends BaseTethered implements RangedAttackMob {
         super(p_33002_, p_33003_);
     }
 
-    //##### Entity setup and stats #####//
+    // ===== Entity setup and stats ===== //
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
                 //Basics
@@ -43,7 +43,10 @@ public class TethSkeleton extends BaseTethered implements RangedAttackMob {
     }
 
     @Override
-    protected void registerGoals() {
+    public void registerDefaultGoals() {
+        this.goalSelector.removeAllGoals(g -> true);
+        this.targetSelector.removeAllGoals(g -> true);
+
         //Avoid water (No float task cuz they are immune to water damage)
         this.goalSelector.addGoal(0, new RangedAttackGoal(this, 1.5f, 40, 10));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.1D));
@@ -53,8 +56,7 @@ public class TethSkeleton extends BaseTethered implements RangedAttackMob {
         this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
 
         // - TARGETS
-            //only get aggressive
-            this.targetSelector.addGoal(1, new HurtByNonSiliconiteGoal(this));
+        this.targetSelector.addGoal(1, new HurtByNonSiliconiteGoal(this));
 
         //Seek out
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));

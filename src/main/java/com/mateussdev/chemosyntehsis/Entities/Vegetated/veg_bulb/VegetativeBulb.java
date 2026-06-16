@@ -19,6 +19,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.model.GeoModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,11 @@ import static com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods.spawnBl
 public class VegetativeBulb extends BaseOrganelle {
     public VegetativeBulb(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
+    }
+
+    @Override
+    public GeoBone[] getBulbsArray(GeoModel<?> model) {
+        return new GeoBone[0];
     }
 
     public boolean mustMerge = false;

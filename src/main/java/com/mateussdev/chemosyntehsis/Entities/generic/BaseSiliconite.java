@@ -40,16 +40,16 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         super(p_33002_, p_33003_);
     }
 
-    //##### ENTITY CUSTOM DATA #####//
+    // ===== ENTITY CUSTOM DATA ===== //
 
     public static final EntityDataAccessor<Integer> METABOLISM_VALUE = SynchedEntityData.defineId(BaseSiliconite.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> BROKEN_OFF_BULBS_VALUE = SynchedEntityData.defineId(BaseSiliconite.class, EntityDataSerializers.INT);
 
-    //##### ===== #####//
+    // ===== ENTITY CONSTANTS ===== //
+    //TODO: Hook up with config
+    private static final float FLEE_HEALTH_THRESHOLD = 0.4f;
 
-
-    //##### ANIMATION STUFF #####//
-
+    // ===== ANIMATION STUFF ===== //
     private final AnimatableInstanceCache anim_cache = GeckoLibUtil.createInstanceCache(this);
 
     @Override
@@ -57,64 +57,46 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         return anim_cache;
     }
 
-
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         //Movement anim controller
         controllers.add(new AnimationController<>(this, "movement", 5, event ->
-        {
-            return event.setAndContinue(
-                    // If moving, play the walking animation
-                    event.isMoving() ? RawAnimation.begin().thenLoop("walk") :
-                            // If not moving, play the idle animation
-                            RawAnimation.begin().thenLoop("idle"));
-        }));
+                event.setAndContinue(
+                        event.isMoving() ?
+                                RawAnimation.begin().thenLoop("walk") : //Walk anim when moving
+                                RawAnimation.begin().thenLoop("idle")))); //Idle anim when not moving
     }
 
-
-    //##### ===== #####//
-
-    //##### GENERAL ENTITY LOGIC #####//
-
-    // - Entity AI
+    // ===== GENERAL ENTITY LOGIC ===== //
 
     @Override
     protected void registerGoals() {
         //Default settings override when new behavior is required
 
-        // - GOALS
         if (!isBrave()) {
-            //Attack targets (condition customizeable)
             this.goalSelector.addGoal(1, new ConditionalAttackGoal(this, 1.0f, true, this::shouldAttackTarget));
-            //Flee players (condition customizeable)
             this.goalSelector.addGoal(0, new ConditionalFleeGoal(this, LivingEntity.class, 16.0f, 1.2d, 1.3d, this::shouldFlee));
         } else {
-            //if brave it will always attack no matter the health/should flee conditions
             this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 1.0f, true));
         }
 
-        //Avoid water (No float task cuz they are immune to water damage)
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.1D));
 
-        //Looking goals
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 3f));
         this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
 
-        // - TARGETS
+
         if (shouldAlertOthersOnHurt()) {
-            //get aggressive and alert
             this.targetSelector.addGoal(1, (new HurtByNonSiliconiteGoal(this, new Class[0])).setAlertOthers(new Class[]{BaseSiliconite.class}));
         } else {
-            //only get aggressive
             this.targetSelector.addGoal(1, new HurtByNonSiliconiteGoal(this));
         }
 
-        //Seek out
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
-    // - Entity base behavior
+
 
     private int t = 0;
 
@@ -154,22 +136,18 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         }
     }
 
-    //##### ===== #####//
-
-    //##### ENTITY OVERRIDES N FUNCTIONALITY #####//
+    // ===== ENTITY OVERRIDES N FUNCTIONALITY ===== //
     //stuff that overrides upper classes like sounds behaviors and interaction with the world
 
     //Custom hurt mechanics
 
-    private int brokenOffBulbs = 0;
-
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
 
-        //only get dealt 10% of fire damage
+        //only get dealt 5% of fire damage
         float damageMultiplier = 1f;
-        if (pSource.is(DamageTypeTags.IS_FIRE) || pSource.is(DamageTypeTags.BURNS_ARMOR_STANDS) || pSource.is(DamageTypeTags.IGNITES_ARMOR_STANDS)) {
-            damageMultiplier = 0.1F;
+        if (pSource.is(DamageTypeTags.IS_FIRE)) {
+            damageMultiplier = 0.05f;
         }
 
         boolean wasHurt = super.hurt(pSource, pAmount * damageMultiplier);
@@ -215,8 +193,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
                 }
             }
         }
-        boolean success = super.doHurtTarget(pEntity);
-        return success;
+        return super.doHurtTarget(pEntity);
     }
 
     @Override
@@ -224,12 +201,10 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         return false;
     }
 
-    //##### ===== #####//
 
+    // ===== CUSTOMIZABLE STUFF ===== //
 
-    //##### CUSTOMIZEABLE STUFF #####//
-
-    //stuff here can be overriden to customize the behavior or the siliconite
+    //stuff here can be overridden to customize the behavior or the siliconite
     //should alert nearby siliconites when hurt
 
     //AI
@@ -243,14 +218,14 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     }
 
     protected boolean shouldAttackTarget(boolean _idk) {
-        //Default behavior is to stop when health is below 30%
+        //Default behavior is to stop when health is below
         //ignore the boolean arg it's always true. I just didn't figure predicates properly yet
-        return getHealth() / getMaxHealth() > 0.4f;
+        return getHealth() / getMaxHealth() > FLEE_HEALTH_THRESHOLD;
     }
 
     protected boolean shouldFlee(Object _idk) {
-        //Default behavior is to flee when health is below 30% as well as requiring the target to not be null
-        return getHealth() / getMaxHealth() < 0.4f && getTarget() != null;
+        //Default behavior is to flee when health is below FLEE_THRESHOLD as well as requiring the target to not be null
+        return getHealth() / getMaxHealth() < FLEE_HEALTH_THRESHOLD && getTarget() != null;
     }
 
     //Stats n stuff
@@ -259,7 +234,6 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         return 1;
     }
 
-    //
     protected void releaseGasIntoAtmosphere(ServerLevel pLevel, float amount) {
         GlobalWarmingData globalWarmingData = GlobalWarmingData.get(pLevel);
         globalWarmingData.addPoints(amount);
@@ -284,14 +258,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         return entityData.get(BROKEN_OFF_BULBS_VALUE);
     }
 
-    public GeoBone[] getBulbsArray(GeoModel<?> model) {
-        GeoBone[] bulbs = {
-
-        };
-        return bulbs;
-    }
-
-    ;
+    public abstract GeoBone[] getBulbsArray(GeoModel<?> model) ;
 
     //Defines whether the siliconite will destroy itself after tethering
     protected boolean destructiveTether() {
@@ -304,19 +271,12 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     }
 
     public void evolve() {
-        //This runs when the metabolism reaches the required point amount and lets the organism to evolve
+        //This runs when the metabolism reaches the required point amount and lets the organism evolve
         //Override functionality here
     }
 
-    public void vegetate() {
-        //This runs when the energy is very low, requiring the organism to adapt to conserve energy
-        //Override functionality here
-    }
 
-    //##### ===== #####//
-
-
-    //##### SAVING AND LOADING #####//
+    // ===== SAVING AND LOADING ===== //
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
@@ -337,6 +297,4 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         this.entityData.define(METABOLISM_VALUE, 0);
         this.entityData.define(BROKEN_OFF_BULBS_VALUE, 0);
     }
-
-    //##### ===== #####//
 }

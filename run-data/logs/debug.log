@@ -373,7 +373,7 @@ java.lang.IllegalAccessException: class io.netty.util.internal.PlatformDependent
 	at java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655) ~[?:?]
 	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622) ~[?:?]
 	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165) ~[?:?]
-[13Jun2026 22:48:27.759] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing com.mateussdev.chemosyntehsis.Events.EventRegisterClient to FORGE
+[13Jun2026 22:48:27.759] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing com.mateussdev.chemosyntehsis.Events.EventClient to FORGE
 [13Jun2026 22:48:27.762] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing com.mateussdev.chemosyntehsis.Events.EventRegisterCommands to FORGE
 [13Jun2026 22:48:27.762] [modloading-worker-0/DEBUG] [io.netty.util.internal.PlatformDependent0/]: java.nio.DirectByteBuffer.<init>(long, int): unavailable
 [13Jun2026 22:48:27.763] [modloading-worker-0/DEBUG] [io.netty.util.internal.PlatformDependent/]: sun.misc.Unsafe: available
@@ -387,7 +387,7 @@ java.lang.IllegalAccessException: class io.netty.util.internal.PlatformDependent
 [13Jun2026 22:48:27.772] [modloading-worker-0/DEBUG] [io.netty.util.internal.PlatformDependent/]: -Dio.netty.noPreferDirect: false
 [13Jun2026 22:48:27.789] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing com.mateussdev.chemosyntehsis.Events.EventRegisterAttributes to MOD
 [13Jun2026 22:48:27.794] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing com.mateussdev.chemosyntehsis.Events.EventRegisterRenderer to MOD
-[13Jun2026 22:48:27.823] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing com.mateussdev.chemosyntehsis.Events.EventRegisterServer to MOD
+[13Jun2026 22:48:27.823] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing com.mateussdev.chemosyntehsis.Events.EventServer to MOD
 [13Jun2026 22:48:27.824] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing com.mateussdev.chemosyntehsis.Events.EventTetherHandling to FORGE
 [13Jun2026 22:48:27.836] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Attempting to inject @EventBusSubscriber classes into the eventbus for geckolib
 [13Jun2026 22:48:27.837] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing software.bernie.example.GeckoLibMod to FORGE

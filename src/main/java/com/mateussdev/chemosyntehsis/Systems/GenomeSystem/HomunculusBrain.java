@@ -5,7 +5,6 @@ import com.mateussdev.chemosyntehsis.Core.ModMutations;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.genome.GenomeCarrier;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationType;
-import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Mob;
@@ -29,7 +28,7 @@ public class HomunculusBrain{
     private int cycleTimer;
 
     private final Map<UUID, GeneFitnessData> trackedGenes = new ConcurrentHashMap<>();
-    private final List<Gene> exampleList = new ArrayList<>();
+    private final List<Gene> templateList = new ArrayList<>();
 
     //Outside world context
     private final IHomunculusContext context;
@@ -85,13 +84,13 @@ public class HomunculusBrain{
         List<GeneFitnessData> top = trackedGenes.values().stream().sorted(Comparator.comparingDouble(GeneFitnessData::getFitness).reversed())
                 .limit(3).toList();
 
-        exampleList.clear();
-        for(GeneFitnessData fitnessData : top) exampleList.add(fitnessData.getGene().copy(rand));
+        templateList.clear();
+        for(GeneFitnessData fitnessData : top) templateList.add(fitnessData.getGene().copy(rand));
 
         //Reset tracked genes
         trackedGenes.clear();
 
-        context.onCycleCompleted(exampleList);
+        context.onCycleCompleted(templateList);
     }
 
     //Fitness tracking
@@ -114,7 +113,7 @@ public class HomunculusBrain{
         List<Gene> result = new ArrayList<>();
         int remainingPoints = genePoolBalance;
 
-        List<Gene> templates = exampleList.isEmpty() ? Collections.emptyList() : new ArrayList<>(exampleList);
+        List<Gene> templates = templateList.isEmpty() ? Collections.emptyList() : new ArrayList<>(templateList);
         Random rand = new Random();
 
         while (remainingPoints > 0) {
@@ -232,7 +231,7 @@ public class HomunculusBrain{
 
         CompoundTag exampleTag = new CompoundTag();
         int i = 0;
-        for (Gene g : exampleList) {
+        for (Gene g : templateList) {
             exampleTag.put("gene_" + i, g.serialize());
             i++;
         }
@@ -245,12 +244,12 @@ public class HomunculusBrain{
     public void deserialize(CompoundTag tag) {
         genePoolBalance = tag.getInt("genePoolBalance");
         cycleTimer = tag.getInt("cycleTimer");
-        exampleList.clear();
+        templateList.clear();
         CompoundTag exampleTag = tag.getCompound("exampleList");
         for (String key : exampleTag.getAllKeys()) {
             CompoundTag geneTag = exampleTag.getCompound(key);
             Gene g = Gene.deserialize(geneTag);
-            if (g != null) exampleList.add(g);
+            if (g != null) templateList.add(g);
         }
     }
 
@@ -258,6 +257,6 @@ public class HomunculusBrain{
     public int getGenePoolBalance() { return genePoolBalance; }
     public int getCycleTimer() { return cycleTimer; }
     public int getCycleDuration() { return CYCLE_DURATION_TICKS; }
-    public List<Gene> getExampleList() { return exampleList; }
+    public List<Gene> getTemplateList() { return templateList; }
     public Map<UUID, GeneFitnessData> getTrackedGenes() { return trackedGenes; }
 }

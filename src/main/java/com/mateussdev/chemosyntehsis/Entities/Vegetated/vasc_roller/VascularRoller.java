@@ -8,7 +8,7 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpo
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
-import com.mateussdev.chemosyntehsis.Entities.generic.Interfaces.IBiomassContainer;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Interfaces.IBiomassContainer;
 import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
@@ -39,9 +39,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.model.GeoModel;
 
 import java.util.Comparator;
 import java.util.List;
@@ -232,6 +234,11 @@ public class VascularRoller extends BaseOrganelle implements IBiomassContainer, 
             retractHarpoon();
         }
         return super.hurt(pSource, pAmount);
+    }
+
+    @Override
+    public GeoBone[] getBulbsArray(GeoModel<?> model) {
+        return new GeoBone[0];
     }
 
     private void targetBlock(BlockPos target) {

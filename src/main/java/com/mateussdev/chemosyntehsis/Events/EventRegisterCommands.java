@@ -1,6 +1,7 @@
 package com.mateussdev.chemosyntehsis.Events;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPCommand;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.GenomeCommand;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.HomunculusCommand;
 import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingCommand;
@@ -17,5 +18,6 @@ public class EventRegisterCommands {
         TetherCommand.register(event.getDispatcher());
         GenomeCommand.register(event);
         HomunculusCommand.register(event);
+        DSPCommand.register(event.getDispatcher());
     }
 }

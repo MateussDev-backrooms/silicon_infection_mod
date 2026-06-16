@@ -2,6 +2,9 @@ package com.mateussdev.chemosyntehsis.Entities.generic;
 
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPThreshold;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPType;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.IDspReceptor;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,8 +16,14 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.model.GeoModel;
 
-public class BaseAmalgamation extends BaseOrganelle{
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+
+public class BaseAmalgamation extends BaseOrganelle implements IDspReceptor {
     protected BaseAmalgamation(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
@@ -24,6 +33,20 @@ public class BaseAmalgamation extends BaseOrganelle{
     private int blocksPlaced = 0;
     private boolean hasPlacedVeinBlock = false;
 
+    private int damagedT = 0;
+
+    private static final int DAMAGE_DSP_TIMER_DURATION = 100; //5 seconds
+    private static final float DAMAGE_DSP_AMOUNT = 5f;
+
+    protected final EnumMap<DSPType, Float> internalBuffer = new EnumMap<>(DSPType.class);
+    protected final List<DSPThreshold> thresholds = new ArrayList<>();
+
+    @Override
+    public EnumMap<DSPType, Float> getInternalBuffer() { return internalBuffer; }
+
+    @Override
+    public List<DSPThreshold> getThresholds() { return thresholds; }
+
     @Override
     public void tick() {
         super.tick();
@@ -31,17 +54,15 @@ public class BaseAmalgamation extends BaseOrganelle{
         if(level() instanceof ServerLevel slvl) {
             if (basePlacementT < 60) {
 
-                // Place one block every 5 ticks
+                //Platform creation
                 if (basePlacementT % 5 == 0) {
-                    // Determine the build direction (Opposite to where we are attached)
                     Direction attachDir = entityData.get(ALIGNMENT);
                     Direction buildDir = attachDir.getOpposite();
 
-                    // The center of our construction platform
+                    //The centre of our construction platform
                     BlockPos centerOrigin = this.blockPosition().relative(buildDir);
 
-                    // Define the 3x3 area based on the alignment
-                    // We need different loops for vertical vs horizontal surfaces
+
                     BlockPos p1, p2;
 
                     if (attachDir.getAxis() == Direction.Axis.Y) {
@@ -88,10 +109,19 @@ public class BaseAmalgamation extends BaseOrganelle{
                 basePlacementT++;
             }
 
+            //TODO: Only regen if there are nearby healers
             if(regenT<240) regenT++;
             else {
                 heal(1f);
                 regenT=0;
+            }
+
+            absorbDSP(this);
+
+            //When damaged release damaged dsp
+            if(damagedT > 0) {
+                emitDSP(DSPType.D_D_DAMAGEDIRECTIVE, DAMAGE_DSP_AMOUNT, this);
+                damagedT--;
             }
         }
     }
@@ -99,7 +129,15 @@ public class BaseAmalgamation extends BaseOrganelle{
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
         regenT = 0; //Do not regen when actively hurt
+
+        //Release onDamaged directives
+        damagedT = DAMAGE_DSP_TIMER_DURATION;
         return super.hurt(pSource, pAmount);
+    }
+
+    @Override
+    public GeoBone[] getBulbsArray(GeoModel<?> model) {
+        return new GeoBone[0];
     }
 
     @Override

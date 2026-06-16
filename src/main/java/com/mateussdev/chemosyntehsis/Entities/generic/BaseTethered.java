@@ -3,15 +3,18 @@ package com.mateussdev.chemosyntehsis.Entities.generic;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Core.ModNetworking;
-import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
+import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
+import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
+import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
+import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Gene;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IGenomeModifiable;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IHomunculus;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
-import com.mateussdev.chemosyntehsis.Util.Packets.MutationSyncPacket;
 import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingData;
+import com.mateussdev.chemosyntehsis.Util.Packets.MutationSyncPacket;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -26,44 +29,39 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 import org.joml.Vector3f;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.model.GeoModel;
 
 import java.util.*;
 
 public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     protected BaseTethered(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
-        defaultGoals = this.goalSelector.getAvailableGoals().stream().toList();
-        targetingGoals = this.targetSelector.getAvailableGoals().stream().toList();
     }
 
-    protected int globalWarmingRate = 64;
-    protected int chunk_count = 5;
+    // ===== CONSTANTS ===== //
+    protected static final int IDLE_GLOBAL_WARMING_RATE = 64;
 
     //Genome system
     public Gene currentGene = null;
     private Gene _oldGene = null;
     protected int metamorphosisTime = 40;
 
-    public int fitnessPoints = 0;
 
-    private List<WrappedGoal> defaultGoals = new ArrayList<>();
-    private List<WrappedGoal> targetingGoals = new ArrayList<>();
-
-    protected boolean explodeOnDeath() {
-        return true;
-    }
-
+    // ==== Animations ===== //
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         //Movement anim controller
@@ -80,54 +78,90 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         }));
 
         //Bone wobbling
-        controllers.add(new AnimationController<>(this, "reaction_controller", 1, event -> {
-
-            return PlayState.CONTINUE;
-        }));
-
-//        MutationLayerRegistry.registerAllMutationAnimControllers(this, controllers);
+        controllers.add(new AnimationController<>(this, "reaction_controller", 1, event -> PlayState.CONTINUE));
     }
 
+    // ===== AI stuffs ===== //
 
 
     @Override
-    protected boolean destructiveTether() {
-        return false;
+    protected void registerGoals() {
+        registerDefaultGoals();
     }
+
+    public void registerDefaultGoals() {
+        this.goalSelector.removeAllGoals(g -> true);
+        this.targetSelector.removeAllGoals(g -> true);
+
+        //Default siliconite AI
+        if (!isBrave()) {
+            this.goalSelector.addGoal(1, new ConditionalAttackGoal(this, 1.0f, true, this::shouldAttackTarget));
+            this.goalSelector.addGoal(0, new ConditionalFleeGoal(this, LivingEntity.class, 16.0f, 1.2d, 1.3d, this::shouldFlee));
+        } else {
+            this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 1.0f, true));
+        }
+
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.1D));
+
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 3f));
+        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+
+
+        if (shouldAlertOthersOnHurt()) {
+            this.targetSelector.addGoal(1, (new HurtByNonSiliconiteGoal(this, new Class[0])).setAlertOthers(new Class[]{BaseSiliconite.class}));
+        } else {
+            this.targetSelector.addGoal(1, new HurtByNonSiliconiteGoal(this));
+        }
+
+        this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, true, false, StaticSiliconiteMethods::shouldAttackMob));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
+    // ===== Customization ===== //
+
+    protected boolean explodeOnDeath() { return true; }
 
     @Override
-    protected float getTetherChance() {
-        return 0.6f;
-    }
+    protected boolean destructiveTether() { return false; }
 
     @Override
-    protected boolean isBrave() {
-        return true;
-    }
+    protected float getTetherChance() { return 0.6f; }
 
-    private int t = 0;
+    @Override
+    public GeoBone[] getBulbsArray(GeoModel<?> model) { return new GeoBone[0]; }
+
+    @Override
+    protected boolean isBrave() { return true; }
+
+    @Override
+    protected int evolvesAtMetabolism() { return 300; }
+
+    // ===== Default functionality ===== //
+    private int tick = 0;
 
     @Override
     public void tick() {
-        t++;
-        if (t % globalWarmingRate == 0) {
-            if (level() instanceof ServerLevel slvl) {
+        tick++;
+        if (tick % IDLE_GLOBAL_WARMING_RATE == 0) {
+            if (this.level() instanceof ServerLevel slvl) {
                 GlobalWarmingData data = GlobalWarmingData.get(slvl);
                 data.addPoints(0.01f);
             }
         }
 
-
-        for(String boneName : wobblyBones()) {
-            Vector3f currBone = boneWobble.get(boneName);
-            if(currBone != null) {
-                currBone.lerp(new Vector3f(0), 0.2f);
+        //Only update the bones on the client
+        if (this.level().isClientSide) {
+            for (String boneName : wobblyBones()) {
+                Vector3f currBone = boneWobble.get(boneName);
+                if (currBone != null) {
+                    currBone.lerp(new Vector3f(0), 0.2f);
+                }
             }
         }
 
         //Run the onTick for each mutation in the genome
-        if(currentGene != null) {
-            for(Mutation mutation : currentGene.mutations) {
+        if (currentGene != null) {
+            for (Mutation mutation : currentGene.mutations) {
                 mutation.onTick(this);
             }
         }
@@ -135,8 +169,9 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         super.tick();
     }
 
-    protected int deathTime = 0;
+    // ===== Death ===== //
 
+    protected int deathTime = 0;
     @Override
     public void tickDeath() {
         if (explodeOnDeath()) {
@@ -157,31 +192,23 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         }
 
         //Run the onTickDeath for each mutation in the genome
-        if(currentGene != null) {
-            for(Mutation mutation : currentGene.mutations) {
+        if (currentGene != null) {
+            for (Mutation mutation : currentGene.mutations) {
                 mutation.onTickDeath(this);
             }
         }
     }
 
     public void turnIntoBiomush() {
-        if (level() instanceof ServerLevel slvl) {
-            //Particles
+        if (this.level() instanceof ServerLevel slvl) {
             StaticSiliconiteMethods.spawnBloodBurst(slvl, blockPosition());
-
             slvl.setBlock(blockPosition(), ModBlocks.BIOMUSH.get().defaultBlockState(), 2);
         }
     }
 
     public void splitIntoChunks(int count) {
-        if (level() instanceof ServerLevel slvl) {
-            slvl.playSound(
-                    null,
-                    blockPosition(),
-                    SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR,
-                    SoundSource.HOSTILE,
-                    1f,
-                    1f);
+        if (this.level() instanceof ServerLevel slvl) {
+            slvl.playSound(null, blockPosition(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.HOSTILE, 1f, 1f);
 
             //Particles
             SiliconiteParticles.spawnBloodBurst(slvl, blockPosition());
@@ -204,53 +231,18 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         }
     }
 
-    @Override
-    protected int evolvesAtMetabolism() {
-        return 300;
-    }
 
-    public final Map<String, Vector3f> boneWobble = new HashMap<>();
+    //===== Bone wobble on hurt =====//
+    public static final Map<String, Vector3f> boneWobble = new HashMap<>();
 
-    //Use function so it can be overrided
-    public final List<String> wobblyBones() {
+    //Use function so it can be overridden
+    public static List<String> wobblyBones() {
         return List.of("body", "head");
     }
 
-    public String wobbleBoneName = "";
-
-    @Override
-    public boolean hurt(DamageSource pSource, float pAmount) {
-        if(isDeadOrDying()) return false;
-
-        //Calculate the actual damage received
-        float culminativeDamageMultiplier = 1.0f;
-        if(currentGene != null) {
-            for(Mutation mutation : currentGene.mutations) {
-                culminativeDamageMultiplier *= mutation.onHurt(this, pSource, pAmount);
-            }
-        }
-        boolean hurtResult = culminativeDamageMultiplier > 0 ? super.hurt(pSource, pAmount*culminativeDamageMultiplier) : false;
-
-        if(culminativeDamageMultiplier > 0) {
-            triggerHitReaction(pSource, pAmount);
-            if(hurtResult) {
-    //            wobbleBoneName = wobblyBones().get(random.nextInt(wobblyBones().size()));
-
-                if (level() instanceof ServerLevel slvl) {
-                    slvl.playSound(null, blockPosition(), SoundEvents.SLIME_SQUISH_SMALL, SoundSource.HOSTILE, 1f, 0.8f);
-                    SiliconiteParticles.spawnBloodHit(slvl, position());
-                }
-            }
-        }
-
-        //Penalty for getting damaged
-        reportFitness(-pAmount*culminativeDamageMultiplier/2);
-
-        return hurtResult;
-    }
-
+    //Move the bones on the client. Do not do this on the server duh
     public void triggerHitReaction(DamageSource source, float amount) {
-        if (level().isClientSide && source.getEntity() != null) {
+        if (this.level().isClientSide && source.getEntity() != null) {
             float impactStrength = 90f * amount;
             float x = (random.nextFloat() - 0.5f) * impactStrength;
             float y = (random.nextFloat() - 0.5f) * impactStrength;
@@ -262,6 +254,36 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
             setDeltaMovement(getDeltaMovement().add(wobbleDir.x, wobbleDir.y, wobbleDir.z));
         }
     }
+
+    @Override
+    public boolean hurt(DamageSource pSource, float pAmount) {
+        if (isDeadOrDying()) return false;
+
+        //Calculate the actual damage received
+        float cumulativeDamageMultiplier = 1.0f;
+        if (currentGene != null) {
+            for (Mutation mutation : currentGene.mutations) {
+                cumulativeDamageMultiplier *= mutation.onHurt(this, pSource, pAmount);
+            }
+        }
+        boolean hurtResult = cumulativeDamageMultiplier > 0 && super.hurt(pSource, pAmount * cumulativeDamageMultiplier);
+
+        if (cumulativeDamageMultiplier > 0) {
+            triggerHitReaction(pSource, pAmount);
+            if (hurtResult) {
+                if (this.level() instanceof ServerLevel slvl) {
+                    slvl.playSound(null, blockPosition(), SoundEvents.SLIME_SQUISH_SMALL, SoundSource.HOSTILE, 1f, 0.8f);
+                    SiliconiteParticles.spawnBloodHit(slvl, position());
+                }
+            }
+        }
+
+        //Penalty for getting damaged
+        reportFitness(-pAmount * cumulativeDamageMultiplier / 2);
+
+        return hurtResult;
+    }
+
 
     // ===== Gene system interaction ===== //
 
@@ -275,20 +297,17 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         if (this.level() instanceof ServerLevel slvl) {
             slvl.playSound(null, blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.HOSTILE);
 
-            if(currentGene != null) {
-                //Reset AI back to default
-                this.goalSelector.removeAllGoals((goal) -> true);
-                this.targetSelector.removeAllGoals((goal) -> true);
-                //readd goals
-                for(WrappedGoal wrappedGoal : defaultGoals) this.goalSelector.addGoal(wrappedGoal.getPriority(), wrappedGoal.getGoal());
-                for(WrappedGoal wrappedGoal : targetingGoals) this.targetSelector.addGoal(wrappedGoal.getPriority(), wrappedGoal.getGoal());
+            if (currentGene != null) {
 
                 //Run onRemove to reset any other values
                 for (Mutation mutation : currentGene.mutations) {
-                    if(mutation.canMutateMob(this)) {
+                    if (mutation.canMutateMob(this)) {
                         mutation.onRemove(this);
                     }
                 }
+
+                //Reset AI back to default
+                registerDefaultGoals();
             }
 
             this.currentGene = gene;
@@ -303,7 +322,7 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
             //Then change the AI by running onInit()
             List<ResourceLocation> mutationTypeIds = new ArrayList<>();
             for (Mutation mutation : gene.mutations) {
-                if(mutation.canMutateMob(this)) {
+                if (mutation.canMutateMob(this)) {
                     mutation.onInit(this);
                     if (mutation.hasRenderLayer()) {
                         mutationTypeIds.add(mutation.getTypeId());
@@ -316,7 +335,7 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
             if (server != null) {
                 server.execute(() -> {
                     for (Mutation mutation : gene.mutations) {
-                        if(!mutation.canMutateMob(this)) continue;
+                        if (!mutation.canMutateMob(this)) continue;
 
                         if (mutation.hasRenderLayer()) {
                             ModNetworking.CHANNEL.send(
@@ -338,13 +357,8 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     }
 
     @Override
-    public void clearAllGenes() {
-
-    }
-
-    @Override
     public void setGeneOrigin(UUID homunculusId) {
-        if(homunculusId != null) {
+        if (homunculusId != null) {
             this.entityData.set(GENE_ORIGIN, Optional.of(homunculusId));
         }
     }
@@ -367,16 +381,10 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         }
     }
 
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(MUTATION_TYPES, new CompoundTag());
-        this.entityData.define(GENE_ORIGIN, Optional.of(UUID.randomUUID()));
-    }
 
     public void updateMutationTypes(List<ResourceLocation> types) {
         CompoundTag tag = new CompoundTag();
-        // Store count and each ID as string
+        //Store count and each ID as string
         tag.putInt("count", types.size());
         for (int i = 0; i < types.size(); i++) {
             tag.putString("type_" + i, types.get(i).toString());
@@ -398,11 +406,17 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     }
 
     // ===== Saving loading ===== //
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(MUTATION_TYPES, new CompoundTag());
+        this.entityData.define(GENE_ORIGIN, Optional.empty());
+    }
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        if(currentGene != null) {
+        if (currentGene != null) {
             tag.put("genome", currentGene.serialize());
             tag.putUUID("origin_homunculus", this.entityData.get(GENE_ORIGIN).get());
         }
@@ -412,31 +426,26 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
 
-        //Save the AI for mutation reloading
-        defaultGoals = this.goalSelector.getAvailableGoals().stream().toList();
-        targetingGoals = this.targetSelector.getAvailableGoals().stream().toList();
-
         //Load
         if (tag.contains("genome")) {
             currentGene = Gene.deserialize(tag.getCompound("genome"));
             this.entityData.set(GENE_ORIGIN, Optional.of(tag.getUUID("origin_homunculus")));
             if (currentGene != null) {
-                // Prepare list of mutation type IDs for synced entity data
                 List<ResourceLocation> types = new ArrayList<>();
+
+                //Reset AI
+                registerDefaultGoals();
                 for (Mutation mutation : currentGene.mutations) {
                     mutation.onInit(this);
                     if (mutation.hasRenderLayer()) {
                         types.add(mutation.getTypeId());
                     }
                 }
-                // Update the entity data – this syncs automatically to clients
+
                 updateMutationTypes(types);
 
-                // Re‑send packets to add render layers on clients
-                if (!level().isClientSide) {
-                    ServerLevel serverLevel = (ServerLevel) level();
-                    // Use server.execute to avoid concurrency issues (optional)
-                    serverLevel.getServer().execute(() -> {
+                if (this.level() instanceof ServerLevel slvl) {
+                    slvl.getServer().execute(() -> {
                         for (Mutation mutation : currentGene.mutations) {
                             if (mutation.hasRenderLayer()) {
                                 ModNetworking.CHANNEL.send(
@@ -462,9 +471,9 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
 
     @Override
     public void awardKillScore(Entity pKilled, int pScoreValue, DamageSource pSource) {
-        if(pKilled instanceof LivingEntity le) {
+        if (pKilled instanceof LivingEntity le) {
             //Add tons of fitness points on kill
-            reportFitness(le.getMaxHealth()*2);
+            reportFitness(le.getMaxHealth() * 2);
         }
         super.awardKillScore(pKilled, pScoreValue, pSource);
     }

@@ -8,8 +8,7 @@ import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_spaw
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_turret.AmalTurret_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.genome.GenomeCarrier_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.Homunculus.homunculus_t1.HomunculusNucleusT1;
-import com.mateussdev.chemosyntehsis.Entities.Homunculus.homunculus_t1.HomunculusNucleusT1_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.homunculus_t1.HomunculusNucleusT1_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity_Render;

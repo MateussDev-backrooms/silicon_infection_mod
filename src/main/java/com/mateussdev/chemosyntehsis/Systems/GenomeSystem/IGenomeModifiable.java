@@ -12,7 +12,6 @@ public interface IGenomeModifiable {
 
     boolean applyGene(Gene gene);
     Gene getGene();
-    void clearAllGenes();
 
     void setGeneOrigin(UUID homunculusId);
     UUID getGeneOrigin();

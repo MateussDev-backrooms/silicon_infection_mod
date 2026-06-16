@@ -22,7 +22,7 @@ import software.bernie.geckolib.util.RenderUtils;
 
 import java.util.Random;
 
-public abstract class Mutation implements GeoAnimatable, Cloneable {
+public abstract class Mutation implements GeoAnimatable {
 
     private final AnimatableInstanceCache cache =
             GeckoLibUtil.createInstanceCache(this);
@@ -101,10 +101,7 @@ public abstract class Mutation implements GeoAnimatable, Cloneable {
     }
 
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return cache;
-    }
-
+    public AnimatableInstanceCache getAnimatableInstanceCache() { return cache; }
     //Ticks the animation. Needed backend for the animations to work
     @Override
     public double getTick(Object object) {
@@ -112,14 +109,12 @@ public abstract class Mutation implements GeoAnimatable, Cloneable {
     }
 
     //Gets the MutationType ID
-    public ResourceLocation getTypeId() {
-        return typeId;
-    };
+    public ResourceLocation getTypeId() { return typeId; }
 
     //Gets the int ID of the mutation instance
     public int getId() {
         return id;
-    };
+    }
 
     // ===== Saving loading ===== //
 

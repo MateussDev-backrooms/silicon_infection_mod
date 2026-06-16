@@ -98,13 +98,13 @@ public class GeneAttributeMutation {
 
         if(attribute != null) {
             attribute.removeModifier(uuid);
-            attribute.addPermanentModifier(new AttributeModifier(uuid, attribute.toString()+"genemult", multiplier, AttributeModifier.Operation.MULTIPLY_TOTAL));
+            attribute.addPermanentModifier(new AttributeModifier(uuid, attribute+"genemult", multiplier, AttributeModifier.Operation.MULTIPLY_TOTAL));
         }
     }
     private void applyBaselineToNullAttribute(Mob mob, AttributeInstance attribute, double addition, UUID uuid) {
         if(attribute != null && attribute.getValue() <= 0) {
             attribute.removeModifier(uuid);
-            attribute.addPermanentModifier(new AttributeModifier(uuid, attribute.toString()+"genemult", addition, AttributeModifier.Operation.ADDITION));
+            attribute.addPermanentModifier(new AttributeModifier(uuid, attribute+"genemult", addition, AttributeModifier.Operation.ADDITION));
         }
     }
 

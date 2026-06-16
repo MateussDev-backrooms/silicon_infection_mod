@@ -1,9 +1,7 @@
-package com.mateussdev.chemosyntehsis.Entities.Homunculus.homunculus_t1;
+package com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.homunculus_t1;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 

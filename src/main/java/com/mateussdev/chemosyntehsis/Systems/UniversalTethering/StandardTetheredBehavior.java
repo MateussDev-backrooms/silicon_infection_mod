@@ -42,11 +42,10 @@ public class StandardTetheredBehavior implements ITetheredHook {
         }
         if (mob.isOnFire()) metabolism += 2;
 
-        //Do not evolve yet cuz missing mob
-//        if (metabolism >= EVOLVE_AT_METABOLISM) {
-//            metabolism = 0;
-//            onEvolve(mob, slvl);
-//        }
+        //If target is from my mod, reset target
+        if(mob.getTarget() != null && StaticSiliconiteMethods.isMobFromChemosynthesisMod(mob.getTarget())) {
+            mob.setTarget(null);
+        }
 
         //Death explosion
         if (mob.isDeadOrDying() && !dead) {

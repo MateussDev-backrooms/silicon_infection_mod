@@ -9,7 +9,7 @@ import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_spaw
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_turret.AmalTurret;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_zombie.AmalZombie;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.genome.GenomeCarrier;
-import com.mateussdev.chemosyntehsis.Entities.Homunculus.homunculus_t1.HomunculusNucleusT1;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.homunculus_t1.HomunculusNucleusT1;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;

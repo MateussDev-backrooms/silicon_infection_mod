@@ -19,7 +19,7 @@ public class TethCow extends BaseTethered {
         super(p_33002_, p_33003_);
     }
 
-    //##### Entity setup and stats #####//
+    // ===== Entity setup and stats ===== //
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 16D)

@@ -43,12 +43,6 @@ public class MutationHarpoon extends Mutation {
     @Override public GeoModel<? extends Mutation> getModel() { return model; }
     @Override public GeoRenderer<? extends Mutation> getRenderer() { return renderer; }
 
-    private int t = 0;
-    @Override
-    public void onTick(Mob mob) {
-
-    }
-
     @Override
     public void onInit(Mob mob) {
         mob.goalSelector.addGoal(-1, new RangedHarpoonAIGoal(mob, 1.5f, 100, 16, this));

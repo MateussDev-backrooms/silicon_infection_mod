@@ -26,9 +26,11 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.model.GeoModel;
 
 import java.util.UUID;
 
@@ -103,6 +105,11 @@ public class GenomeCarrier extends BaseSiliconite {
     @Override
     protected float getBulbBreakoffChance() {
         return 0.0f;
+    }
+
+    @Override
+    public GeoBone[] getBulbsArray(GeoModel<?> model) {
+        return new GeoBone[0];
     }
 
     private boolean _brw = true;

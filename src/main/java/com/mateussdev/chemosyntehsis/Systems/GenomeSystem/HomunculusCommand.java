@@ -1,6 +1,5 @@
 package com.mateussdev.chemosyntehsis.Systems.GenomeSystem;
 
-import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -10,8 +9,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 import java.util.Map;
@@ -77,8 +74,8 @@ public class HomunculusCommand {
                 .withStyle(ChatFormatting.AQUA), false);
 
         // Example list
-        source.sendSuccess(() -> Component.literal("=== Example list:").withStyle(ChatFormatting.GREEN), false);
-        List<Gene> examples = brain.getExampleList();
+        source.sendSuccess(() -> Component.literal("=== Template list:").withStyle(ChatFormatting.GREEN), false);
+        List<Gene> examples = brain.getTemplateList();
         if (examples.isEmpty()) {
             source.sendSuccess(() -> Component.literal("  (none)").withStyle(ChatFormatting.GRAY), false);
         } else {
@@ -120,19 +117,17 @@ public class HomunculusCommand {
     }
 
     private static void appendGeneAttributeModification(CommandSourceStack source, Gene gene) {
-        source.sendSuccess(() -> Component.literal("---Attribute mutation ratios:---").withStyle(ChatFormatting.BLUE), false);
-        source.sendSuccess(() -> Component.literal("   (higher number -> more biased towards attribute A)").withStyle(ChatFormatting.DARK_BLUE), false);
-        source.sendSuccess(() -> Component.literal("   (smaller number -> more biased towards attribute B)").withStyle(ChatFormatting.DARK_BLUE), false);
-        source.sendSuccess(() -> Component.literal("-------------------------------").withStyle(ChatFormatting.DARK_BLUE), false);
         GeneAttributeMutation genmut = gene.attributeMutation;
-        source.sendSuccess(() -> Component.literal("[ health/speed = "+genmut.health_speed+" ]").withStyle(ChatFormatting.BLUE), false);
-        source.sendSuccess(() -> Component.literal("[ health/armor = "+genmut.health_armor+" ]").withStyle(ChatFormatting.BLUE), false);
-        source.sendSuccess(() -> Component.literal("[ armor/attack damage = "+genmut.armor_attackDamage+" ]").withStyle(ChatFormatting.BLUE), false);
-        source.sendSuccess(() -> Component.literal("[ armor toughness/armor = "+genmut.armorToughness_armor+" ]").withStyle(ChatFormatting.BLUE), false);
-        source.sendSuccess(() -> Component.literal("[ attack speed/attack damage = "+genmut.attackSpeed_attackDamage+" ]").withStyle(ChatFormatting.BLUE), false);
-        source.sendSuccess(() -> Component.literal("[ attack speed/attack knockback = "+genmut.attackSpeed_attackKnockback+" ]").withStyle(ChatFormatting.BLUE), false);
-        source.sendSuccess(() -> Component.literal("[ speed/knockbackResistance = "+genmut.speed_knockbackResistance+" ]").withStyle(ChatFormatting.BLUE), false);
-        source.sendSuccess(() -> Component.literal("[ follow range/attack damage = "+genmut.followRange_attackDamage+" ]").withStyle(ChatFormatting.BLUE), false);
-        source.sendSuccess(() -> Component.literal("[ follow range/speed = "+genmut.followRange_speed+" ]").withStyle(ChatFormatting.BLUE), false);
+        source.sendSuccess(() -> Component.literal(
+                String.format("Attribute Ratios: H/S:%.2f H/A:%.2f A/D:%.2f T/A:%.2f AS/K:%.2f S/KB:%.2f FR/D:%.2f FR/S:%.2f",
+                        genmut.health_speed,
+                        genmut.health_armor,
+                        genmut.armor_attackDamage,
+                        genmut.armorToughness_armor,
+                        genmut.attackSpeed_attackKnockback,
+                        genmut.speed_knockbackResistance,
+                        genmut.followRange_attackDamage,
+                        genmut.followRange_speed)
+        ).withStyle(ChatFormatting.BLUE), false);
     }
 }
