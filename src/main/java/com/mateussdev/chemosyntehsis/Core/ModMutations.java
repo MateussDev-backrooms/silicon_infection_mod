@@ -4,6 +4,7 @@ import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationBurro
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationFlight.MutationFlight;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationHarpoon.MutationHarpoon;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationSwimming.MutationSwimming;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationTeleportation.MutationTeleportation;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -35,6 +36,11 @@ public class ModMutations {
             () -> new MutationType(
                     new ResourceLocation(MODID, "burrowing"),
                     (mutationId) -> new MutationBurrowing(new ResourceLocation(MODID, "burrowing"), mutationId)
+            ));
+    public static final RegistryObject<MutationType> TELEPORTATION = MUTATION_TYPES.register("teleportation",
+            () -> new MutationType(
+                    new ResourceLocation(MODID, "teleportation"),
+                    (mutationId) -> new MutationTeleportation(new ResourceLocation(MODID, "teleportation"), mutationId)
             ));
 
     public static void register(IEventBus eventBus) {

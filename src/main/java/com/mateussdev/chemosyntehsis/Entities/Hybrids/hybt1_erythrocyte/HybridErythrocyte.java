@@ -47,10 +47,9 @@ public class HybridErythrocyte extends BaseHybrid {
 
     @Override
     protected void registerGoals() {
-//        this.goalSelector.addGoal(1, new ErythrocyteRetreatGoal(this)); // Highest priority when retreating
+        this.goalSelector.addGoal(-1, new ErythrocyteDeliverTNTGoal(this)); //funny
         this.goalSelector.addGoal(0, new ErythrocyteDeployMobGoal(this));
         this.goalSelector.addGoal(1, new ErythrocytePickUpMobGoal(this));
-//        this.goalSelector.addGoal(2, new FloatingLookAtTargetGoal(this));
         this.goalSelector.addGoal(2, new FloatingSiliconiteRandomStrollGoal(this, 7f, 4f));
 
         //Seek out

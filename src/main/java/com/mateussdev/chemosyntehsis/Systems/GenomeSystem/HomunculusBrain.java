@@ -3,6 +3,8 @@ package com.mateussdev.chemosyntehsis.Systems.GenomeSystem;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Core.ModMutations;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.genome.GenomeCarrier;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPType;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.IDspReceptor;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationType;
 import net.minecraft.nbt.CompoundTag;
@@ -63,7 +65,13 @@ public class HomunculusBrain{
         for (Gene gene : chosenGenes) {
             trackGene(gene, gene.id);
             Mob target = findUniqueTarget(assignedTargets, context.getServerLevel(), context.getPosition(), 64.0);
-            if (target == null) break; // no more available mobs
+            if (target == null) {
+                //Not enough mobs - release DSP
+                if(context.getHomunculusMob() instanceof IDspReceptor receptor) {
+                    receptor.emitDSP(DSPType.D_MM_MOBDEFICIT, 1000, context.getHomunculusMob());
+                }
+                break;
+            }
             assignedTargets.add(target);
 
             GenomeCarrier carrier = new GenomeCarrier(ModEntities.GENOME_CARRIER.get(), context.getServerLevel());

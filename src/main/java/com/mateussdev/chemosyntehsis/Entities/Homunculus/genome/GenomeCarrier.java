@@ -112,7 +112,6 @@ public class GenomeCarrier extends BaseSiliconite {
         return new GeoBone[0];
     }
 
-    private boolean _brw = true;
     @Override
     public void tick() {
         super.tick();

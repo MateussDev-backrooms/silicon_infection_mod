@@ -6,6 +6,7 @@ import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseHybrid;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
+import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.*;
@@ -43,6 +44,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
     }
 
     protected int evolution_t = 0;
+    private int clusterCooldown = 200;
     public boolean mustEvolve = false;
     public boolean doBurrowAnim = false;
 
@@ -139,7 +141,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
         }
 
         if(tickCount % 60 == 0) {
-            if (!level().isClientSide && !this.mustEvolve) {
+            if (!level().isClientSide && !this.mustEvolve && --clusterCooldown <= 0) {
                 List<ChunkOfFlesh> nearby = level().getEntitiesOfClass(
                         ChunkOfFlesh.class,
                         this.getBoundingBox().inflate(MERGE_RADIUS),
@@ -170,7 +172,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
                 c.setBurrowAnimation(true);
             }
 
-            spawnBloodBurst(slvl, blockPosition());
+            SiliconiteParticles.spawnBloodBurst(slvl, blockPosition());
 
             slvl.scheduleTick(this.blockPosition(), Blocks.AIR, 20);
         }
@@ -185,7 +187,6 @@ public class ChunkOfFlesh extends BaseSiliconite {
                 c -> c.mustEvolve
         );
 
-        // Only ONE chunk does the spawn
         if (all.stream().anyMatch(c -> c.getId() < this.getId())) return;
 
         // Effects
@@ -243,7 +244,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        entityData.set(IS_BURROWING, false);
+        entityData.set(IS_BURROWING, tag.getBoolean("is_burrowing"));
     }
 
     @Override

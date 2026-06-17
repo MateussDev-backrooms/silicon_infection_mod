@@ -2,7 +2,13 @@ package com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_con
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
+import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_turret.AmalTurret;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
+import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.AmalgamationDSPConversions;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPThreshold;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPType;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,6 +19,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -26,6 +33,12 @@ import net.minecraft.world.phys.AABB;
 public class AmalConverter extends BaseAmalgamation {
     public AmalConverter(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
+        thresholds.add(new DSPThreshold(DSPType.D_D_DAMAGEDIRECTIVE, 400, () -> {
+            AmalgamationDSPConversions.convertToProtective(this);
+        }));
+        thresholds.add(new DSPThreshold(DSPType.D_MM_MOBDEFICIT, 400, () -> {
+            AmalgamationDSPConversions.convertToMobgen(this);
+        }));
     }
 
     private static final EntityDataAccessor<Integer> CONVERT_RADIUS = SynchedEntityData.defineId(AmalConverter.class, EntityDataSerializers.INT);

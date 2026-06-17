@@ -5,6 +5,7 @@ import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_turr
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
 import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.AmalgamationDSPConversions;
 import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPThreshold;
 import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPType;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
@@ -27,7 +28,7 @@ public class AmalSpawner extends BaseAmalgamation {
     public AmalSpawner(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
         thresholds.add(new DSPThreshold(DSPType.D_D_DAMAGEDIRECTIVE, 400, () -> {
-            convertToTurret();
+            AmalgamationDSPConversions.convertToProtective(this);
         }));
     }
 
@@ -88,21 +89,6 @@ public class AmalSpawner extends BaseAmalgamation {
                     StaticSiliconiteMethods.spawnBloodBurst(slvl, blockPosition());
                 }
             }
-        }
-    }
-
-    protected void convertToTurret() {
-        if(this.level() instanceof ServerLevel slvl) {
-            slvl.playSound(null, blockPosition(), SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE);
-            SiliconiteParticles.spawnTransformationParticle(slvl, blockPosition());
-            AmalTurret turret = ModEntities.AMAL_TURRET.get().create(slvl);
-            turret.moveTo(this.getPosition(0));
-
-            StaticSiliconiteMethods.debugLog("mobilize!!!!!");
-
-            slvl.addFreshEntity(turret);
-            thresholds.clear();
-            this.discard();
         }
     }
 }

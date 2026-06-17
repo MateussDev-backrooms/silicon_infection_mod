@@ -116,7 +116,10 @@ public class BaseAmalgamation extends BaseOrganelle implements IDspReceptor {
                 regenT=0;
             }
 
-            absorbDSP(this);
+            if(damagedT <= 0) {
+                //Cannot absorb when damaged
+                absorbDSP(this);
+            }
 
             //When damaged release damaged dsp
             if(damagedT > 0) {

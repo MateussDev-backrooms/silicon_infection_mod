@@ -13,6 +13,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
@@ -107,6 +108,11 @@ public class HomunculusNucleusT1 extends BaseAmalgamation implements IHomunculus
     @Override
     public UUID getHomunculusId() {
         return this.getUUID();
+    }
+
+    @Override
+    public Mob getHomunculusMob() {
+        return this;
     }
 
     @Override

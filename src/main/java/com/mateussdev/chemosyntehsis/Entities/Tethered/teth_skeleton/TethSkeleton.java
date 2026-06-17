@@ -65,6 +65,7 @@ public class TethSkeleton extends BaseTethered implements RangedAttackMob {
 
     @Override
     public void performRangedAttack(LivingEntity target, float dst_f) {
+        if(!this.canBeSeenByAnyone()) return;
         BulbProjectileEntity bulbProjectile = new BulbProjectileEntity(this.level(), this);
 
         bulbProjectile.setPos(this.getX(), this.getEyeY(), this.getZ());

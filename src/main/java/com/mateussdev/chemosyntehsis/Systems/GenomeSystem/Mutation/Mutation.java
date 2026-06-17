@@ -6,6 +6,8 @@ import com.mateussdev.chemosyntehsis.Core.ModRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
@@ -74,6 +76,11 @@ public abstract class Mutation implements GeoAnimatable {
 
     //Condition for applying mutation. Usually for masking certain mobs, or requiring certain prerequisites for the mob's mutation
     public abstract boolean canMutateMob(Mob mob);
+
+    //Called when mob tries to deal damage - returning false supresses all damage the entity can do
+    public boolean canDealDamage(Mob mob, Entity target) { return true; }
+
+    public boolean canBeSeen(Mob mob) { return true; }
 
     // ===== Graphics ===== //
 

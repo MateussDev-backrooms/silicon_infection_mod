@@ -54,7 +54,7 @@ public class RangedHarpoonAIGoal extends Goal {
      */
     public boolean canUse() {
         LivingEntity livingentity = this.mob.getTarget();
-        if (livingentity != null && livingentity.isAlive()) {
+        if (livingentity != null && livingentity.isAlive() && mob.canBeSeenByAnyone()) {
             this.target = livingentity;
             return true;
         } else {

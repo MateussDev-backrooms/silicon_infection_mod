@@ -292,6 +292,15 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     private static final EntityDataAccessor<Optional<UUID>> GENE_ORIGIN =
             SynchedEntityData.defineId(BaseTethered.class, EntityDataSerializers.OPTIONAL_UUID);
 
+    //States (needed for client-server sync)
+    private static final EntityDataAccessor<CompoundTag> MUTATION_STATE =
+            SynchedEntityData.defineId(BaseTethered.class, EntityDataSerializers.COMPOUND_TAG);
+
+    @Override
+    public EntityDataAccessor<CompoundTag> getMutationStateAccessor() {
+        return MUTATION_STATE;
+    }
+
     @Override
     public boolean applyGene(Gene gene) {
         if (this.level() instanceof ServerLevel slvl) {
@@ -405,12 +414,24 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         return false;
     }
 
+    @Override
+    public boolean canBeSeenByAnyone() {
+        boolean cumulative = true;
+        if (currentGene != null) {
+            for (Mutation mutation : currentGene.mutations) {
+                cumulative = mutation.canBeSeen(this);
+            }
+        }
+        return super.canBeSeenByAnyone() && cumulative;
+    }
+
     // ===== Saving loading ===== //
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(MUTATION_TYPES, new CompoundTag());
         this.entityData.define(GENE_ORIGIN, Optional.empty());
+        this.entityData.define(MUTATION_STATE, new CompoundTag());
     }
 
     @Override
@@ -419,6 +440,7 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         if (currentGene != null) {
             tag.put("genome", currentGene.serialize());
             tag.putUUID("origin_homunculus", this.entityData.get(GENE_ORIGIN).get());
+            tag.put("mutation_state", this.entityData.get(MUTATION_STATE));
         }
     }
 
@@ -430,6 +452,7 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         if (tag.contains("genome")) {
             currentGene = Gene.deserialize(tag.getCompound("genome"));
             this.entityData.set(GENE_ORIGIN, Optional.of(tag.getUUID("origin_homunculus")));
+            this.entityData.set(MUTATION_STATE, tag.getCompound("mutation_state"));
             if (currentGene != null) {
                 List<ResourceLocation> types = new ArrayList<>();
 
@@ -456,6 +479,8 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
                         }
                     });
                 }
+
+                //load mutation state
             }
         }
     }
@@ -464,6 +489,13 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
 
     @Override
     public boolean doHurtTarget(Entity pEntity) {
+        //Check if any mutation is preventing damage
+        if (currentGene != null) {
+            for (Mutation mutation : currentGene.mutations) {
+                if(!mutation.canDealDamage(this, pEntity)) return false;
+            }
+        }
+
         //Give fitness point to the amount of damage the mob dealt to another mob
         reportFitness((float) getAttribute(Attributes.ATTACK_DAMAGE).getValue());
         return super.doHurtTarget(pEntity);

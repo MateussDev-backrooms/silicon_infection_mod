@@ -1,14 +1,17 @@
-package com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationBurrowing;
+package com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationTeleportation;
 
+import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IGenomeModifiable;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationBaseRenderLayer;
-import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
+import com.mateussdev.chemosyntehsis.Util.Rendering.TextureUtilities;
+import com.mateussdev.chemosyntehsis.Util.Rendering.UVScaleableVertexConsumer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Mth;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Mob;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -21,15 +24,18 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
 
-public class MutationBurrowing_Layer<T extends Mob & GeoAnimatable> extends MutationBaseRenderLayer<T> {
+public class MutationTeleportation_Layer<T extends Mob & GeoAnimatable> extends MutationBaseRenderLayer<T> {
 
-    private final GeoModel<MutationBurrowing> mutationModel;
-    private final GeoRenderer<MutationBurrowing> mutationRenderer;
+    private final GeoModel<MutationTeleportation> mutationModel;
+    private final GeoRenderer<MutationTeleportation> mutationRenderer;
 
-    public MutationBurrowing_Layer(GeoRenderer<?> entityRendererIn, MutationBurrowing mutation) {
+    private static final ResourceLocation TINT_TEXTURE = new ResourceLocation(Chemosynthesis.MODID, "textures/util/ender_overlay.png");
+    private static final RenderType TINT_RENDER_TYPE = RenderType.entityTranslucent(TINT_TEXTURE);
+
+    public MutationTeleportation_Layer(GeoRenderer<?> entityRendererIn, MutationTeleportation mutation) {
         super((GeoEntityRenderer<?>) entityRendererIn, mutation);
-        this.mutationModel = new MutationBurrowing_Model();
-        this.mutationRenderer = new MutationBurrowing_Renderer(mutationModel);
+        this.mutationModel = new MutationTeleportation_Model();
+        this.mutationRenderer = new MutationTeleportation_Renderer(mutationModel);
     }
 
     @Override
@@ -37,16 +43,16 @@ public class MutationBurrowing_Layer<T extends Mob & GeoAnimatable> extends Muta
         super.render(poseStack, animatable, bakedModel, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
         if (animatable instanceof IGenomeModifiable genmod && !(genmod.hasMutationType(mutationReference.getTypeId()))) return;
 
-        GeoBone root = getRenderer().getGeoModel().getBone("root").orElse(null); //get the root
+        //Render overlay
+        ResourceLocation texLoc = getRenderer().getTextureLocation(animatable);
+        float uvWidth = TextureUtilities.getUvWidthScaleForTexture(texLoc, 4f, 64);
+        float uvHeight = TextureUtilities.getUvHeightScaleForTexture(texLoc, 4f, 64);
+
+        VertexConsumer scaledConsumer = new UVScaleableVertexConsumer(bufferSource.getBuffer(TINT_RENDER_TYPE), uvWidth, uvHeight);
+        getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, renderType, scaledConsumer, partialTick, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 0.33f);
 
         //Cast to the actual mutation here instead of using the generic one:
-        MutationBurrowing castedMutationRef = (MutationBurrowing) mutationReference;
-
-//        if(root != null) {
-//            StaticSiliconiteMethods.debugLog(getBurrowRenderOffset(animatable, castedMutationRef)+" - brw offset");
-//            root.setPosY(getBurrowRenderOffset(animatable, castedMutationRef));
-//        }
-
+        MutationTeleportation castedMutationRef = (MutationTeleportation) mutationReference;
 
         //Get socket bone
         GeoModel<T> hostModel = getRenderer().getGeoModel();
@@ -81,27 +87,5 @@ public class MutationBurrowing_Layer<T extends Mob & GeoAnimatable> extends Muta
         );
 
         poseStack.popPose();
-    }
-
-    public float getBurrowRenderOffset(Mob mob, MutationBurrowing mutation) {
-        if(!(mob instanceof IGenomeModifiable genmod)) return 0f;
-
-        CompoundTag state = genmod.getMutationState(mob, mutation.getTypeId(), genmod.getMutationStateAccessor());
-        int stateOrdinal = state.getInt("burrowState");
-        MutationBurrowing.BurrowState burrowState = MutationBurrowing.BurrowState.values()[stateOrdinal];
-        int transitionTimer = state.getInt("transitionTimer");
-
-        return switch (burrowState) {
-            case SURFACE -> 0f;
-            case UNDERGROUND -> mutation.MAX_BURROW_DEPTH;
-            case BURROWING -> {
-                float t = (float) transitionTimer / mutation.TRANSITION_DURATION;
-                yield Mth.lerp(t, 0f, mutation.MAX_BURROW_DEPTH);
-            }
-            case UNBURROWING -> {
-                float t = (float) transitionTimer / mutation.TRANSITION_DURATION;
-                yield Mth.lerp(t, mutation.MAX_BURROW_DEPTH, 0f);
-            }
-        };
     }
 }

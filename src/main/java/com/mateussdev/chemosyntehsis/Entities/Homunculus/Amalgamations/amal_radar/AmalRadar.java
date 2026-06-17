@@ -4,6 +4,9 @@ import com.mateussdev.chemosyntehsis.Core.ModSounds;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.AmalgamationDSPConversions;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPThreshold;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPType;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -70,6 +73,10 @@ public class AmalRadar extends BaseAmalgamation {
         this.positionSource = new EntityPositionSource(this, 0f);
 
         this.dynamicSonarListener = new DynamicGameEventListener(new EarSonarListener(positionSource));
+
+        thresholds.add(new DSPThreshold(DSPType.D_MM_MOBDEFICIT, 400, () -> {
+            AmalgamationDSPConversions.convertToMobgen(this);
+        }));
     }
 
     // ##### Entity setup and stats ##### //
