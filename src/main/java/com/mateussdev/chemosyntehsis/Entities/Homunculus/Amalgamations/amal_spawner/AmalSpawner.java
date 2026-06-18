@@ -47,6 +47,8 @@ public class AmalSpawner extends BaseAmalgamation {
     private final List<EntityType<? extends BaseTethered>> spawnables = List.of(
             ModEntities.TETH_ZOMBIE.get(),
             ModEntities.TETH_COW.get(),
+            ModEntities.TETH_SHEEP.get(),
+            ModEntities.TETH_PIG.get(),
             ModEntities.TETH_SKELETON.get(),
             ModEntities.TETH_ENDERMAN.get()
     );

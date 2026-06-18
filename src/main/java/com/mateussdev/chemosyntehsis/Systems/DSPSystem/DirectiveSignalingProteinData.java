@@ -3,6 +3,8 @@ package com.mateussdev.chemosyntehsis.Systems.DSPSystem;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
@@ -19,17 +21,71 @@ public class DirectiveSignalingProteinData extends SavedData {
     private static final float DIFFUSION_THRESHOLD = 1000f;
     private static final float DIFFUSION_RATE = 0.25f;
 
-    public static final Map<ChunkPos, EnumMap<DSPType, Float>> dspMap = new HashMap<>();
+    public final Map<ChunkPos, EnumMap<DSPType, Float>> dspMap = new HashMap<>();
     private static final float PARTICLE_VISIBILITY_THRESHOLD = 10f;
 
     @Override
     public CompoundTag save(CompoundTag pCompoundTag) {
+        ListTag list = new ListTag();
+
+        for (Map.Entry<ChunkPos, EnumMap<DSPType, Float>> entry : dspMap.entrySet()) {
+            ChunkPos pos = entry.getKey();
+            EnumMap<DSPType, Float> innerMap = entry.getValue();
+
+            CompoundTag chunkTag = new CompoundTag();
+            chunkTag.putInt("x", pos.x);
+            chunkTag.putInt("z", pos.z);
+
+            CompoundTag dspTag = new CompoundTag();
+            for (Map.Entry<DSPType, Float> innerEntry : innerMap.entrySet()) {
+                float value = innerEntry.getValue();
+                // Skip zero/negative values to save space
+                if (value > 0.0f) {
+                    dspTag.putFloat(innerEntry.getKey().name(), value);
+                }
+            }
+
+            // Only save if there's actually data
+            if (!dspTag.isEmpty()) {
+                chunkTag.put("dsp", dspTag);
+                list.add(chunkTag);
+            }
+        }
+
+        pCompoundTag.put("chunks", list);
         return pCompoundTag;
     }
 
     public static DirectiveSignalingProteinData load(CompoundTag tag) {
         DirectiveSignalingProteinData data = new DirectiveSignalingProteinData();
-        //TODO: Serialization
+        ListTag list = tag.getList("chunks", Tag.TAG_COMPOUND);
+
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag chunkTag = list.getCompound(i);
+            int x = chunkTag.getInt("x");
+            int z = chunkTag.getInt("z");
+            ChunkPos pos = new ChunkPos(x, z);
+
+            CompoundTag dspTag = chunkTag.getCompound("dsp");
+            EnumMap<DSPType, Float> innerMap = new EnumMap<>(DSPType.class);
+
+            for (String key : dspTag.getAllKeys()) {
+                try {
+                    DSPType type = DSPType.valueOf(key);
+                    float val = dspTag.getFloat(key);
+                    if (val > 0.0f) {
+                        innerMap.put(type, val);
+                    }
+                } catch (IllegalArgumentException ignored) {
+                    //Skip unknown enum values
+                }
+            }
+
+            if (!innerMap.isEmpty()) {
+                data.dspMap.put(pos, innerMap);
+            }
+        }
+
         return data;
     }
 
@@ -44,28 +100,33 @@ public class DirectiveSignalingProteinData extends SavedData {
     public void tick(ServerLevel slvl) {
         Map<ChunkPos, EnumMap<DSPType, Float>> pendingDiffusion = new HashMap<>();
 
+        // First, collect all diffusion (without modifying dspMap)
         for (Map.Entry<ChunkPos, EnumMap<DSPType, Float>> entry : dspMap.entrySet()) {
+            ChunkPos pos = entry.getKey();
             EnumMap<DSPType, Float> field = entry.getValue();
-
             for (DSPType type : DSPType.values()) {
                 float value = field.getOrDefault(type, 0f);
                 if (value <= 0f) continue;
-
-                //Decay
-                field.put(type, Math.max(0f, value - DECAY_RATE));
-
-                // ollect diffusion into staging map, do not touch dspMap here
                 if (value > DIFFUSION_THRESHOLD) {
-                    diffuseChunk(entry.getKey(), slvl, field, type, value, pendingDiffusion);
+                    diffuseChunk(pos, slvl, field, type, value, pendingDiffusion);
                 }
             }
         }
 
-        // Now safe to modify dspMap — iteration is finished
-        for (Map.Entry<ChunkPos, EnumMap<DSPType, Float>> pending : pendingDiffusion.entrySet()) {
-            dspMap.computeIfAbsent(pending.getKey(), k -> new EnumMap<>(DSPType.class))
-                    .forEach((type, amount) ->
-                            dspMap.get(pending.getKey()).merge(type, amount, Float::sum));
+        // Now apply all changes: decay + diffusion
+        for (Map.Entry<ChunkPos, EnumMap<DSPType, Float>> entry : dspMap.entrySet()) {
+            EnumMap<DSPType, Float> field = entry.getValue();
+            for (DSPType type : DSPType.values()) {
+                float value = field.getOrDefault(type, 0f);
+                // Apply decay
+                value = Math.max(0f, value - DECAY_RATE);
+                // Add incoming diffusion from pending
+                if (pendingDiffusion.containsKey(entry.getKey())) {
+                    value += pendingDiffusion.get(entry.getKey()).getOrDefault(type, 0f);
+                }
+                field.put(type, value);
+                this.setDirty();
+            }
         }
     }
 
@@ -110,6 +171,7 @@ public class DirectiveSignalingProteinData extends SavedData {
         }
 
         field.put(type, value - totalPushed);
+        this.setDirty();
     }
 
     public void spawnDSPParticles(ServerLevel slvl) {

@@ -12,14 +12,16 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjec
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_zombie.AmalZombie;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_pig.TethPig;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_sheep.TethSheep;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_erythrocyte.HybridErythrocyte;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte.HybridThrombocyte;
-import com.mateussdev.chemosyntehsis.Entities.met_cow.MetCow;
-import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie;
+import com.mateussdev.chemosyntehsis.Entities.Metabolized.met_cow.MetCow;
+import com.mateussdev.chemosyntehsis.Entities.Metabolized.met_zombie.MetZombie;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_skeleton.TethSkeleton;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_zombie.TethZombie;
@@ -79,6 +81,14 @@ public class ModEntities {
             ENTITIES.register("teth_cow", () -> EntityType.Builder.of(TethCow::new, MobCategory.MONSTER)
                     .sized(0.7f, 1.2f)
                     .build("teth_cow"));
+    public static final RegistryObject<EntityType<TethSheep>> TETH_SHEEP =
+            ENTITIES.register("teth_sheep", () -> EntityType.Builder.of(TethSheep::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.1f)
+                    .build("teth_sheep"));
+    public static final RegistryObject<EntityType<TethPig>> TETH_PIG =
+            ENTITIES.register("teth_pig", () -> EntityType.Builder.of(TethPig::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.0f)
+                    .build("teth_pig"));
     public static final RegistryObject<EntityType<TethEnderman>> TETH_ENDERMAN =
             ENTITIES.register("teth_enderman", () -> EntityType.Builder.of(TethEnderman::new, MobCategory.MONSTER)
                     .sized(0.7f, 3f)

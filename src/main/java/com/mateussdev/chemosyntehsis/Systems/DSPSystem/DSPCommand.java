@@ -2,6 +2,7 @@ package com.mateussdev.chemosyntehsis.Systems.DSPSystem;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -15,20 +16,23 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.AABB;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DSPCommand {
+    // ---- Registration ----
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("dsp")
                         .requires(source -> source.hasPermission(2))
 
+                        // Query (with optional radius)
                         .then(Commands.literal("query")
-                                .executes(DSPCommand::executeQuery))
+                                .executes(ctx -> executeQuery(ctx, 3))            // default radius = 3
+                                .then(Commands.argument("radius", IntegerArgumentType.integer(1, 16))
+                                        .executes(ctx -> executeQuery(ctx, IntegerArgumentType.getInteger(ctx, "radius")))))
 
+                        // Add
                         .then(Commands.literal("add")
                                 .then(Commands.argument("type", StringArgumentType.word())
                                         .suggests((ctx, builder) -> {
@@ -37,64 +41,118 @@ public class DSPCommand {
                                             }
                                             return builder.buildFuture();
                                         })
-                                        .then(Commands.argument("amount", FloatArgumentType.floatArg())
+                                        .then(Commands.argument("amount", FloatArgumentType.floatArg(0.01f))
                                                 .executes(DSPCommand::executeAddDSP))))
+
+                        // Set (override)
+                        .then(Commands.literal("set")
+                                .then(Commands.argument("type", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> {
+                                            for (DSPType type : DSPType.values()) {
+                                                builder.suggest(type.name());
+                                            }
+                                            return builder.buildFuture();
+                                        })
+                                        .then(Commands.argument("amount", FloatArgumentType.floatArg(0f))
+                                                .executes(DSPCommand::executeSetDSP))))
+
+                        // Remove (subtract)
+                        .then(Commands.literal("remove")
+                                .then(Commands.argument("type", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> {
+                                            for (DSPType type : DSPType.values()) {
+                                                builder.suggest(type.name());
+                                            }
+                                            return builder.buildFuture();
+                                        })
+                                        .then(Commands.argument("amount", FloatArgumentType.floatArg(0.01f))
+                                                .executes(DSPCommand::executeRemoveDSP))))
+
+                        // Receptors query (unchanged)
                         .then(Commands.literal("receptors")
                                 .then(Commands.literal("query")
                                         .executes(DSPCommand::executeReceptorQuery)))
         );
     }
 
-    private static int executeQuery(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    // ---- Query with radius ----
+    private static int executeQuery(CommandContext<CommandSourceStack> ctx, int radius) throws CommandSyntaxException {
         CommandSourceStack source = ctx.getSource();
         ServerLevel level = source.getLevel();
-        ChunkPos chunkPos = new ChunkPos(BlockPos.containing(source.getPosition()));
+        ChunkPos center = new ChunkPos(BlockPos.containing(source.getPosition()));
 
         DirectiveSignalingProteinData data = DirectiveSignalingProteinData.get(level);
-        EnumMap<DSPType, Float> field = data.dspMap.get(chunkPos);
 
-        source.sendSuccess(() -> Component.literal(
-                "=== Directive Signaling Protein Levels at Chunk [" + chunkPos.x + ", " + chunkPos.z + "] ==="
-        ).withStyle(ChatFormatting.GOLD), false);
-
-        if (field == null || field.isEmpty()) {
-            source.sendSuccess(() -> Component.literal(
-                    "No DSP present in this chunk."
-            ).withStyle(ChatFormatting.GRAY), false);
-            return 1;
+        // Gather all chunks within the square radius
+        List<ChunkPos> chunksInRange = new ArrayList<>();
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                chunksInRange.add(new ChunkPos(center.x + dx, center.z + dz));
+            }
         }
 
-        for (DSPType type : DSPType.values()) {
-            float value = field.getOrDefault(type, 0f);
-            ChatFormatting color = value > 0f ? ChatFormatting.GREEN : ChatFormatting.DARK_GRAY;
-            source.sendSuccess(() -> Component.literal(
-                    String.format("  %-35s %.2f", type.name(), value)
-            ).withStyle(color), false);
+        // Collect all DSP types for column headers
+        DSPType[] allTypes = DSPType.values();
+
+        // Prepare table data: row = chunk, columns = DSP values
+        Map<ChunkPos, EnumMap<DSPType, Float>> chunkData = new LinkedHashMap<>();
+        for (ChunkPos pos : chunksInRange) {
+            EnumMap<DSPType, Float> field = data.dspMap.get(pos);
+            if (field == null || field.isEmpty()) {
+                // Still include the chunk with zeros
+                EnumMap<DSPType, Float> empty = new EnumMap<>(DSPType.class);
+                for (DSPType type : allTypes) empty.put(type, 0f);
+                chunkData.put(pos, empty);
+            } else {
+                // Fill missing types with 0
+                for (DSPType type : allTypes) {
+                    field.putIfAbsent(type, 0f);
+                }
+                chunkData.put(pos, field);
+            }
+        }
+
+        // Build table header
+        StringBuilder header = new StringBuilder();
+        header.append("Chunk");
+        for (DSPType type : allTypes) {
+            header.append(String.format(" | %6s", abbreviateType(type)));
+        }
+        String separator = "-".repeat(header.length());
+
+        source.sendSuccess(() -> Component.literal(
+                "=== DSP Levels within " + radius + " chunks of [" + center.x + ", " + center.z + "] ==="
+        ).withStyle(ChatFormatting.GOLD), false);
+
+        source.sendSuccess(() -> Component.literal(header.toString()).withStyle(ChatFormatting.WHITE), false);
+        source.sendSuccess(() -> Component.literal(separator).withStyle(ChatFormatting.DARK_GRAY), false);
+
+        // Print each row
+        for (Map.Entry<ChunkPos, EnumMap<DSPType, Float>> entry : chunkData.entrySet()) {
+            ChunkPos pos = entry.getKey();
+            EnumMap<DSPType, Float> values = entry.getValue();
+
+            StringBuilder row = new StringBuilder();
+            row.append(String.format("[%3d, %3d]", pos.x, pos.z));
+            for (DSPType type : allTypes) {
+                float val = values.getOrDefault(type, 0f);
+                String formatted = (val > 0) ? String.format("%6.1f", val) : "  0.0 ";
+                row.append(" | ").append(formatted);
+            }
+            source.sendSuccess(() -> Component.literal(row.toString()).withStyle(ChatFormatting.GREEN), false);
         }
 
         return 1;
     }
 
+    // ---- Add DSP ----
     private static int executeAddDSP(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         CommandSourceStack source = ctx.getSource();
         ServerLevel level = source.getLevel();
         ChunkPos chunkPos = new ChunkPos(BlockPos.containing(source.getPosition()));
 
-        String typeName = StringArgumentType.getString(ctx, "type");
+        DSPType type = parseDSPType(ctx, source, "type");
         float amount = FloatArgumentType.getFloat(ctx, "amount");
-
-        DSPType type;
-        try {
-            type = DSPType.valueOf(typeName);
-        } catch (IllegalArgumentException e) {
-            source.sendFailure(Component.literal(
-                    "Unknown DSP type: '" + typeName + "'. Valid types: " +
-                            Arrays.stream(DSPType.values())
-                                    .map(DSPType::name)
-                                    .collect(Collectors.joining(", "))
-            ));
-            return 0;
-        }
 
         DirectiveSignalingProteinData data = DirectiveSignalingProteinData.get(level);
         data.dspMap
@@ -102,15 +160,67 @@ public class DSPCommand {
                 .merge(type, amount, Float::sum);
         data.setDirty();
 
-        DSPType finalType = type;
         source.sendSuccess(() -> Component.literal(
                 String.format("Added %.2f %s to chunk [%d, %d]",
-                        amount, finalType.name(), chunkPos.x, chunkPos.z)
+                        amount, type.name(), chunkPos.x, chunkPos.z)
         ).withStyle(ChatFormatting.AQUA), false);
 
         return 1;
     }
 
+    // ---- Set DSP (override) ----
+    private static int executeSetDSP(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        CommandSourceStack source = ctx.getSource();
+        ServerLevel level = source.getLevel();
+        ChunkPos chunkPos = new ChunkPos(BlockPos.containing(source.getPosition()));
+
+        DSPType type = parseDSPType(ctx, source, "type");
+        float amount = FloatArgumentType.getFloat(ctx, "amount");
+
+        DirectiveSignalingProteinData data = DirectiveSignalingProteinData.get(level);
+        data.dspMap
+                .computeIfAbsent(chunkPos, k -> new EnumMap<>(DSPType.class))
+                .put(type, amount);
+        data.setDirty();
+
+        source.sendSuccess(() -> Component.literal(
+                String.format("Set %s to %.2f in chunk [%d, %d]",
+                        type.name(), amount, chunkPos.x, chunkPos.z)
+        ).withStyle(ChatFormatting.AQUA), false);
+
+        return 1;
+    }
+
+    // ---- Remove DSP (subtract) ----
+    private static int executeRemoveDSP(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        CommandSourceStack source = ctx.getSource();
+        ServerLevel level = source.getLevel();
+        ChunkPos chunkPos = new ChunkPos(BlockPos.containing(source.getPosition()));
+
+        DSPType type = parseDSPType(ctx, source, "type");
+        float amount = FloatArgumentType.getFloat(ctx, "amount");
+
+        DirectiveSignalingProteinData data = DirectiveSignalingProteinData.get(level);
+        EnumMap<DSPType, Float> field = data.dspMap.get(chunkPos);
+        if (field == null) {
+            source.sendFailure(Component.literal("No DSP data in this chunk."));
+            return 0;
+        }
+
+        float current = field.getOrDefault(type, 0f);
+        float newValue = Math.max(0f, current - amount);
+        field.put(type, newValue);
+        data.setDirty();
+
+        source.sendSuccess(() -> Component.literal(
+                String.format("Removed %.2f %s (new value: %.2f) in chunk [%d, %d]",
+                        amount, type.name(), newValue, chunkPos.x, chunkPos.z)
+        ).withStyle(ChatFormatting.AQUA), false);
+
+        return 1;
+    }
+
+    // ---- Receptors query (unchanged, but we keep it) ----
     private static int executeReceptorQuery(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         CommandSourceStack source = ctx.getSource();
         ServerLevel level = source.getLevel();
@@ -216,5 +326,31 @@ public class DSPCommand {
                 ).withStyle(ready ? ChatFormatting.RED : ChatFormatting.GRAY), false);
             }
         }
+    }
+
+    // ---- Helper: parse DSPType with error handling ----
+    private static DSPType parseDSPType(CommandContext<CommandSourceStack> ctx, CommandSourceStack source, String argName) throws CommandSyntaxException {
+        String typeName = StringArgumentType.getString(ctx, argName);
+        try {
+            return DSPType.valueOf(typeName);
+        } catch (IllegalArgumentException e) {
+            source.sendFailure(Component.literal(
+                    "Unknown DSP type: '" + typeName + "'. Valid types: " +
+                            Arrays.stream(DSPType.values())
+                                    .map(DSPType::name)
+                                    .collect(Collectors.joining(", "))
+            ));
+            throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().create();
+        }
+    }
+
+    // ---- Helper: abbreviate DSP type (e.g., "D_D_DAMAGEDIRECTIVE" → "D_D") ----
+    private static String abbreviateType(DSPType type) {
+        String name = type.name();
+        String[] parts = name.split("_");
+        if (parts.length >= 2) {
+            return parts[0] + "_" + parts[1];
+        }
+        return name; // fallback
     }
 }

@@ -42,9 +42,15 @@ public class MutationTeleportation extends Mutation {
     private final GeoModel<MutationTeleportation> model = new MutationTeleportation_Model();
     private final GeoRenderer<MutationTeleportation> renderer = new MutationTeleportation_Renderer(model);
 
+    public static final int TELEPORTATION_COOLDOWN = 100;
+    public static final float TELEPORTATION_DISTANCE = 8.0f;
+    public int teleportationT = 0;
+
 
     @Override public boolean hasRenderLayer() { return true; }
     @Override public String getAttachBoneName() { return "body"; }
+
+    @Override public int getCost() { return 4; }
 
     @Override
     public GeoRenderLayer<?> createRenderLayer(GeoRenderer<?> hostRenderer) {
@@ -59,8 +65,10 @@ public class MutationTeleportation extends Mutation {
         if(mob.level() instanceof ServerLevel slvl) {
             if (mob.tickCount % 2 == 0) {
                 //Enderman particles
-                slvl.sendParticles(ParticleTypes.REVERSE_PORTAL, mob.position().x, mob.position().y, mob.position().z, 2, mob.getBoundingBox().getXsize(), mob.getBoundingBox().getYsize(), mob.getBoundingBox().getZsize(), 2f);
+                slvl.sendParticles(ParticleTypes.REVERSE_PORTAL, mob.position().x, mob.position().y, mob.position().z, 2, mob.getBoundingBox().getXsize(), mob.getBoundingBox().getYsize(), mob.getBoundingBox().getZsize(), 0.5f);
             }
+
+            if(teleportationT > 0) --teleportationT;
         }
     }
 
@@ -68,16 +76,14 @@ public class MutationTeleportation extends Mutation {
     public void onInit(Mob mob) {
         //Save the to-be changed values
 
-        //Add floating AI functionality
-        ((MobAccessor)mob).setNavigation(new FlyingPathNavigation(mob, mob.level()));
-        ((MobAccessor)mob).setMoveControl(new ImprovedFlyingMoveControl((BaseSiliconite) mob, 1f, true));
-
         //Add floating goal
-        mob.goalSelector.addGoal(1, new FloatingSiliconiteRandomStrollGoal((BaseSiliconite) mob, 7f, 4f));
+        mob.goalSelector.addGoal(0, new TeleportNearTargetMutGoal(mob, this, TELEPORTATION_DISTANCE));
     }
 
     @Override
     public float onHurt(Mob mob, DamageSource source, float amount) {
+        if(amount <= 0f) return 0f;
+
         if(source.getDirectEntity() instanceof Projectile projectile) {
             teleportRandomly(mob);
             return 0f;
@@ -122,7 +128,7 @@ public class MutationTeleportation extends Mutation {
     }
 
     public boolean teleport(Vec3 teleportPosition, Mob mob) {
-        if (mob.level() instanceof ServerLevel slvl) {
+        if (mob.level() instanceof ServerLevel slvl && mob.canBeSeenByAnyone()) {
             for (int i = 0; i < 5; i++) {
                 double x = teleportPosition.x + ((mob.getRandom().nextFloat() * 2 - 1) * i);
                 double y = teleportPosition.y + ((mob.getRandom().nextFloat() * 2 - 1) * i);
@@ -146,7 +152,6 @@ public class MutationTeleportation extends Mutation {
                     slvl.broadcastEntityEvent(mob, (byte) 46);
 
                     mob.playSound(SoundEvents.ENDERMAN_TELEPORT, 1f, 0.75f);
-                    mob.playSound(SoundEvents.ENDERMAN_HURT, 0.75f, 1f);
                     mob.playSound(SoundEvents.SHULKER_TELEPORT, 0.75f, 1f);
                     mob.playSound(SoundEvents.IRON_GOLEM_ATTACK, 0.75f, 1f);
                     return true;
@@ -208,6 +213,48 @@ public class MutationTeleportation extends Mutation {
         boolean flag2 = !slvl.noCollision(mob.getBoundingBox().deflate(0.2f).move(position.subtract(mob.position())));
 
         return !flag && !flag1 && !flag2;
+    }
+
+    protected Vec3 cleanTeleportPosition(Vec3 position, ServerLevel slvl, Mob mob) {
+
+        //Find the actually checked position
+        BlockPos blockpos = BlockPos.containing(position);
+        BlockState blockstate = mob.level().getBlockState(BlockPos.containing(position));
+
+        double d3 = position.y;
+        Level level = mob.level();
+        if (level.hasChunkAt(blockpos)) {
+            boolean flagchk = false;
+
+            //If initial position is in air
+            if (blockstate.isAir()) {
+                while (!flagchk && blockpos.getY() > level.getMinBuildHeight()) {
+                    BlockPos blockpos1 = blockpos.below();
+                    blockstate = level.getBlockState(blockpos1);
+                    if (blockstate.blocksMotion()) {
+                        flagchk = true;
+                    } else {
+                        --d3;
+                        blockpos = blockpos1;
+                    }
+                }
+            } else if (blockstate.blocksMotion()) {
+
+                //Check up block until we emerge
+                while (!flagchk && blockpos.getY() < level.getMaxBuildHeight()) {
+                    BlockPos blockpos1 = blockpos.above();
+                    blockstate = level.getBlockState(blockpos1);
+                    if (blockstate.blocksMotion()) {
+                        flagchk = true;
+                    } else {
+                        ++d3;
+                        blockpos = blockpos1;
+                    }
+                }
+            }
+        }
+
+        return blockpos.getCenter();
     }
 
     @Override

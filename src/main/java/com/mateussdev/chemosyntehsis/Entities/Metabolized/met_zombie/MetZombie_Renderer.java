@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.Entities.met_zombie;
+package com.mateussdev.chemosyntehsis.Entities.Metabolized.met_zombie;
 
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

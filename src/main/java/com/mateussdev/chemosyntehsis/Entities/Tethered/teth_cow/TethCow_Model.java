@@ -30,6 +30,7 @@ public class TethCow_Model extends GeoModel<TethCow> {
     @Override
     public void setCustomAnimations(TethCow animatable, long instanceId, AnimationState<TethCow> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
+
         //Missing bulb visuals
         StaticSiliconiteMethods.updateBulbVisuals(animatable, this);
 

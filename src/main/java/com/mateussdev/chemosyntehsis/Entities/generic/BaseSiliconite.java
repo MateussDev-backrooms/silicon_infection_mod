@@ -21,6 +21,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
@@ -48,6 +49,7 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     // ===== ENTITY CONSTANTS ===== //
     //TODO: Hook up with config
     private static final float FLEE_HEALTH_THRESHOLD = 0.4f;
+    private static final float TETHER_HEALTH_REQUIREMENT = 0.15f;
 
     // ===== ANIMATION STUFF ===== //
     private final AnimatableInstanceCache anim_cache = GeckoLibUtil.createInstanceCache(this);
@@ -96,29 +98,30 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
-
-
-    private int t = 0;
-
     @Override
     public void baseTick() {
         super.baseTick();
 
-        //prevent drowning
-        this.setAirSupply(this.getMaxAirSupply());
+        if(!canDrown()) {
+            //prevent drowning
+            this.setAirSupply(this.getMaxAirSupply());
+        }
 
         //Prevent targeting tethered mobs
         if(this.getTarget() != null) {
             if(this.getTarget() instanceof Mob mob && UniversalTethering.isTethered(mob)) {
                 this.setTarget(null);
+                //Stop the target selector
+                if(this.targetSelector.getRunningGoals().findFirst().isPresent()) {
+                    this.targetSelector.getRunningGoals().findFirst().get().stop();
+                }
             }
         }
 
         if (this.level() instanceof ServerLevel slvl) {
-            t++;
 
             //Metabolism stuffs
-            if (t % 40 == 0) {
+            if (tickCount % 40 == 0) {
                 //add to metabolism
                 entityData.set(METABOLISM_VALUE, entityData.get(METABOLISM_VALUE) + getMetabolismGain());
             }
@@ -183,8 +186,8 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     public boolean doHurtTarget(Entity pEntity) {
         //Check if attacking entity
         if (pEntity instanceof Mob mob) {
-            if(mob.getHealth()/mob.getMaxHealth() < 0.33f) {
-                if(level() instanceof ServerLevel slvl) {
+            if((mob.getHealth()-this.getAttributeValue(Attributes.ATTACK_DAMAGE))/mob.getMaxHealth() < TETHER_HEALTH_REQUIREMENT) {
+                if(this.level() instanceof ServerLevel slvl) {
                     UniversalTethering.tryTetherMob(mob, slvl);
                     if (destructiveTether()) {
                         this.remove(RemovalReason.DISCARDED);
@@ -232,6 +235,10 @@ public abstract class BaseSiliconite extends Monster implements GeoEntity {
     protected int getMetabolismGain() {
         //TODO implement different gain depending on biome temperature, time of day and Y level
         return 1;
+    }
+
+    protected boolean canDrown() {
+        return false;
     }
 
     protected void releaseGasIntoAtmosphere(ServerLevel pLevel, float amount) {

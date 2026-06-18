@@ -39,11 +39,12 @@ public class ModCreativeTabs {
                         pOutput.accept(ModItems.SPAWN_CHUNK_OF_FLESH.get());
                         pOutput.accept(ModItems.SPAWN_CLUSTER_OF_FLESH.get());
 
-                        pOutput.accept(ModItems.SPAWN_GENOME_CARRIER.get());
 
                         pOutput.accept(ModItems.SPAWN_TETH_ZOMBIE.get());
                         pOutput.accept(ModItems.SPAWN_TETH_SKELETON.get());
                         pOutput.accept(ModItems.SPAWN_TETH_COW.get());
+                        pOutput.accept(ModItems.SPAWN_TETH_SHEEP.get());
+                        pOutput.accept(ModItems.SPAWN_TETH_PIG.get());
                         pOutput.accept(ModItems.SPAWN_TETH_ENDERMAN.get());
 
                         pOutput.accept(ModItems.SPAWN_MET_ZOMBIE.get());

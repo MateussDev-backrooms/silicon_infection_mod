@@ -10,7 +10,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Optional;
 
 public class StandardTetheredBehavior implements ITetheredHook {
     private static final int GLOBAL_WARMING_RATE = 64;
@@ -43,8 +46,14 @@ public class StandardTetheredBehavior implements ITetheredHook {
         if (mob.isOnFire()) metabolism += 2;
 
         //If target is from my mod, reset target
-        if(mob.getTarget() != null && StaticSiliconiteMethods.isMobFromChemosynthesisMod(mob.getTarget())) {
-            mob.setTarget(null);
+        if(mob.getTarget() != null && mob.getTarget() instanceof Mob mobTarget) {
+            if((StaticSiliconiteMethods.isMobFromChemosynthesisMod(mob.getTarget()) || UniversalTethering.isTethered(mobTarget))) {
+                mob.setTarget(null);
+                //Stop all targeting
+                for(WrappedGoal goal : mob.targetSelector.getRunningGoals().toList()) {
+                    goal.stop();
+                }
+            }
         }
 
         //Death explosion

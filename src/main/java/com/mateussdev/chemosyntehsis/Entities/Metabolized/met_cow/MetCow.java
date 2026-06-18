@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.Entities.met_cow;
+package com.mateussdev.chemosyntehsis.Entities.Metabolized.met_cow;
 
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseMetabolized;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;

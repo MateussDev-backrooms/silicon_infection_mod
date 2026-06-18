@@ -35,8 +35,11 @@ public class Gene {
     public GeneAttributeMutation attributeMutation = new GeneAttributeMutation();
 
     public void addMutation(Mutation mutation) {
-        mutations.add(mutation);
-        //TODO: Data validation
+        //Require mutations to be unique
+        if (mutations.stream().noneMatch(m -> m.getTypeId().equals(mutation.getTypeId()))) {
+            mutations.add(mutation);
+        }
+
     }
 
     public int getCost() {

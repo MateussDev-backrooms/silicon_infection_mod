@@ -32,6 +32,8 @@ public class MutationHarpoon extends Mutation {
 
     public BulbHarpoonEntity harpoonEntity;
 
+    private static final int HARPOON_COOLDOWN = 50;
+
     @Override public boolean hasRenderLayer() { return true; }
     @Override public String getAttachBoneName() { return "head"; }
 
@@ -45,7 +47,7 @@ public class MutationHarpoon extends Mutation {
 
     @Override
     public void onInit(Mob mob) {
-        mob.goalSelector.addGoal(-1, new RangedHarpoonAIGoal(mob, 1.5f, 100, 16, this));
+        mob.goalSelector.addGoal(-1, new RangedHarpoonAIGoal(mob, 1.5f, HARPOON_COOLDOWN, 16, this));
     }
 
     @Override

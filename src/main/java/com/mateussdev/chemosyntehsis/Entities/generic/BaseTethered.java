@@ -2,6 +2,7 @@ package com.mateussdev.chemosyntehsis.Entities.generic;
 
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Core.ModMutations;
 import com.mateussdev.chemosyntehsis.Core.ModNetworking;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
@@ -136,6 +137,9 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     @Override
     protected int evolvesAtMetabolism() { return 300; }
 
+    @Override
+    protected boolean canDrown() { return true; }
+
     // ===== Default functionality ===== //
     private int tick = 0;
 
@@ -263,7 +267,7 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
         float cumulativeDamageMultiplier = 1.0f;
         if (currentGene != null) {
             for (Mutation mutation : currentGene.mutations) {
-                cumulativeDamageMultiplier *= mutation.onHurt(this, pSource, pAmount);
+                cumulativeDamageMultiplier *= mutation.onHurt(this, pSource, pAmount*cumulativeDamageMultiplier);
             }
         }
         boolean hurtResult = cumulativeDamageMultiplier > 0 && super.hurt(pSource, pAmount * cumulativeDamageMultiplier);
@@ -423,6 +427,13 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
             }
         }
         return super.canBeSeenByAnyone() && cumulative;
+    }
+
+    @Override
+    public boolean isSensitiveToWater() {
+        if(hasMutationType(ModMutations.SWIMMING.getId())) return false;
+        if(hasMutationType(ModMutations.TELEPORTATION.getId())) return true;
+        return false;
     }
 
     // ===== Saving loading ===== //

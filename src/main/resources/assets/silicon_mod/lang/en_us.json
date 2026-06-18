@@ -9,10 +9,17 @@
   "item.silicon_mod.spawn_cluster_of_flesh": "Cluster of Flesh Spawn Egg",
   "entity.silicon_mod.cluster_of_flesh": "Cluster of Flesh",
 
+  "item.silicon_mod.spawn_genome": "Genome carrier Spawn Egg",
+  "entity.silicon_mod.genome": "Genome carrier",
+
   "item.silicon_mod.spawn_teth_zombie": "Tethered Zombie Spawn Egg",
   "entity.silicon_mod.teth_zombie": "Tethered Zombie",
   "item.silicon_mod.spawn_teth_cow": "Tethered Cow Spawn Egg",
   "entity.silicon_mod.teth_cow": "Tethered Cow",
+  "item.silicon_mod.spawn_teth_sheep": "Tethered Sheep Spawn Egg",
+  "entity.silicon_mod.teth_sheep": "Tethered Sheep",
+  "item.silicon_mod.spawn_teth_pig": "Tethered Pig Spawn Egg",
+  "entity.silicon_mod.teth_pig": "Tethered Pig",
   "item.silicon_mod.spawn_teth_skeleton": "Tethered Skeleton Spawn Egg",
   "entity.silicon_mod.teth_skeleton": "Tethered Skeleton",
   "item.silicon_mod.spawn_teth_enderman": "Tethered Enderman Spawn Egg",
@@ -30,6 +37,9 @@
   "item.silicon_mod.spawn_vasc_roller": "Vascular Roller Spawn Egg",
   "entity.silicon_mod.vasc_roller": "Vascular Roller",
 
+
+  "item.silicon_mod.spawn_homunculus_t1": "Tier 1 Homunculus Spawn Egg",
+  "entity.silicon_mod.homunculus_t1": "Tier 1 Homunculus",
   "item.silicon_mod.spawn_amal_zombie": "Zombie Amalgamation Spawn Egg",
   "entity.silicon_mod.amal_zombie": "Zombie Amalgamation",
   "item.silicon_mod.spawn_amal_spawner": "Spawner Amalgamation Spawn Egg",

@@ -117,8 +117,8 @@ public class GenomeCarrier extends BaseSiliconite {
         super.tick();
 
         if(level() instanceof ServerLevel slvl) {
-            if(this.getTarget() != null && this.getTarget().distanceTo(this) < 1f) {
-                applyGenome((Mob) this.getTarget());
+            if(this.getTarget() != null && this.getTarget().distanceTo(this) < 1.3f && this.getTarget() instanceof Mob mob) {
+                applyGenome(mob);
             }
         }
     }

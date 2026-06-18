@@ -3,7 +3,7 @@ package com.mateussdev.chemosyntehsis.Entities.Tethered.teth_zombie;
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
-import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie;
+import com.mateussdev.chemosyntehsis.Entities.Metabolized.met_zombie.MetZombie;
 import net.minecraft.world.entity.Mob;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 

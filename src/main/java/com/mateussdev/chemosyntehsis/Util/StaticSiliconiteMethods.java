@@ -351,6 +351,7 @@ public class StaticSiliconiteMethods {
     }
 
     public static void updateHeadRotationAnimal(BaseSiliconite animatable, GeoModel<?> model, String boneName, float offsetPitch, float offsetYaw) {
+        if(animatable.isDeadOrDying()) return;
         GeoBone head = model.getBone(boneName).get();
 
         float yaw   = (float) Math.toRadians(animatable.yHeadRot);
@@ -360,6 +361,7 @@ public class StaticSiliconiteMethods {
     }
 
     public static void updateHeadRotationUpright(BaseSiliconite animatable, GeoModel<?> model, String boneName, float offsetPitch, float offsetYaw) {
+        if(animatable.isDeadOrDying()) return;
         GeoBone head = model.getBone(boneName).get();
 
         float yaw   = (float) Math.toRadians(animatable.yHeadRot);

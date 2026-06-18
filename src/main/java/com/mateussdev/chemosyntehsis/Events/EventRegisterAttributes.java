@@ -12,13 +12,15 @@ import com.mateussdev.chemosyntehsis.Entities.Homunculus.genome.GenomeCarrier;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.homunculus_t1.HomunculusNucleusT1;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerfocyte;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_pig.TethPig;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_sheep.TethSheep;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_erythrocyte.HybridErythrocyte;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte.HybridThrombocyte;
-import com.mateussdev.chemosyntehsis.Entities.met_cow.MetCow;
-import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie;
+import com.mateussdev.chemosyntehsis.Entities.Metabolized.met_cow.MetCow;
+import com.mateussdev.chemosyntehsis.Entities.Metabolized.met_zombie.MetZombie;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_cow.TethCow;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_skeleton.TethSkeleton;
@@ -46,6 +48,8 @@ public class EventRegisterAttributes {
         event.put(ModEntities.TETH_ZOMBIE.get(), TethZombie.createAttributes().build());
         event.put(ModEntities.TETH_SKELETON.get(), TethSkeleton.createAttributes().build());
         event.put(ModEntities.TETH_COW.get(), TethCow.createAttributes().build());
+        event.put(ModEntities.TETH_SHEEP.get(), TethSheep.createAttributes().build());
+        event.put(ModEntities.TETH_PIG.get(), TethPig.createAttributes().build());
         event.put(ModEntities.TETH_ENDERMAN.get(), TethEnderman.createAttributes().build());
 
         //Metabolized mobs

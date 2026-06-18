@@ -14,14 +14,16 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjec
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_zombie.AmalZombie_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_pig.TethPig_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_sheep.TethSheep_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_erythrocyte.HybridErythrocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_thrombocyte.HybridThrombocyte_Renderer;
 import com.mateussdev.chemosyntehsis.Systems.UniversalTethering.TetheredOverlayLayer;
-import com.mateussdev.chemosyntehsis.Entities.met_cow.MetCow_Renderer;
-import com.mateussdev.chemosyntehsis.Entities.met_zombie.MetZombie_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Metabolized.met_cow.MetCow_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Metabolized.met_zombie.MetZombie_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_cow.TethCow_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_skeleton.TethSkeleton_Renderer;
@@ -56,6 +58,8 @@ public class EventRegisterRenderer {
         EntityRenderers.register(ModEntities.TETH_ZOMBIE.get(), TethZombie_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_SKELETON.get(), TethSkeleton_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_COW.get(), TethCow_Renderer::new);
+        EntityRenderers.register(ModEntities.TETH_SHEEP.get(), TethSheep_Renderer::new);
+        EntityRenderers.register(ModEntities.TETH_PIG.get(), TethPig_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_ENDERMAN.get(), TethEnderman_Renderer::new);
 
         //Metabolized mobs

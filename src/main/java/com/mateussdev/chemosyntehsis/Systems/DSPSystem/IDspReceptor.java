@@ -23,6 +23,7 @@ public interface IDspReceptor {
         data.dspMap
                 .computeIfAbsent(pos, k -> new EnumMap<>(DSPType.class))
                 .merge(type, v, Float::sum);
+        data.setDirty();
     }
 
     default void absorbDSP(Mob self) {
@@ -66,6 +67,8 @@ public interface IDspReceptor {
             threshold.onExceed().run();
             getInternalBuffer().merge(threshold.type(), -threshold.threshold(), Float::sum);
         }
+
+        data.setDirty();
     }
 
     // ===== Customizable ===== //

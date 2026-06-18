@@ -20,10 +20,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HomunculusBrain{
 
     // ===== Config ===== //
-    public static int CYCLE_DURATION_TICKS = 600;
-    public static int BASE_GENE_POOL_POINTS = 50;
-    public static float MUTATION_DEVIATION = 0.2f;
-    public static int MAX_MUTATIONS_PER_GENE = 3;
+    public static final int CYCLE_DURATION_TICKS = 600;
+    public static final int BASE_GENE_POOL_POINTS = 50;
+    public static final float MUTATION_DEVIATION = 0.2f;
+    public static final int MAX_MUTATIONS_PER_GENE = 3;
+    public static final float MAX_RATIO = 4.0f;
 
     // ===== State management ===== //
     private int genePoolBalance;
@@ -124,7 +125,9 @@ public class HomunculusBrain{
         List<Gene> templates = templateList.isEmpty() ? Collections.emptyList() : new ArrayList<>(templateList);
         Random rand = new Random();
 
-        while (remainingPoints > 0) {
+        int attempts = 0;
+        while (remainingPoints > 0 && attempts < 100) {
+            attempts++;
             Gene candidate;
             if (!templates.isEmpty()) {
                 //Create new gene by mutating an existing template gene
@@ -138,11 +141,14 @@ public class HomunculusBrain{
             if (cost <= remainingPoints) {
                 result.add(candidate);
                 remainingPoints -= cost;
+                attempts = 0;
             } else {
                 //If we cannot afford even the cheapest possible gene, break to avoid infinite loop
                 if (result.isEmpty() && templates.isEmpty()) break;
                 //Otherwise try another template or random gene (may succeed with lower cost)
             }
+            //If we've tried many times and still can't afford anything, just break
+            if (attempts >= 100 && result.isEmpty()) break;
         }
 
         genePoolBalance = 0; //We used up all the points. Set the gene pool to zero
@@ -187,15 +193,15 @@ public class HomunculusBrain{
         //Mutate slightly each ratio
         GeneAttributeMutation attributeMutation = mutated.attributeMutation;
         //Add a random amount between 0 and deviation, and have uniform 50/50 for it to get added or get subtracted
-        attributeMutation.health_speed += mutateRatio(rand, attributeMutation.health_speed);
-        attributeMutation.health_armor += mutateRatio(rand, attributeMutation.health_armor);
-        attributeMutation.armor_attackDamage += mutateRatio(rand, attributeMutation.armor_attackDamage);
-        attributeMutation.armorToughness_armor += mutateRatio(rand, attributeMutation.armorToughness_armor);
-        attributeMutation.attackSpeed_attackDamage += mutateRatio(rand, attributeMutation.attackSpeed_attackDamage);
-        attributeMutation.attackSpeed_attackKnockback += mutateRatio(rand, attributeMutation.attackSpeed_attackKnockback);
-        attributeMutation.speed_knockbackResistance += mutateRatio(rand, attributeMutation.speed_knockbackResistance);
-        attributeMutation.followRange_attackDamage += mutateRatio(rand, attributeMutation.followRange_attackDamage);
-        attributeMutation.followRange_speed += mutateRatio(rand, attributeMutation.followRange_speed);
+        attributeMutation.health_speed = mutateRatio(rand, attributeMutation.health_speed);
+        attributeMutation.health_armor = mutateRatio(rand, attributeMutation.health_armor);
+        attributeMutation.armor_attackDamage = mutateRatio(rand, attributeMutation.armor_attackDamage);
+        attributeMutation.armorToughness_armor = mutateRatio(rand, attributeMutation.armorToughness_armor);
+        attributeMutation.attackSpeed_attackDamage = mutateRatio(rand, attributeMutation.attackSpeed_attackDamage);
+        attributeMutation.attackSpeed_attackKnockback = mutateRatio(rand, attributeMutation.attackSpeed_attackKnockback);
+        attributeMutation.speed_knockbackResistance = mutateRatio(rand, attributeMutation.speed_knockbackResistance);
+        attributeMutation.followRange_attackDamage = mutateRatio(rand, attributeMutation.followRange_attackDamage);
+        attributeMutation.followRange_speed = mutateRatio(rand, attributeMutation.followRange_speed);
 
         if (rand.nextFloat() < 0.3f && mutated.mutations.size() < MAX_MUTATIONS_PER_GENE) {
             RegistryObject<MutationType> randomType = ModMutations.MUTATION_TYPES.getEntries().stream().toList()
@@ -213,14 +219,19 @@ public class HomunculusBrain{
         //Since ratios are not linear but logarithmic, adjust
         float log = (float) Math.log(Math.max(value, 1e-6f));
         log += rand.nextFloat() * MUTATION_DEVIATION * (rand.nextBoolean() ? 1 : -1);
-        return (float) Math.exp(log);
+        return clampRatio((float) Math.exp(log));
+    }
+
+    private float clampRatio(float value) {
+        return Math.min(Math.max(value, 1f / MAX_RATIO), MAX_RATIO);
     }
 
     private float randomRatio(Random rng, float maxDiff) {
         float sideA = Math.max(rng.nextFloat()*maxDiff, 0.00001f); //generate random float between 0 and max
         float sideB = Math.max(rng.nextFloat()*maxDiff, 0.00001f); //generate random float between 0 and max
+        float ratio = sideA/sideB;
 
-        return sideA/sideB;
+        return Math.min(Math.max(ratio, 1f / MAX_RATIO), MAX_RATIO);
     }
 
     private Mob findUniqueTarget(List<Mob> alreadyAssigned, ServerLevel level, Vec3 center, double radius) {

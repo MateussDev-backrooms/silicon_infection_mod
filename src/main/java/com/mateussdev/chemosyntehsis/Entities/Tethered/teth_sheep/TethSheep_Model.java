@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.Entities.met_cow;
+package com.mateussdev.chemosyntehsis.Entities.Tethered.teth_sheep;
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
@@ -6,38 +6,43 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 
-public class MetCow_Model extends GeoModel<MetCow> {
+public class TethSheep_Model extends GeoModel<TethSheep> {
     //MODEL PATH
     private static final ResourceLocation model = new ResourceLocation(Chemosynthesis.MODID,
-            "geo/entity/met_cow.geo.json");
+            "geo/entity/teth_sheep.geo.json");
     //TEXTURE PATH
     private static final ResourceLocation texture = new ResourceLocation(Chemosynthesis.MODID,
-            "textures/entity/met_cow.png");
+            "textures/entity/teth_sheep.png");
     //ANIMATIONS PATH
     private static final ResourceLocation animation = new ResourceLocation(Chemosynthesis.MODID,
-            "animations/entity/met_cow.animation.json");
+            "animations/entity/teth_sheep.animation.json");
 
     @Override
-    public ResourceLocation getModelResource(MetCow object) { return model; }
+    public ResourceLocation getModelResource(TethSheep object) { return model; }
 
     @Override
-    public ResourceLocation getTextureResource(MetCow object) { return texture; }
+    public ResourceLocation getTextureResource(TethSheep object) { return texture; }
 
     @Override
-    public ResourceLocation getAnimationResource(MetCow object) { return animation; }
+    public ResourceLocation getAnimationResource(TethSheep object) { return animation; }
 
     private int t = 0;
     @Override
-    public void setCustomAnimations(MetCow animatable, long instanceId, AnimationState<MetCow> animationState) {
+    public void setCustomAnimations(TethSheep animatable, long instanceId, AnimationState<TethSheep> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
+
+        //Missing bulb visuals
         StaticSiliconiteMethods.updateBulbVisuals(animatable, this);
+
         //Breathing
         StaticSiliconiteMethods.updateBreathing(this, "body", 20, 0.02, animationState.getPartialTick(), t);
         t++;
 
         //Head movement
-        StaticSiliconiteMethods.updateHeadRotationAnimal(animatable, this, "head", (float) Math.PI/2, 0f);
+        StaticSiliconiteMethods.updateHeadRotationUpright(animatable, this, "head", 0, 0f);
 
         StaticSiliconiteMethods.updateBoneWobble(animatable, this, animationState.getPartialTick());
+
+
     }
 }

@@ -31,6 +31,7 @@ public class TethEnderman_Model extends GeoModel<TethEnderman> {
     @Override
     public void setCustomAnimations(TethEnderman animatable, long instanceId, AnimationState<TethEnderman> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
+
         StaticSiliconiteMethods.updateBulbVisuals(animatable, this);
         //Breathing
         StaticSiliconiteMethods.updateBreathing(this, "body", 20, 0.02, animationState.getPartialTick(), t);

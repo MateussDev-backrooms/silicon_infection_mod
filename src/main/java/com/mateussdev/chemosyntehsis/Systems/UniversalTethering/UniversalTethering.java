@@ -37,19 +37,30 @@ public class UniversalTethering {
                     EntityType.HUSK, ModEntities.TETH_ZOMBIE.get(),
                     EntityType.DROWNED, ModEntities.TETH_ZOMBIE.get(),
                     EntityType.COW, ModEntities.TETH_COW.get(),
+                    EntityType.PIG, ModEntities.TETH_PIG.get(),
+                    EntityType.SHEEP, ModEntities.TETH_SHEEP.get(),
                     EntityType.SKELETON, ModEntities.TETH_SKELETON.get(),
                     EntityType.STRAY, ModEntities.TETH_SKELETON.get(),
                     EntityType.ENDERMAN, ModEntities.TETH_ENDERMAN.get()
             );
 
+    private static final float MINIMAL_HITBOX_VOLUME_FOR_TETHER = 0.8f;
+
     public static void tryTetherMob(Mob tetherTarget, ServerLevel serverLevel) {
         EntityType<? extends LivingEntity> handmadeTetheredVariant = handmadeTetheredMobs.get(tetherTarget.getType());
         if(handmadeTetheredVariant==null) {
             //Split into chunks depending on the bounding box size
-            if(StaticSiliconiteMethods.boundingBoxVolume(tetherTarget.getBoundingBox()) < 0f) {
+            if(StaticSiliconiteMethods.boundingBoxVolume(tetherTarget.getBoundingBox()) < MINIMAL_HITBOX_VOLUME_FOR_TETHER) {
                 StaticSiliconiteMethods.splitIntoChunks(serverLevel, tetherTarget.blockPosition(), Mth.clamp(Mth.ceil(StaticSiliconiteMethods.boundingBoxVolume(tetherTarget.getBoundingBox())), 2, 64));
                 tetherTarget.discard();
             } else {
+                //Conditions for tethering
+
+                //Cannot be from my own mod
+                if(StaticSiliconiteMethods.isMobFromChemosynthesisMod(tetherTarget)) return;
+
+                //Cannot tether stationary mobs
+
                 SiliconiteParticles.spawnTransformationParticle(serverLevel, tetherTarget.blockPosition());
                 serverLevel.playSound(
                         null,
