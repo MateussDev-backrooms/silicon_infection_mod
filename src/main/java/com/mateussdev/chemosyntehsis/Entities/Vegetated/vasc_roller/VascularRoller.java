@@ -9,7 +9,7 @@ import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Interfaces.IBiomassContainer;
-import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
+import com.mateussdev.chemosyntehsis.Systems.MobCapSystem.GlobalMobCap;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import net.minecraft.core.BlockPos;

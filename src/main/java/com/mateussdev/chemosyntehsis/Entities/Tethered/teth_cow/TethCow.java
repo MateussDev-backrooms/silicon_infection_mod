@@ -1,22 +1,23 @@
 package com.mateussdev.chemosyntehsis.Entities.Tethered.teth_cow;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.Metabolized.met_cow.MetCow;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
-import com.mateussdev.chemosyntehsis.Entities.Metabolized.met_cow.MetCow;
 import net.minecraft.server.level.ServerLevel;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.model.GeoModel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.model.GeoModel;
 
 public class TethCow extends BaseTethered {
     public TethCow(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
+        this.bulbCount = 12;
     }
 
     // ===== Entity setup and stats ===== //
@@ -60,7 +61,7 @@ public class TethCow extends BaseTethered {
                 model.getBone("appendage13").get()
         };
 
-        if(hasScrambled) {
+        if (hasScrambled) {
             return scrambled_bulbs;
         } else {
             scrambled_bulbs = StaticSiliconiteMethods.scrambleBones(bulbs);
@@ -70,20 +71,13 @@ public class TethCow extends BaseTethered {
     }
 
     @Override
-    public int getBulbCount() {
-        return 12;
-    }
-
-    @Override
     public void evolve() {
-        if (this.level() instanceof ServerLevel slvl) {
-            MetCow metCow = ModEntities.MET_COW.get().create(slvl);
-            metCow.moveTo(blockPosition().getCenter());
-            slvl.addFreshEntity(metCow);
-            StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
-            this.discard();
-
-        }
+        if (!(this.level() instanceof ServerLevel slvl)) return;
+        MetCow metCow = ModEntities.MET_COW.get().create(slvl);
+        metCow.moveTo(blockPosition().getCenter());
+        slvl.addFreshEntity(metCow);
+        StaticSiliconiteMethods.spawnTransformationParticle(slvl, blockPosition());
+        this.discard();
     }
 
 }

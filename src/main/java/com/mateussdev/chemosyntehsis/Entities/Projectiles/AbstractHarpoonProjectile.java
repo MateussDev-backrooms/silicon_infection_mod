@@ -20,12 +20,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public abstract class AbstractHarpoonProjectile extends AbstractArrow {
+public abstract class AbstractHarpoonProjectile extends AbstractArrow implements GeoAnimatable {
     protected AbstractHarpoonProjectile(EntityType<? extends AbstractArrow> pEntityType, Level pLevel, boolean canAttachToBlocks, boolean canAttachToMobs, boolean dragItself) {
         super(pEntityType, pLevel);
         this.canAttachToBlocks = canAttachToBlocks;
@@ -235,6 +236,8 @@ public abstract class AbstractHarpoonProjectile extends AbstractArrow {
 
         if(getOwner() != null) {
             decreaseLength(1);
+            //Instantly retract when reached max length
+            if(getHarpoonLeftLength() <= 0) RetractHarpoon();
             if(getHarpoonLeftLength() > 0 && getCurrentAttachType() != AttachTypes.Reeling.ordinal()) {
 
                 setPosToHarpoonPos();

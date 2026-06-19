@@ -23,6 +23,8 @@ import net.minecraft.world.level.Level;
 public class TethSkeleton extends BaseTethered implements RangedAttackMob {
     public TethSkeleton(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
+        this.explodeOnDeath = false;
+        this.bulbCount = 8;
     }
 
     // ===== Entity setup and stats ===== //
@@ -100,11 +102,6 @@ public class TethSkeleton extends BaseTethered implements RangedAttackMob {
         this.level().playSound(null, this.blockPosition(), SoundEvents.MUD_BREAK, SoundSource.HOSTILE, 1.0F, 1.0F);
     }
 
-    @Override
-    protected boolean explodeOnDeath() {
-        return false;
-    }
-
     // ===== Bulb setup ===== //
     private boolean hasScrambled = false;
     private GeoBone[] scrambled_bulbs = {};
@@ -130,10 +127,5 @@ public class TethSkeleton extends BaseTethered implements RangedAttackMob {
             hasScrambled = true;
             return scrambled_bulbs;
         }
-    }
-
-    @Override
-    public int getBulbCount() {
-        return 8;
     }
 }

@@ -40,6 +40,9 @@ public abstract class BaseOrganelle extends BaseSiliconite {
         this.setPersistenceRequired();
         this.setNoGravity(true);
         this.setYBodyRot(0);
+
+        this.bulbBreakoffChance = 0f;
+        this.discardOnTether = false;
     }
 
 
@@ -312,11 +315,6 @@ public abstract class BaseOrganelle extends BaseSiliconite {
 
         calculateAttachOrientation();
 
-    }
-
-    @Override
-    protected boolean destructiveTether() {
-        return false;
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerf
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_zombie.AmalZombie_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.mutated_harpoon.MutatedHarpoonEntity_Render;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_pig.TethPig_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_sheep.TethSheep_Renderer;
@@ -94,6 +95,7 @@ public class EventRegisterRenderer {
         //Projectile
         EntityRenderers.register(ModEntities.BULB_PROJECTILE.get(), BulbProjectileEntity_Render::new);
         EntityRenderers.register(ModEntities.BULB_HARPOON_PROJECTILE.get(), BulbHarpoonEntity_Render::new);
+        EntityRenderers.register(ModEntities.MUTATED_HARPOON_PROJECTILE.get(), MutatedHarpoonEntity_Render::new);
 
         //GibEntities
         EntityRenderers.register(ModEntities.GIB_FLESH.get(), GibFlesh_Renderer::new);

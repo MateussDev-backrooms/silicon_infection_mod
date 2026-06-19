@@ -14,18 +14,26 @@ import net.minecraft.world.level.Level;
 public class MetZombie extends BaseMetabolized {
     public MetZombie(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
+        this.bulbCount = 8;
     }
 
     //##### Entity setup and stats #####//
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
+                //Basics
                 .add(Attributes.MAX_HEALTH, 12D)
                 .add(Attributes.MOVEMENT_SPEED, 0.35D)
                 .add(Attributes.FOLLOW_RANGE, 25D)
-                .add(Attributes.ARMOR_TOUGHNESS, 3D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0d)
+                //Attack
                 .add(Attributes.ATTACK_KNOCKBACK, 0.5D)
                 .add(Attributes.ATTACK_SPEED, 2D)
-                .add(Attributes.ATTACK_DAMAGE, 8D);
+                .add(Attributes.ATTACK_DAMAGE, 8D)
+                //Armor
+                .add(Attributes.ARMOR, 0d)
+                .add(Attributes.ARMOR_TOUGHNESS, 0D)
+
+                ;
     }
 
     // ===== Bulb setup ===== //

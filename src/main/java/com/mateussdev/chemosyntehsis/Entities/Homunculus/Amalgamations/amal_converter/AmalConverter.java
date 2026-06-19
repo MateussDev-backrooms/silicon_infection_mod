@@ -2,10 +2,7 @@ package com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_con
 
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Core.ModBlocks;
-import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_turret.AmalTurret;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
-import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
 import com.mateussdev.chemosyntehsis.Systems.DSPSystem.AmalgamationDSPConversions;
 import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPThreshold;
 import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPType;
@@ -19,7 +16,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -78,7 +74,7 @@ public class AmalConverter extends BaseAmalgamation {
                             && state.getDestroySpeed(slvl, pos) > 0.2) {
                         //In the infection radius
                         ResourceLocation blockKey = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-                        Block convertToBlock = StaticSiliconiteMethods.infectionConversionMap.get(state.getBlock());
+                        Block convertToBlock = StaticSiliconiteMethods.INFECTION_CONVERT_MAP.get(state.getBlock());
 
                         double dstSquared = pos.distSqr(blockPosition());
                         double dstNormalized = dstSquared/(entityData.get(CONVERT_RADIUS)*entityData.get(CONVERT_RADIUS));
@@ -91,7 +87,7 @@ public class AmalConverter extends BaseAmalgamation {
                         else if(dstBiased < 0.66) convertToBlock = ModBlocks.SILICATE_BLOCK_L3.get();
 
                         if(state.getBlock() == convertToBlock) continue;
-                        if(StaticSiliconiteMethods.blockConversionBlacklist.contains(state.getBlock())) continue;
+                        if(StaticSiliconiteMethods.BLOCK_CONVERSION_BLACKLIST.contains(state.getBlock())) continue;
                         if(convertToBlock == null && blockKey.getNamespace().equals(Chemosynthesis.MODID)) continue;
                         if(convertToBlock == null && !blockKey.getNamespace().equals(Chemosynthesis.MODID)) convertToBlock = ModBlocks.SILICATE_BLOCK_L3.get();
 //                        slvl.destroyBlock(pos, false);

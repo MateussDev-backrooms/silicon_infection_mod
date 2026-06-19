@@ -8,14 +8,6 @@ import com.mateussdev.chemosyntehsis.Entities.generic.BaseHybrid;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.player.Player;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -25,22 +17,33 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.model.GeoModel;
 
 import java.util.List;
 
-import static com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods.spawnBloodBurst;
-
 public class ChunkOfFlesh extends BaseSiliconite {
     public ChunkOfFlesh(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
+        this.tetherChance = 0f;
+        this.bulbBreakoffChance = 0f;
     }
 
     protected int evolution_t = 0;
@@ -80,7 +83,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
             }
 
             return event.setAndContinue(
-                    event.isMoving() ? RawAnimation.begin().thenLoop("walk"):
+                    event.isMoving() ? RawAnimation.begin().thenLoop("walk") :
                             RawAnimation.begin().thenLoop("idle"));
         }));
     }
@@ -107,32 +110,22 @@ public class ChunkOfFlesh extends BaseSiliconite {
     }
 
     @Override
-    protected float getTetherChance() {
-        return 0.0f;
-    }
-
-    @Override
-    protected float getBulbBreakoffChance() {
-        return 0.0f;
-    }
-
-    @Override
     public GeoBone[] getBulbsArray(GeoModel<?> model) {
         return new GeoBone[0];
     }
 
     public void consumeBiomush() {
-
         evolveIntoHybrid();
         this.discard();
     }
 
     private boolean _brw = true;
+
     @Override
     public void tick() {
         super.tick();
         if (entityData.get(IS_BURROWING) && _brw) {
-            level().playSound(this, this.blockPosition(), SoundEvents.WARDEN_DIG, SoundSource.HOSTILE, 1f, 1f);
+            this.level().playSound(this, this.blockPosition(), SoundEvents.WARDEN_DIG, SoundSource.HOSTILE, 1f, 1f);
             _brw = false;
         }
 
@@ -140,9 +133,9 @@ public class ChunkOfFlesh extends BaseSiliconite {
             mergeIntoCluster();
         }
 
-        if(tickCount % 60 == 0) {
-            if (!level().isClientSide && !this.mustEvolve && --clusterCooldown <= 0) {
-                List<ChunkOfFlesh> nearby = level().getEntitiesOfClass(
+        if (tickCount % 60 == 0) {
+            if (this.level() instanceof ServerLevel slvl && !this.mustEvolve && --clusterCooldown <= 0 && !entityData.get((IS_BURROWING))) {
+                List<ChunkOfFlesh> nearby = this.level().getEntitiesOfClass(
                         ChunkOfFlesh.class,
                         this.getBoundingBox().inflate(MERGE_RADIUS),
                         c -> c != this && !c.mustEvolve && !c.entityData.get(IS_BURROWING)
@@ -156,26 +149,22 @@ public class ChunkOfFlesh extends BaseSiliconite {
     }
 
     private void initiateMerge(List<ChunkOfFlesh> others) {
+        if (!(this.level() instanceof ServerLevel slvl)) return;
+
         this.mustEvolve = true;
+        for (ChunkOfFlesh c : others) { c.mustEvolve = true; }
+
+        Vec3 center = this.position();
 
         for (ChunkOfFlesh c : others) {
-            c.mustEvolve = true;
+            Vec3 dir = center.subtract(c.position());
+            c.setDeltaMovement(dir);
+            c.setBurrowAnimation(true);
         }
 
-        if (level() instanceof ServerLevel slvl) {
-            Vec3 center = this.position();
+        SiliconiteParticles.spawnBloodBurst(slvl, blockPosition());
 
-            // Suck the others inward (visual feedback)
-            for (ChunkOfFlesh c : others) {
-                Vec3 dir = center.subtract(c.position()).normalize();
-                c.setDeltaMovement(dir.scale(0.5));
-                c.setBurrowAnimation(true);
-            }
-
-            SiliconiteParticles.spawnBloodBurst(slvl, blockPosition());
-
-            slvl.scheduleTick(this.blockPosition(), Blocks.AIR, 20);
-        }
+        slvl.scheduleTick(this.blockPosition(), Blocks.AIR, 20);
     }
 
     private void mergeIntoCluster() {
@@ -190,7 +179,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
         if (all.stream().anyMatch(c -> c.getId() < this.getId())) return;
 
         // Effects
-        spawnBloodBurst(slvl, this.blockPosition());
+        SiliconiteParticles.spawnBloodBurst(slvl, this.blockPosition());
         slvl.playSound(null, blockPosition(), SoundEvents.MUD_FALL, SoundSource.HOSTILE, 1f, 3f);
 
         // Spawn Cluster
@@ -205,30 +194,28 @@ public class ChunkOfFlesh extends BaseSiliconite {
     }
 
 
-
-
     public void evolveIntoHybrid() {
-        if(this.level() instanceof ServerLevel slvl) {
-            spawnBloodBurst(slvl, this.blockPosition());
-            slvl.playSound(null, this.blockPosition(), SoundEvents.ZOMBIE_INFECT, SoundSource.HOSTILE);
+        if (!(this.level() instanceof ServerLevel slvl)) return;
 
-            BaseHybrid result = HYBRID_EVOLUTION_RESULTS.get(slvl.random.nextInt(HYBRID_EVOLUTION_RESULTS.size())).create(slvl);
-            if(result == null) return;
+        SiliconiteParticles.spawnBloodBurst(slvl, this.blockPosition());
+        slvl.playSound(null, this.blockPosition(), SoundEvents.ZOMBIE_INFECT, SoundSource.HOSTILE);
 
-            result.moveTo(this.getX(), this.getY(), this.getZ());
-            slvl.addFreshEntity(result);
-        }
+        BaseHybrid result = HYBRID_EVOLUTION_RESULTS.get(slvl.random.nextInt(HYBRID_EVOLUTION_RESULTS.size())).create(slvl);
+        if (result == null) return;
+
+        result.moveTo(this.getX(), this.getY(), this.getZ());
+        slvl.addFreshEntity(result);
     }
 
     public void setBurrowAnimation(boolean bool) {
         doBurrowAnim = bool;
         entityData.set(IS_BURROWING, bool);
-        if(!bool) _brw = true;
+        if (!bool) _brw = true;
     }
 
     @Override
     public void push(double pX, double pY, double pZ) {
-        if(entityData.get(IS_BURROWING)) {
+        if (entityData.get(IS_BURROWING)) {
             super.push(0d, 0d, 0d);
         } else {
             super.push(pX, pY, pZ);

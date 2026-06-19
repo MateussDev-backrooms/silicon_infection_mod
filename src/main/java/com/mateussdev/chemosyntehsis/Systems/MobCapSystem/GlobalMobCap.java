@@ -1,4 +1,4 @@
-package com.mateussdev.chemosyntehsis.Util;
+package com.mateussdev.chemosyntehsis.Systems.MobCapSystem;
 
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import net.minecraft.core.BlockPos;

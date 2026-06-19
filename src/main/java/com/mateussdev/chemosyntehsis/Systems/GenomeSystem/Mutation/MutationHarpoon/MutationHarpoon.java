@@ -3,6 +3,7 @@ package com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationHarp
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.AbstractHarpoonProjectile;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.mutated_harpoon.MutatedHarpoonEntity;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationFlight.MutationFlight;
 import net.minecraft.resources.ResourceLocation;
@@ -30,7 +31,7 @@ public class MutationHarpoon extends Mutation {
     private final GeoModel<MutationHarpoon> model = new MutationHarpoon_Model();
     private final GeoRenderer<MutationHarpoon> renderer = new MutationHarpoon_Renderer(model);
 
-    public BulbHarpoonEntity harpoonEntity;
+    public MutatedHarpoonEntity harpoonEntity;
 
     private static final int HARPOON_COOLDOWN = 50;
 
@@ -47,16 +48,17 @@ public class MutationHarpoon extends Mutation {
 
     @Override
     public void onInit(Mob mob) {
-        mob.goalSelector.addGoal(-1, new RangedHarpoonAIGoal(mob, 1.5f, HARPOON_COOLDOWN, 16, this));
+        mob.goalSelector.addGoal(-1, new RangedHarpoonAIGoal(mob, 1.5f, HARPOON_COOLDOWN, 8, this));
     }
 
     @Override
     public float onHurt(Mob mob, DamageSource source, float amount) {
-        if(harpoonEntity != null) {
-            harpoonEntity.setAttached(false);
-            harpoonEntity.setTarget(null);
-            harpoonEntity.setCurrentAttachType(AbstractHarpoonProjectile.AttachTypes.Reeling);
-        }
+//        if(harpoonEntity != null) {
+//            harpoonEntity.setAttached(false);
+//            harpoonEntity.setTarget(null);
+//            harpoonEntity.setCurrentAttachType(AbstractHarpoonProjectile.AttachTypes.Reeling);
+//            harpoonEntity = null;
+//        }
         return super.onHurt(mob, source, amount);
     }
 

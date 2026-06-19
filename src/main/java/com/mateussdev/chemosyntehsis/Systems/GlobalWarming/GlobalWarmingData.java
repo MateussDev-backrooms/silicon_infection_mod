@@ -2,19 +2,24 @@ package com.mateussdev.chemosyntehsis.Systems.GlobalWarming;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.saveddata.SavedData;
 
 public class GlobalWarmingData extends SavedData {
+
+    //TODO: Make the system chunk-based, having a heatmap of activity and local effects
+    //Keep the global temperature too
+
     private static final String DATA_SAVE_NAME = "silicon_greenhousePoints";
     private float greenhousePoints = 0;
 
-    public String[] phaseNames = {"Dormant", "Interphase", "Prophase", "Metaphase", "Anaphase", "Telophase", "Cytokinesis"};
+    public static final String[] PHASE_NAMES = {"Dormant", "Interphase", "Prophase", "Metaphase", "Anaphase", "Telophase", "Cytokinesis"};
     public static final int[] PHASE_THRESHOLD = {0, 100, 500, 2500, 10000, 50000, 100000};
 
-    public static GlobalWarmingData get(Level level) {
-        return level.getServer().overworld().getDataStorage().computeIfAbsent(
+    public static GlobalWarmingData get(ServerLevel level) {
+        return level.getDataStorage().computeIfAbsent(
                 GlobalWarmingData::load,
                 GlobalWarmingData::new,
                 DATA_SAVE_NAME

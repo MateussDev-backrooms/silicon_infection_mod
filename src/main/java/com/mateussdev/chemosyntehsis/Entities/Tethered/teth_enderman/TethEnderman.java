@@ -56,6 +56,7 @@ public class TethEnderman extends BaseTethered {
         super(p_33002_, p_33003_);
         this.setMaxUpStep(1.0F);
         this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
+        this.bulbCount = 5;
     }
 
     private int angerSoundT = 0;
@@ -132,18 +133,6 @@ public class TethEnderman extends BaseTethered {
     }
 
     @Override
-    public int getBulbCount() {
-        return 5;
-    }
-
-    @Override
-    public void evolve() {
-        if (this.level() instanceof ServerLevel slvl) {
-
-        }
-    }
-
-    @Override
     public void tick() {
         super.tick();
 
@@ -175,12 +164,6 @@ public class TethEnderman extends BaseTethered {
                 this.level().addParticle(ParticleTypes.PORTAL, this.getRandomX(0.5), this.getRandomY() - 0.25, this.getRandomZ(0.5), (this.random.nextDouble() - 0.5) * 2.0, -this.random.nextDouble(), (this.random.nextDouble() - 0.5) * 2.0);
             }
         }
-    }
-
-    @Override
-    public void aiStep() {
-        super.aiStep();
-
     }
 
     @Override

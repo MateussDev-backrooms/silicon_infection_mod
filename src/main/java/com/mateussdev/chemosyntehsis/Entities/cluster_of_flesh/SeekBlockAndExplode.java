@@ -21,7 +21,7 @@ public class SeekBlockAndExplode extends Goal {
 
     @Override
     public boolean canUse() {
-        // Look for biomush nearby
+        //Look for biomush nearby
         targetPos = findNearbyBiomush();
         return targetPos != null;
     }
@@ -48,6 +48,7 @@ public class SeekBlockAndExplode extends Goal {
         if (state.getBlock() instanceof BiomushBlock) {
 
             //KABOOM
+            mob.separateCluster();
 
         } else {
 

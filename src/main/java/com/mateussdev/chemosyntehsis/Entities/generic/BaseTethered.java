@@ -51,10 +51,17 @@ import java.util.*;
 public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     protected BaseTethered(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
+        this.tetherChance = 0.6f;
+        this.discardOnTether = false;
+        this.metabolismEvolutionThreshold = 300;
     }
 
     // ===== CONSTANTS ===== //
     protected static final int IDLE_GLOBAL_WARMING_RATE = 64;
+
+    // ===== ENTITY VARS ===== //
+    //Change in constructor
+    protected boolean explodeOnDeath = true;
 
     //Genome system
     public Gene currentGene = null;
@@ -120,6 +127,7 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
 
     // ===== Customization ===== //
 
+    @Deprecated
     protected boolean explodeOnDeath() { return true; }
 
     @Override
@@ -141,12 +149,10 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     protected boolean canDrown() { return true; }
 
     // ===== Default functionality ===== //
-    private int tick = 0;
 
     @Override
     public void tick() {
-        tick++;
-        if (tick % IDLE_GLOBAL_WARMING_RATE == 0) {
+        if (tickCount % IDLE_GLOBAL_WARMING_RATE == 0) {
             if (this.level() instanceof ServerLevel slvl) {
                 GlobalWarmingData data = GlobalWarmingData.get(slvl);
                 data.addPoints(0.01f);

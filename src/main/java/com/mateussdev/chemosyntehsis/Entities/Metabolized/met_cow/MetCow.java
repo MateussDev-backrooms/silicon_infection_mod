@@ -14,18 +14,26 @@ import software.bernie.geckolib.model.GeoModel;
 public class MetCow extends BaseMetabolized {
     public MetCow(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
+        this.bulbCount = 8;
     }
 
     //##### Entity setup and stats #####//
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
+                //Basics
                 .add(Attributes.MAX_HEALTH, 10D)
                 .add(Attributes.MOVEMENT_SPEED, 0.40D)
                 .add(Attributes.FOLLOW_RANGE, 25D)
-                .add(Attributes.ARMOR_TOUGHNESS, 3D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0d)
+                //Attack
                 .add(Attributes.ATTACK_KNOCKBACK, 0.5D)
                 .add(Attributes.ATTACK_SPEED, 2D)
-                .add(Attributes.ATTACK_DAMAGE, 8D);
+                .add(Attributes.ATTACK_DAMAGE, 8D)
+                //Armor
+                .add(Attributes.ARMOR, 0d)
+                .add(Attributes.ARMOR_TOUGHNESS, 0D)
+
+                ;
     }
 
     // ===== Bulb setup ===== //
@@ -53,12 +61,5 @@ public class MetCow extends BaseMetabolized {
             hasScrambled = true;
             return scrambled_bulbs;
         }
-    }
-
-    int cooldown = 0;
-
-    @Override
-    public int getBulbCount() {
-        return 8;
     }
 }

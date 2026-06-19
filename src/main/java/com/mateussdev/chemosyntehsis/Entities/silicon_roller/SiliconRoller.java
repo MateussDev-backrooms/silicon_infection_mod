@@ -18,11 +18,8 @@ import net.minecraft.world.level.Level;
 public class SiliconRoller extends BaseSiliconite {
     public SiliconRoller(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
-    }
-
-    @Override
-    protected boolean destructiveTether() {
-        return true;
+        this.discardOnTether = true;
+        this.bulbCount = 18;
     }
 
     //##### Entity setup and stats #####//
@@ -114,15 +111,10 @@ public class SiliconRoller extends BaseSiliconite {
         super.tick();
 
         //kill if lost too many bulbs
-        if(entityData.get(BROKEN_OFF_BULBS_VALUE) >= getBulbCount() - 2) {
+        if(entityData.get(BROKEN_OFF_BULBS_VALUE) >= bulbCount - 2) {
             explodeIntoBulbs();
             this.level().broadcastEntityEvent(this, (byte)60);
             this.remove(RemovalReason.KILLED);
         }
-    }
-
-    @Override
-    public int getBulbCount() {
-        return 18;
     }
 }

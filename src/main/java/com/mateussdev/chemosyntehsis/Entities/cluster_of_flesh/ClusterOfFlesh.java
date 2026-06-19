@@ -7,6 +7,7 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjec
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
+import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
 import net.minecraft.core.BlockPos;
@@ -83,7 +84,7 @@ public class ClusterOfFlesh extends BaseSiliconite {
                     mobPos.offset(-2, -2, -2),
                     mobPos.offset(2, 2, 2))) {
 
-                BlockState state = level().getBlockState(pos);
+                BlockState state = this.level().getBlockState(pos);
 
                 if (state.getBlock() instanceof BiomushBlock
                         && !state.getValue(BiomushBlock.IS_CONSUMED)) {
@@ -98,22 +99,18 @@ public class ClusterOfFlesh extends BaseSiliconite {
     protected void tickDeath() {
         ++deathTime;
 
-        if (deathTime == 8 && !level().isClientSide) {
+        if (deathTime == 8 && !this.level().isClientSide) {
             separateCluster();
         }
     }
 
     public void separateCluster() {
+        if(!(this.level() instanceof ServerLevel slvl)) return;
+
         explodeIntoBulbs();
-        spawnBloodBurst();
+        SiliconiteParticles.spawnBloodBurst(slvl, blockPosition());
         splitIntoChunks(5);
-        level().playSound(
-                null,
-                blockPosition(),
-                SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR,
-                SoundSource.HOSTILE,
-                1f,
-                1f);
+        this.level().playSound(null, blockPosition(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.HOSTILE, 1f, 1f);
         this.level().broadcastEntityEvent(this, (byte)60);
         this.remove(RemovalReason.KILLED);
     }
@@ -122,35 +119,14 @@ public class ClusterOfFlesh extends BaseSiliconite {
         for (int i = 0; i < 8; i++) {
             BulbProjectileEntity shard = new BulbProjectileEntity(level(),this);
             shard.shoot(
-                    level().random.triangle(0, 1),
-                    level().random.triangle(0.2, 1),
-                    level().random.triangle(0, 1),
-                    1.2f, // speed
-                    10.0f // inaccuracy
+                    this.level().random.triangle(0, 1),
+                    this.level().random.triangle(0.2, 1),
+                    this.level().random.triangle(0, 1),
+                    1.2f,
+                    10.0f
             );
-            level().addFreshEntity(shard);
+            this.level().addFreshEntity(shard);
         }
-    }
-
-    private void spawnBloodBurst() {
-        if (!(this.level() instanceof ServerLevel serverLevel)) return;
-
-        DustParticleOptions blood = new DustParticleOptions(
-                new Vector3f(0.8f, 0.2f, 0.0f),
-                3.0f
-        );
-
-        serverLevel.sendParticles(
-                blood,
-                this.getX(),
-                this.getY() + 1.0,
-                this.getZ(),
-                30,
-                0.3,
-                0.5,
-                0.3,
-                0.1
-        );
     }
 
     // ===== Bulb setup ===== //

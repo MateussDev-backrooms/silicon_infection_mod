@@ -1,15 +1,13 @@
 package com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_spawner;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_turret.AmalTurret;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseAmalgamation;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
-import com.mateussdev.chemosyntehsis.Particles.SiliconiteParticles;
 import com.mateussdev.chemosyntehsis.Systems.DSPSystem.AmalgamationDSPConversions;
 import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPThreshold;
 import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPType;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
-import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
+import com.mateussdev.chemosyntehsis.Systems.MobCapSystem.GlobalMobCap;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;

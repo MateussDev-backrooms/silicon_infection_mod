@@ -11,6 +11,7 @@ import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt2_perfocyte.HybridPerf
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjectileEntity;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_zombie.AmalZombie;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.mutated_harpoon.MutatedHarpoonEntity;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_pig.TethPig;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_sheep.TethSheep;
@@ -179,6 +180,10 @@ public class ModEntities {
             ENTITIES.register("bulb_harpoon_projectile", () -> EntityType.Builder.<BulbHarpoonEntity>of(BulbHarpoonEntity::new, MobCategory.MISC)
                     .sized(0.33f, 0.33f)
                     .build("bulb_harpoon_projectile"));
+    public static final RegistryObject<EntityType<MutatedHarpoonEntity>> MUTATED_HARPOON_PROJECTILE =
+            ENTITIES.register("mutated_harpoon_projectile", () -> EntityType.Builder.<MutatedHarpoonEntity>of(MutatedHarpoonEntity::new, MobCategory.MISC)
+                    .sized(0.33f, 0.33f)
+                    .build("mutated_harpoon_projectile"));
 
     //GibEntities
     public static final RegistryObject<EntityType<GibFlesh>> GIB_FLESH =

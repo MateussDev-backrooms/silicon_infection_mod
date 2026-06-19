@@ -5,7 +5,7 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjec
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.veg_roller.VegetativeRoller;
-import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
+import com.mateussdev.chemosyntehsis.Systems.MobCapSystem.GlobalMobCap;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;

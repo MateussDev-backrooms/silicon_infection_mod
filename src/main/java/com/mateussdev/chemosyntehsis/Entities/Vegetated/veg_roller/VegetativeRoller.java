@@ -5,7 +5,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.BaseOrganelle;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import com.mateussdev.chemosyntehsis.Entities.silicon_roller.SiliconRoller;
 import com.mateussdev.chemosyntehsis.Entities.Vegetated.vasc_roller.VascularRoller;
-import com.mateussdev.chemosyntehsis.Util.GlobalMobCap;
+import com.mateussdev.chemosyntehsis.Systems.MobCapSystem.GlobalMobCap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;

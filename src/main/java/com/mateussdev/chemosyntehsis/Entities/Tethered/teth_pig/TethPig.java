@@ -14,6 +14,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class TethPig extends BaseTethered {
     public TethPig(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
+        this.bulbCount = 7;
     }
 
     // ===== Entity setup and stats ===== //
@@ -59,11 +60,6 @@ public class TethPig extends BaseTethered {
             hasScrambled = true;
             return scrambled_bulbs;
         }
-    }
-
-    @Override
-    public int getBulbCount() {
-        return 7;
     }
 
     @Override
