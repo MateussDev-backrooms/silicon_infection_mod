@@ -21,6 +21,8 @@ public class ModCreativeTabs {
                         //Items
                         pOutput.accept(ModItems.SILICON.get());
                         pOutput.accept(ModItems.ATMOSPHERE_ANALYZER.get());
+                        pOutput.accept(ModItems.MUTATION_WAND.get());
+                        pOutput.accept(ModItems.TETHERING_WAND.get());
                         pOutput.accept(ModItems.BULB_HARPOON_GUN.get());
 
                         //Blocks
@@ -46,6 +48,7 @@ public class ModCreativeTabs {
                         pOutput.accept(ModItems.SPAWN_TETH_SHEEP.get());
                         pOutput.accept(ModItems.SPAWN_TETH_PIG.get());
                         pOutput.accept(ModItems.SPAWN_TETH_ENDERMAN.get());
+                        pOutput.accept(ModItems.SPAWN_TETH_VILLAGER.get());
 
                         pOutput.accept(ModItems.SPAWN_MET_ZOMBIE.get());
                         pOutput.accept(ModItems.SPAWN_MET_COW.get());

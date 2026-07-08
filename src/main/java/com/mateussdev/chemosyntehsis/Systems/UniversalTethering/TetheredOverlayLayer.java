@@ -23,20 +23,19 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Quaternionf;
 
-import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
-    // reuse one bulb model instance (baked layer) - lazy init
+    //Only create a single bulb model instance
     private BulbSingular<?> bulbInstance;
 
     private final RenderLayerParent<T, M> ownerRenderer;
 
+    //==== Constantz =====//
     private static final Map<Class<?>, Set<ModelPart>> MODEL_PARTS_CACHE = new HashMap<>();
 
     private static final ResourceLocation BULB_TEX = new ResourceLocation(Chemosynthesis.MODID, "textures/util/bulb_singular.png");
-    private RenderType bulbRenderType = RenderType.entityCutout(BULB_TEX);
+    private final RenderType BULB_RENDER_TYPE = RenderType.entityCutout(BULB_TEX);
 
     private static final ResourceLocation TINT_TEXTURE = new ResourceLocation(Chemosynthesis.MODID, "textures/util/tethered_overlay.png");
     private static final RenderType TINT_RENDER_TYPE = RenderType.entityTranslucent(TINT_TEXTURE);
@@ -52,7 +51,7 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
     //    @SuppressWarnings("unchecked")
     private void ensureBulbModel() {
         if (this.bulbInstance == null) {
-            // bake the model layer (same approach vanilla uses for models)
+            //bake the model layer
             ModelPart root = Minecraft.getInstance().getEntityModels().bakeLayer(BulbSingular.LAYER_LOCATION);
             this.bulbInstance = new BulbSingular<>(root);
         }
@@ -113,7 +112,7 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
 
         ensureBulbModel();
 
-        VertexConsumer bulbConsumer = buffer.getBuffer(bulbRenderType);
+        VertexConsumer bulbConsumer = buffer.getBuffer(BULB_RENDER_TYPE);
 
         for (ModelPart part : parts) {
 

@@ -3,6 +3,8 @@ package com.mateussdev.chemosyntehsis.Core;
 import com.mateussdev.chemosyntehsis.Chemosynthesis;
 import com.mateussdev.chemosyntehsis.Items.AtmosphereAnalyzer;
 import com.mateussdev.chemosyntehsis.Items.BulbHarpoonGun;
+import com.mateussdev.chemosyntehsis.Items.MutationWand;
+import com.mateussdev.chemosyntehsis.Items.TetheringWand;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeSpawnEggItem;
@@ -22,6 +24,11 @@ public class ModItems {
 
     public static final RegistryObject<Item> ATMOSPHERE_ANALYZER =
             ITEMS.register("atmosphere_analyzer", () -> new AtmosphereAnalyzer(new Item.Properties()));
+
+    public static final RegistryObject<Item> MUTATION_WAND =
+            ITEMS.register("mutation_wand", () -> new MutationWand(new Item.Properties()));
+    public static final RegistryObject<Item> TETHERING_WAND =
+            ITEMS.register("tethering_wand", () -> new TetheringWand(new Item.Properties()));
 
     public static final RegistryObject<Item> BULB_HARPOON_GUN =
             ITEMS.register("bulb_harpoon_gun", () -> new BulbHarpoonGun(new Item.Properties()));
@@ -62,6 +69,9 @@ public class ModItems {
     public static final RegistryObject<Item> SPAWN_TETH_ENDERMAN =
             ITEMS.register("spawn_teth_enderman",
                     () -> new ForgeSpawnEggItem(ModEntities.TETH_ENDERMAN, 0x967445, 0x7c4b45, new Item.Properties()));
+    public static final RegistryObject<Item> SPAWN_TETH_VILLAGER =
+            ITEMS.register("spawn_teth_villager",
+                    () -> new ForgeSpawnEggItem(ModEntities.TETH_VILLAGER, 0x967445, 0x7c4b45, new Item.Properties()));
 
     //Metabolized mobs
     public static final RegistryObject<Item> SPAWN_MET_ZOMBIE =

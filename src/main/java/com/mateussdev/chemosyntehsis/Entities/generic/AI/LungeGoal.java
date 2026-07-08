@@ -1,5 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.generic.AI;
 
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_villager.TethVillager;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -53,6 +55,11 @@ public class LungeGoal extends Goal {
 
             mob.setDeltaMovement(dx * speed, dy * verticalFactor + upwardBoost, dz * speed);
             mob.hasImpulse = true;
+
+            //TODO: Make this more universal
+            if(mob instanceof TethVillager villager) {
+                villager.onLunge();
+            }
         }
     }
 

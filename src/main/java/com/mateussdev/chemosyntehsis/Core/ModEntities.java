@@ -15,6 +15,7 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.mutated_harpoon.Mutate
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_pig.TethPig;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_sheep.TethSheep;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_villager.TethVillager;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh;
 import com.mateussdev.chemosyntehsis.Entities.GibEntities.flesh_gib.GibFlesh;
@@ -94,6 +95,10 @@ public class ModEntities {
             ENTITIES.register("teth_enderman", () -> EntityType.Builder.of(TethEnderman::new, MobCategory.MONSTER)
                     .sized(0.7f, 3f)
                     .build("teth_enderman"));
+    public static final RegistryObject<EntityType<TethVillager>> TETH_VILLAGER =
+            ENTITIES.register("teth_villager", () -> EntityType.Builder.of(TethVillager::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f)
+                    .build("teth_villager"));
 
     //Metabolized mobs
     public static final RegistryObject<EntityType<MetZombie>> MET_ZOMBIE =

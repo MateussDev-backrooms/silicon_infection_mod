@@ -19,6 +19,8 @@ public class ModItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         simpleItem(ModItems.SILICON);
         simpleItem(ModItems.ATMOSPHERE_ANALYZER);
+        simpleItem(ModItems.MUTATION_WAND);
+        simpleItem(ModItems.TETHERING_WAND);
         simpleItem(ModItems.BULB_HARPOON_GUN);
 
         //Spawn eggs
@@ -30,6 +32,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent(ModItems.SPAWN_TETH_SHEEP.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SPAWN_TETH_PIG.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SPAWN_TETH_ENDERMAN.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.SPAWN_TETH_VILLAGER.getId().getPath(), mcLoc("item/template_spawn_egg"));
 
         withExistingParent(ModItems.SPAWN_MET_ZOMBIE.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.SPAWN_MET_COW.getId().getPath(), mcLoc("item/template_spawn_egg"));

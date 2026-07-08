@@ -126,7 +126,7 @@ public class RangedHarpoonAIGoal extends Goal {
         // && !b && mutationHarpoon.harpoonEntity.getCurrentAttachType() == 0
         if (attackTime <= 0) {
 
-            MutatedHarpoonEntity harpoon = new MutatedHarpoonEntity(mob.level(), mob);
+            BulbHarpoonEntity harpoon = new BulbHarpoonEntity(mob.level(), mob);
             harpoon.setPos(mob.getX(), mob.getY(), mob.getZ());
 
             Vec3 shootDir = target.getEyePosition().subtract(mob.position());

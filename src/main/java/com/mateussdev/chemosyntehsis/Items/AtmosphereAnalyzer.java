@@ -2,6 +2,7 @@ package com.mateussdev.chemosyntehsis.Items;
 
 import com.mateussdev.chemosyntehsis.Systems.GlobalWarming.GlobalWarmingData;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -34,8 +35,8 @@ public class AtmosphereAnalyzer extends Item {
     }
 
     private void displayDiagnostics(Level pLevel, Player pPlayer) {
-        if(!pLevel.isClientSide()) {
-            GlobalWarmingData globalWarmingData = GlobalWarmingData.get(pLevel);
+        if(pLevel instanceof ServerLevel slvl) {
+            GlobalWarmingData globalWarmingData = GlobalWarmingData.get(slvl);
 
             float points = globalWarmingData.getPoints();
             float relativeDegrees = globalWarmingData.getRelativeTemperature();

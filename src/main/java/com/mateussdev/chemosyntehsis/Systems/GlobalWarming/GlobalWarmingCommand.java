@@ -46,7 +46,6 @@ public class GlobalWarmingCommand {
 
                             ctx.getSource().sendSuccess(() ->
                                     Component.literal("Volatile greenhouse gas particles per cubic meter: " + points +
-                                            "\nCurrent phase: ["+ data.getPhase() + "] " + data.phaseNames[data.getPhase()] +
                                             "\nLocal Surface Temperature: " + String.format("%.2f", finalTemp) + "°C" +
                                             "\nRelative Increase: " + String.format("%.2f", relativeDegrees) + "°C"
                                     ), false);
@@ -61,7 +60,7 @@ public class GlobalWarmingCommand {
                                     int newPoints = GlobalWarmingData.PHASE_THRESHOLD[phaseIndex];
                                     data.addPoints(newPoints - data.getPoints()); // Difference to reach new phase
                                     ctx.getSource().sendSuccess(() -> Component.literal(
-                                            "Set phase to " + phaseIndex + " (" + data.phaseNames[phaseIndex] + "). Greenhouse points: " + newPoints
+                                            "Set phase to " + phaseIndex + " (" + "eff" + "). Greenhouse points: " + newPoints
                                     ), false);
                                     return 1;
                                 }))

@@ -17,6 +17,7 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.mutated_harpoon.Mutate
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_pig.TethPig_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_sheep.TethSheep_Renderer;
+import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_villager.TethVillager_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh.ChunkOfFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.cluster_of_flesh.ClusterOfFlesh_Renderer;
 import com.mateussdev.chemosyntehsis.Entities.Hybrids.hybt1_astrocyte.HybridAstrocyte_Renderer;
@@ -62,6 +63,7 @@ public class EventRegisterRenderer {
         EntityRenderers.register(ModEntities.TETH_SHEEP.get(), TethSheep_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_PIG.get(), TethPig_Renderer::new);
         EntityRenderers.register(ModEntities.TETH_ENDERMAN.get(), TethEnderman_Renderer::new);
+        EntityRenderers.register(ModEntities.TETH_VILLAGER.get(), TethVillager_Renderer::new);
 
         //Metabolized mobs
         EntityRenderers.register(ModEntities.MET_ZOMBIE.get(), MetZombie_Renderer::new);

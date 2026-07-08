@@ -24,6 +24,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class UniversalTethering {
@@ -31,18 +32,24 @@ public class UniversalTethering {
     public static Map<EntityType<?>, EntityType<? extends BaseTethered>> handmadeTetheredMobs =
             //Defines all tetherable mobs and their tether result
             //the key is the target mob and the value is the tether result
-            Map.of(
-                    //Define all tether pairs here
-                    EntityType.ZOMBIE, ModEntities.TETH_ZOMBIE.get(),
-                    EntityType.HUSK, ModEntities.TETH_ZOMBIE.get(),
-                    EntityType.DROWNED, ModEntities.TETH_ZOMBIE.get(),
-                    EntityType.COW, ModEntities.TETH_COW.get(),
-                    EntityType.PIG, ModEntities.TETH_PIG.get(),
-                    EntityType.SHEEP, ModEntities.TETH_SHEEP.get(),
-                    EntityType.SKELETON, ModEntities.TETH_SKELETON.get(),
-                    EntityType.STRAY, ModEntities.TETH_SKELETON.get(),
-                    EntityType.ENDERMAN, ModEntities.TETH_ENDERMAN.get()
-            );
+            new HashMap<>();
+
+    static {
+        handmadeTetheredMobs.put(EntityType.ZOMBIE, ModEntities.TETH_ZOMBIE.get());
+        handmadeTetheredMobs.put(EntityType.HUSK, ModEntities.TETH_ZOMBIE.get());
+        handmadeTetheredMobs.put(EntityType.DROWNED, ModEntities.TETH_ZOMBIE.get());
+        handmadeTetheredMobs.put(EntityType.COW, ModEntities.TETH_COW.get());
+        handmadeTetheredMobs.put(EntityType.PIG, ModEntities.TETH_PIG.get());
+        handmadeTetheredMobs.put(EntityType.SHEEP, ModEntities.TETH_SHEEP.get());
+        handmadeTetheredMobs.put(EntityType.SKELETON, ModEntities.TETH_SKELETON.get());
+        handmadeTetheredMobs.put(EntityType.STRAY, ModEntities.TETH_SKELETON.get());
+        handmadeTetheredMobs.put(EntityType.ENDERMAN, ModEntities.TETH_ENDERMAN.get());
+        handmadeTetheredMobs.put(EntityType.VILLAGER, ModEntities.TETH_VILLAGER.get());
+        handmadeTetheredMobs.put(EntityType.ZOMBIE_VILLAGER, ModEntities.TETH_VILLAGER.get());
+        handmadeTetheredMobs.put(EntityType.PILLAGER, ModEntities.TETH_VILLAGER.get());
+        handmadeTetheredMobs.put(EntityType.VINDICATOR, ModEntities.TETH_VILLAGER.get());
+        handmadeTetheredMobs.put(EntityType.EVOKER, ModEntities.TETH_VILLAGER.get());
+    }
 
     private static final float MINIMAL_HITBOX_VOLUME_FOR_TETHER = 0.8f;
 

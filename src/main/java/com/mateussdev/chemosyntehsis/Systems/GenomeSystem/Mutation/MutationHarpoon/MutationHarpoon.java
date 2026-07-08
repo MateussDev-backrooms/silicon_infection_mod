@@ -31,7 +31,7 @@ public class MutationHarpoon extends Mutation {
     private final GeoModel<MutationHarpoon> model = new MutationHarpoon_Model();
     private final GeoRenderer<MutationHarpoon> renderer = new MutationHarpoon_Renderer(model);
 
-    public MutatedHarpoonEntity harpoonEntity;
+    public BulbHarpoonEntity harpoonEntity;
 
     private static final int HARPOON_COOLDOWN = 50;
 
@@ -53,12 +53,12 @@ public class MutationHarpoon extends Mutation {
 
     @Override
     public float onHurt(Mob mob, DamageSource source, float amount) {
-//        if(harpoonEntity != null) {
-//            harpoonEntity.setAttached(false);
-//            harpoonEntity.setTarget(null);
-//            harpoonEntity.setCurrentAttachType(AbstractHarpoonProjectile.AttachTypes.Reeling);
-//            harpoonEntity = null;
-//        }
+        if(harpoonEntity != null) {
+            harpoonEntity.setAttached(false);
+            harpoonEntity.setTarget(null);
+            harpoonEntity.setCurrentAttachType(AbstractHarpoonProjectile.AttachTypes.Reeling);
+            harpoonEntity = null;
+        }
         return super.onHurt(mob, source, amount);
     }
 
