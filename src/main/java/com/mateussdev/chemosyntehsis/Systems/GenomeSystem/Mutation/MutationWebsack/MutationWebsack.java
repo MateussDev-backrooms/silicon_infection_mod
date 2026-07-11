@@ -1,11 +1,13 @@
 package com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationWebsack;
 
 import com.mateussdev.chemosyntehsis.Core.ModEntities;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.web_shot.WebShotEntity;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.FloatingSiliconiteRandomStrollGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.ImprovedFlyingMoveControl;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Mixin.MobAccessor;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -15,6 +17,9 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
@@ -65,17 +70,20 @@ public class MutationWebsack extends Mutation {
             float _dst = mob.distanceTo(target);
             if(--webshootCooldown <= 0) {
                 if(_dst <= WEBSHOOT_MAX_DISTANCE && _dst >= WEBSHOOT_MIN_DISTANCE) {
-                    shootWebAtTarget(mob, target, _dst);
+                    shootWebAtTarget(mob, target, _dst, slvl);
                     webshootCooldown = WEBSHOOT_COOLDOWN;
                 }
             }
         }
     }
 
-    public void shootWebAtTarget(Mob mob, LivingEntity target, float distance) {
+    public void shootWebAtTarget(Mob mob, LivingEntity target, float distance, ServerLevel slvl) {
         //Calculate shoot angle
-        Vec3 shootDirection = target.position().subtract(mob.position()).normalize();
-
+        WebShotEntity shot = new WebShotEntity(slvl, mob);
+        shot.setPos(mob.getEyePosition());
+        Vec3 shootDirection = target.position().subtract(mob.position());
+        shot.shoot(shootDirection.x, shootDirection.y, shootDirection.z, 2f, 0.2f);
+        slvl.addFreshEntity(shot);
     }
 
     @Override
@@ -103,6 +111,11 @@ public class MutationWebsack extends Mutation {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean canPassThroughBlock(Mob mob, BlockState state) {
+        return state.is(Blocks.COBWEB);
     }
 
     @Override

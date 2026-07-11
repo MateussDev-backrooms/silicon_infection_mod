@@ -12,6 +12,7 @@ import com.mateussdev.chemosyntehsis.Entities.Projectiles.basic_bulbs.BulbProjec
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.bulb_harpoon.BulbHarpoonEntity;
 import com.mateussdev.chemosyntehsis.Entities.Homunculus.Amalgamations.amal_zombie.AmalZombie;
 import com.mateussdev.chemosyntehsis.Entities.Projectiles.mutated_harpoon.MutatedHarpoonEntity;
+import com.mateussdev.chemosyntehsis.Entities.Projectiles.web_shot.WebShotEntity;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_enderman.TethEnderman;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_pig.TethPig;
 import com.mateussdev.chemosyntehsis.Entities.Tethered.teth_sheep.TethSheep;
@@ -189,6 +190,10 @@ public class ModEntities {
             ENTITIES.register("mutated_harpoon_projectile", () -> EntityType.Builder.<MutatedHarpoonEntity>of(MutatedHarpoonEntity::new, MobCategory.MISC)
                     .sized(0.33f, 0.33f)
                     .build("mutated_harpoon_projectile"));
+    public static final RegistryObject<EntityType<WebShotEntity>> WEB_SHOT =
+            ENTITIES.register("web_shot", () -> EntityType.Builder.<WebShotEntity>of(WebShotEntity::new, MobCategory.MISC)
+                    .sized(0.33f, 0.33f)
+                    .build("web_shot"));
 
     //GibEntities
     public static final RegistryObject<EntityType<GibFlesh>> GIB_FLESH =

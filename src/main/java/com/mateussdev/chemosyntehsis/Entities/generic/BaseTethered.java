@@ -35,6 +35,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 import org.joml.Vector3f;
@@ -147,6 +148,16 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
 
     @Override
     protected boolean canDrown() { return true; }
+
+    @Override
+    public void makeStuckInBlock(BlockState pState, Vec3 pMotionMultiplier) {
+        if (currentGene != null) {
+            for (Mutation mutation : currentGene.mutations) {
+                if(mutation.canPassThroughBlock(this, pState)) return;
+            }
+        }
+        super.makeStuckInBlock(pState, pMotionMultiplier);
+    }
 
     // ===== Default functionality ===== //
 

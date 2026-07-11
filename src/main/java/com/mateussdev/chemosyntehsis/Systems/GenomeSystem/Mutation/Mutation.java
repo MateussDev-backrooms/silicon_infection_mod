@@ -9,6 +9,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.NotImplementedException;
@@ -81,6 +83,9 @@ public abstract class Mutation implements GeoAnimatable {
     public boolean canDealDamage(Mob mob, Entity target) { return true; }
 
     public boolean canBeSeen(Mob mob) { return true; }
+
+    //Called in the mob class on the makeStuckInBlock() function, allowing for special behavior depending on block
+    public boolean canPassThroughBlock(Mob mob, BlockState state) { return false; }
 
     // ===== Graphics ===== //
 
