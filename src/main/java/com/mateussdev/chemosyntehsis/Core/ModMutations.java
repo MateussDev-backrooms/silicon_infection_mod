@@ -6,6 +6,7 @@ import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationHarpo
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationSwimming.MutationSwimming;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationTeleportation.MutationTeleportation;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationType;
+import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationWebsack.MutationWebsack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -41,6 +42,11 @@ public class ModMutations {
             () -> new MutationType(
                     new ResourceLocation(MODID, "teleportation"),
                     (mutationId) -> new MutationTeleportation(new ResourceLocation(MODID, "teleportation"), mutationId)
+            ));
+    public static final RegistryObject<MutationType> WEBSACK = MUTATION_TYPES.register("websack",
+            () -> new MutationType(
+                    new ResourceLocation(MODID, "websack"),
+                    (mutationId) -> new MutationWebsack(new ResourceLocation(MODID, "websack"), mutationId)
             ));
 
     public static void register(IEventBus eventBus) {

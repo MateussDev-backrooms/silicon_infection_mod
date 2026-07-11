@@ -67,7 +67,8 @@ public class MutationHarpoon extends Mutation {
 
         //Generic mob mask
         List<EntityType<?>> disabledMobs = List.of(
-                ModEntities.TETH_SKELETON.get()
+                ModEntities.TETH_SKELETON.get(),
+                ModEntities.TETH_VILLAGER.get()
         );
 
         for(EntityType<?> type : disabledMobs) {

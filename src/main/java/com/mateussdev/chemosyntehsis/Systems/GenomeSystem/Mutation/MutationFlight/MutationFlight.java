@@ -104,7 +104,8 @@ public class MutationFlight extends Mutation {
 
         //Generic mob mask
         List<EntityType<?>> disabledMobs = List.of(
-                ModEntities.TETH_ENDERMAN.get()
+                ModEntities.TETH_ENDERMAN.get(),
+                ModEntities.TETH_VILLAGER.get()
         );
 
         for(EntityType<?> type : disabledMobs) {

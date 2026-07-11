@@ -1,0 +1,26 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"active": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"websack": {
+					"rotation": {
+						"0.0": {
+							"vector": [-22.2808, 1.7811, 1.3304]
+						},
+						"1.0": {
+							"vector": [-15, 0, 0],
+							"easing": "easeInOutQuad"
+						},
+						"2.0": {
+							"vector": [-22.2808, 1.7811, 1.3304],
+							"easing": "easeInOutQuad"
+						}
+					}
+				}
+			}
+		}
+	}
+}
