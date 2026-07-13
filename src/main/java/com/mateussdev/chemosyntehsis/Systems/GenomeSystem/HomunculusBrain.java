@@ -178,12 +178,22 @@ public class HomunculusBrain{
             if (!allTypes.isEmpty()) {
                 MutationType type = allTypes.get(rand.nextInt(allTypes.size()));
                 Mutation mutation = type.create(rand.nextInt(Integer.MAX_VALUE));
-                if(!gene.mutations.contains(mutation)) {
+                if(!gene.mutations.contains(mutation) && isTierFree(mutation, gene.mutations)) {
                     gene.addMutation(mutation);
                 }
             }
         }
         return gene;
+    }
+
+    private boolean isTierFree(Mutation comparator, List<Mutation> mutations) {
+        int tier = comparator.tier();
+        for(Mutation mut : mutations) {
+            if(mut.tier() == tier) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private Gene mutateGene(Gene template){
@@ -207,7 +217,9 @@ public class HomunculusBrain{
             RegistryObject<MutationType> randomType = ModMutations.MUTATION_TYPES.getEntries().stream().toList()
                     .get(rand.nextInt(ModMutations.MUTATION_TYPES.getEntries().size()));
             Mutation newMut = randomType.get().create(rand.nextInt(Integer.MAX_VALUE));
-            mutated.addMutation(newMut);
+            if(isTierFree(newMut, mutated.mutations)) {
+                mutated.addMutation(newMut);
+            }
         }
         if (rand.nextFloat() < 0.2f && !mutated.mutations.isEmpty()) {
             mutated.mutations.remove(rand.nextInt(mutated.mutations.size()));

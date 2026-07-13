@@ -63,6 +63,9 @@ public class MutationBurrowing extends Mutation {
     @Override public String getAttachBoneName() { return "body"; }
 
     @Override
+    public int tier() { return 2; }
+
+    @Override
     public GeoRenderLayer<?> createRenderLayer(GeoRenderer<?> hostRenderer) {
         return new MutationBurrowing_Layer<>(hostRenderer, this);
     }

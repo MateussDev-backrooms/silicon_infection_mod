@@ -6,6 +6,7 @@ import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Gene;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IGenomeModifiable;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.MutationType;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -100,6 +101,8 @@ public class MutationWand extends Item {
             gene = new Gene();
         }
 
+
+
         boolean alreadyHas = gene.mutations.stream().anyMatch(m -> m.getTypeId().equals(mutationId));
 
         if (alreadyHas) {
@@ -112,9 +115,13 @@ public class MutationWand extends Item {
             int uniqueId = new java.util.Random().nextInt(Integer.MAX_VALUE);
             Mutation newMutation = type.create(uniqueId);
 
+
             if (!newMutation.canMutateMob(mob)) {
                 player.displayClientMessage(Component.literal(mob.getName().getString() + " doesn't support this mutation"), true);
                 return InteractionResult.FAIL;
+            }
+            if(!isTierFree(newMutation, gene.mutations)) {
+                player.sendSystemMessage(Component.literal("Warning: The "+ro.getId()+" mutation is of the same tier as another mutation in the mob. This combination will not be possible during normal gameplay").withStyle(ChatFormatting.YELLOW));
             }
 
             gene.mutations.add(newMutation);
@@ -133,5 +140,15 @@ public class MutationWand extends Item {
         tooltip.add(Component.literal("Selected mutation: " + selected));
         tooltip.add(Component.literal("Right-click air: cycle | Right-click mob: toggle"));
         super.appendHoverText(stack, level, tooltip, flag);
+    }
+
+    private boolean isTierFree(Mutation comparator, List<Mutation> mutations) {
+        int tier = comparator.tier();
+        for(Mutation mut : mutations) {
+            if(mut.tier() == tier) {
+                return false;
+            }
+        }
+        return true;
     }
 }

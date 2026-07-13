@@ -48,7 +48,8 @@ public class AmalSpawner extends BaseAmalgamation {
             ModEntities.TETH_SHEEP.get(),
             ModEntities.TETH_PIG.get(),
             ModEntities.TETH_SKELETON.get(),
-            ModEntities.TETH_ENDERMAN.get()
+            ModEntities.TETH_ENDERMAN.get(),
+            ModEntities.TETH_VILLAGER.get()
     );
 
     @Override

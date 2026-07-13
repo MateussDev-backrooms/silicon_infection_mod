@@ -26,12 +26,12 @@ public class ModItems {
             ITEMS.register("atmosphere_analyzer", () -> new AtmosphereAnalyzer(new Item.Properties()));
 
     public static final RegistryObject<Item> MUTATION_WAND =
-            ITEMS.register("mutation_wand", () -> new MutationWand(new Item.Properties()));
+            ITEMS.register("mutation_wand", () -> new MutationWand(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> TETHERING_WAND =
-            ITEMS.register("tethering_wand", () -> new TetheringWand(new Item.Properties()));
+            ITEMS.register("tethering_wand", () -> new TetheringWand(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> BULB_HARPOON_GUN =
-            ITEMS.register("bulb_harpoon_gun", () -> new BulbHarpoonGun(new Item.Properties()));
+            ITEMS.register("bulb_harpoon_gun", () -> new BulbHarpoonGun(new Item.Properties().stacksTo(1)));
 
     //Spawn eggs
     //Pure

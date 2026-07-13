@@ -47,6 +47,9 @@ public class MutationHarpoon extends Mutation {
     @Override public GeoRenderer<? extends Mutation> getRenderer() { return renderer; }
 
     @Override
+    public int tier() { return 3; }
+
+    @Override
     public void onInit(Mob mob) {
         mob.goalSelector.addGoal(-1, new RangedHarpoonAIGoal(mob, 1.5f, HARPOON_COOLDOWN, 8, this));
     }

@@ -50,6 +50,9 @@ public class MutationTeleportation extends Mutation {
     @Override public boolean hasRenderLayer() { return true; }
     @Override public String getAttachBoneName() { return "body"; }
 
+    @Override
+    public int tier() { return 1; }
+
     @Override public int getCost() { return 4; }
 
     @Override

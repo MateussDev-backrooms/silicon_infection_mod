@@ -10,6 +10,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -103,6 +104,11 @@ public class GenomeCommand {
             throw ERROR_CANNOT_MUTATE.create();
         }
 
+        //Warn if the mutation wouldn't be added during normal gameplay
+        if(!isTierFree(newMutation, genMod.getGene().mutations)) {
+            ctx.getSource().sendSuccess(() -> Component.literal("Warning: The "+mutationName+" mutation is of the same tier as another mutation in the mob. This combination will not be possible during normal gameplay").withStyle(ChatFormatting.YELLOW), false);
+        }
+
         // Get or create the gene
         Gene gene = genMod.getGene();
         if (gene == null) {
@@ -124,6 +130,16 @@ public class GenomeCommand {
                 true
         );
         return 1;
+    }
+
+    private static boolean isTierFree(Mutation comparator, List<Mutation> mutations) {
+        int tier = comparator.tier();
+        for(Mutation mut : mutations) {
+            if(mut.tier() == tier) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // ---------- remove_mutation ----------

@@ -50,6 +50,9 @@ public class MutationWebsack extends Mutation {
     @Override public String getAttachBoneName() { return "body"; }
 
     @Override
+    public int tier() { return 3; }
+
+    @Override
     public GeoRenderLayer<?> createRenderLayer(GeoRenderer<?> hostRenderer) {
         return new MutationWebsack_Layer<>(hostRenderer, this);
     }

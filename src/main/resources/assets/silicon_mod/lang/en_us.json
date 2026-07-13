@@ -1,6 +1,8 @@
 {
   "item.silicon_mod.silicon": "Silicon",
   "item.silicon_mod.atmosphere_analyzer": "Atmospheric Analyzer",
+  "item.silicon_mod.tethering_wand": "Tethering wand",
+  "item.silicon_mod.mutation_wand": "Mutation wand",
 
   "item.silicon_mod.spawn_roller": "Roller Spawn Egg",
   "entity.silicon_mod.silicon_roller": "Roller",
@@ -24,6 +26,8 @@
   "entity.silicon_mod.teth_skeleton": "Tethered Skeleton",
   "item.silicon_mod.spawn_teth_enderman": "Tethered Enderman Spawn Egg",
   "entity.silicon_mod.teth_enderman": "Tethered Enderman",
+  "item.silicon_mod.spawn_teth_villager": "Tethered Villager Spawn Egg",
+  "entity.silicon_mod.teth_villager": "Tethered Villager",
 
   "item.silicon_mod.spawn_met_zombie": "Metabolized Zombie Spawn Egg",
   "entity.silicon_mod.met_zombie": "Metabolized Zombie",

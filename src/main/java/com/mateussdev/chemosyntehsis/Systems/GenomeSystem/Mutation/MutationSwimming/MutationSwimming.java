@@ -57,6 +57,9 @@ public class MutationSwimming extends Mutation {
     private final GeoModel<MutationSwimming> model = new MutationSwimming_Model();
     private final GeoRenderer<MutationSwimming> renderer = new MutationSwimming_Renderer(model);
 
+    @Override
+    public int tier() { return 2; }
+
     //AI revert vars//
     private MoveControl oldMoveControl;
     private LookControl oldLookControl;

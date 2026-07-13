@@ -58,6 +58,9 @@ public class MutationFlight extends Mutation {
     @Override public GeoRenderer<? extends Mutation> getRenderer() { return renderer; }
 
     @Override
+    public int tier() { return 1; }
+
+    @Override
     public void onTick(Mob mob) {
         if(mob.level() instanceof ServerLevel slvl) {
             //Float upward when on ground
