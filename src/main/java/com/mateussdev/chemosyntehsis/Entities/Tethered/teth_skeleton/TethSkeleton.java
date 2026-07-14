@@ -46,6 +46,11 @@ public class TethSkeleton extends BaseTethered implements RangedAttackMob {
 
     @Override
     public void registerDefaultGoals() {
+        //Stop all goals
+        this.goalSelector.getRunningGoals().forEach(WrappedGoal::stop);
+        this.targetSelector.getRunningGoals().forEach(WrappedGoal::stop);
+
+        //Remove all goals
         this.goalSelector.removeAllGoals(g -> true);
         this.targetSelector.removeAllGoals(g -> true);
 

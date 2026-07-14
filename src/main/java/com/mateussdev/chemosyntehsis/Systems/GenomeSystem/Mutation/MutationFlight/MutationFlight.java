@@ -7,6 +7,7 @@ import com.mateussdev.chemosyntehsis.Entities.generic.AI.ImprovedFlyingMoveContr
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Mixin.MobAccessor;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.Mutation.Mutation;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -15,6 +16,7 @@ import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.control.JumpControl;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.level.ClipContext;
@@ -78,6 +80,8 @@ public class MutationFlight extends Mutation {
         }
     }
 
+    private boolean initialized = false;
+
     @Override
     public void onInit(Mob mob) {
         //Save the to-be changed values
@@ -92,14 +96,27 @@ public class MutationFlight extends Mutation {
 
         //Add floating goal
         mob.goalSelector.addGoal(1, new FloatingSiliconiteRandomStrollGoal((BaseSiliconite) mob, 7f, 4f));
+        initialized = true;
     }
 
     @Override
     public void onRemove(Mob mob) {
         //Reset values
+        if (!initialized) return; // never onInit'd — refuse to touch anything
+
         mob.setNoGravity(oldGravity);
-        ((MobAccessor)mob).setNavigation(oldNavigation);
-        ((MobAccessor)mob).setMoveControl(oldMoveControl);
+        ((MobAccessor)mob).getNavigation().stop();
+
+        // NEVER hand back a null navigation — fall back to a safe default if corrupted
+        PathNavigation safeNav = (oldNavigation != null) ? oldNavigation : new GroundPathNavigation(mob, mob.level());
+        ((MobAccessor)mob).setNavigation(safeNav);
+        safeNav.stop();
+
+        MoveControl safeControl = (oldMoveControl != null) ? oldMoveControl : new MoveControl(mob);
+        ((MobAccessor)mob).setMoveControl(safeControl);
+
+        mob.setDeltaMovement(0, 0, 0);
+        initialized = false; // prevent a second onRemove from doing anything at all
     }
 
     @Override

@@ -163,6 +163,8 @@ public class MutationBurrowing extends Mutation {
 
     @Override
     public float onHurt(Mob mob, DamageSource source, float amount) {
+        //Prevent invulnerability from /kill
+        if(amount > 1000f) return 1f;
         //Do not receive damage when underground
         return burrowState == BurrowState.UNDERGROUND ? 0.0f : 1.0f;
     }

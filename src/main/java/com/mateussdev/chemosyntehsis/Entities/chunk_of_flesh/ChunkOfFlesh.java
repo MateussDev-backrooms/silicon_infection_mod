@@ -47,19 +47,19 @@ public class ChunkOfFlesh extends BaseSiliconite {
     }
 
     protected int evolution_t = 0;
-    private int clusterCooldown = 200;
+    private int clusterCooldown = 10; //In seconds
     public boolean mustEvolve = false;
     public boolean doBurrowAnim = false;
 
     public static final EntityDataAccessor<Boolean> IS_BURROWING = SynchedEntityData.defineId(ChunkOfFlesh.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> IS_GOING_TO_BIOMUSH = SynchedEntityData.defineId(ChunkOfFlesh.class, EntityDataSerializers.BOOLEAN);
 
     private static final int MERGE_COUNT = 5;
     private static final double MERGE_RADIUS = 3.5D;
 
     private static final List<EntityType<? extends BaseHybrid>> HYBRID_EVOLUTION_RESULTS = List.of(
             ModEntities.THROMBOCYTE.get(),
-            ModEntities.ERYTHROCYTE.get(),
-            ModEntities.ASTROCYTE.get()
+            ModEntities.ERYTHROCYTE.get()
     );
 
     //##### Entity setup and stats #####//
@@ -93,7 +93,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
         //Default settings override when new behavior is required
 
         // - GOALS
-        this.goalSelector.addGoal(0, new SeekAndEatBiomushGoal(this, ModBlocks.BIOMUSH.get()));
+        this.goalSelector.addGoal(0, new SeekAndEatBiomushGoal(ModBlocks.BIOMUSH.get(), this, 1.0f, 24));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<Monster>(this, Monster.class, 16.0f, 1.2d, 1.3d, this::shouldFlee));
 
         //Avoid water (No float task cuz they are immune to water damage)
@@ -121,6 +121,7 @@ public class ChunkOfFlesh extends BaseSiliconite {
 
     private boolean _brw = true;
 
+    private int mergeT = 0;
     @Override
     public void tick() {
         super.tick();
@@ -133,12 +134,12 @@ public class ChunkOfFlesh extends BaseSiliconite {
             mergeIntoCluster();
         }
 
-        if (tickCount % 60 == 0) {
+        if (++mergeT % 60 == 0) {
             if (this.level() instanceof ServerLevel slvl && !this.mustEvolve && --clusterCooldown <= 0 && !entityData.get((IS_BURROWING))) {
                 List<ChunkOfFlesh> nearby = this.level().getEntitiesOfClass(
                         ChunkOfFlesh.class,
                         this.getBoundingBox().inflate(MERGE_RADIUS),
-                        c -> c != this && !c.mustEvolve && !c.entityData.get(IS_BURROWING)
+                        c -> c != this && !c.mustEvolve && !c.entityData.get(IS_GOING_TO_BIOMUSH)
                 );
 
                 if (nearby.size() + 1 >= MERGE_COUNT) {
@@ -226,23 +227,31 @@ public class ChunkOfFlesh extends BaseSiliconite {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("is_burrowing", entityData.get(IS_BURROWING));
+        tag.putBoolean("is_going_to_biomush", entityData.get(IS_GOING_TO_BIOMUSH));
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         entityData.set(IS_BURROWING, tag.getBoolean("is_burrowing"));
+        entityData.set(IS_GOING_TO_BIOMUSH, tag.getBoolean("is_going_to_biomush"));
     }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         entityData.define(IS_BURROWING, false);
+        entityData.define(IS_GOING_TO_BIOMUSH, false);
     }
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
         entityData.set(IS_BURROWING, false);
+        setIsGoingToBiomush(false);
         return super.hurt(pSource, pAmount);
+    }
+
+    public void setIsGoingToBiomush(boolean b) {
+        entityData.set(IS_GOING_TO_BIOMUSH, b);
     }
 }

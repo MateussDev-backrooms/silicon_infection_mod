@@ -103,7 +103,7 @@ public abstract class AbstractProperHarpoonProjectile extends AbstractArrow impl
                 Vec3 launchDirection = getOwner().position().subtract(attachPosition).normalize();
                 if(getOwner() instanceof LivingEntity LE) {
                     LE.setDeltaMovement(LE.getDeltaMovement().add(launchDirection.scale(RETRACT_SPEED/1)));
-                    StaticSiliconiteMethods.debugLog("delta: "+LE.getDeltaMovement());
+//                    StaticSiliconiteMethods.debugLog("delta: "+LE.getDeltaMovement());
                 }
 
                 //keep track of length

@@ -1,12 +1,7 @@
 package com.mateussdev.chemosyntehsis.Entities.Tethered.teth_villager;
 
-import com.mateussdev.chemosyntehsis.Core.ModEntities;
-import com.mateussdev.chemosyntehsis.Entities.Metabolized.met_zombie.MetZombie;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalAttackGoal;
-import com.mateussdev.chemosyntehsis.Entities.generic.AI.ConditionalFleeGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HurtByNonSiliconiteGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.LungeGoal;
-import com.mateussdev.chemosyntehsis.Entities.generic.BaseSiliconite;
 import com.mateussdev.chemosyntehsis.Entities.generic.BaseTethered;
 import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.server.level.ServerLevel;
@@ -16,14 +11,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.Animation;
@@ -33,6 +26,10 @@ import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.model.GeoModel;
 
 public class TethVillager extends BaseTethered {
+
+    //=====Constantz=====//
+    private static final double SLIDE_SPEED = 0.3;
+
     public TethVillager(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
         this.bulbCount = 8;
@@ -61,13 +58,18 @@ public class TethVillager extends BaseTethered {
                 .triggerableAnim("jump_start", RawAnimation.begin().then("jump_begin", Animation.LoopType.PLAY_ONCE))
                 .triggerableAnim("jump_end", RawAnimation.begin().then("jump_end", Animation.LoopType.PLAY_ONCE))
                 .triggerableAnim("jump_fail", RawAnimation.begin().then("jump_fail", Animation.LoopType.HOLD_ON_LAST_FRAME))
-                .setAnimationSpeed(1.4f));
+                .setAnimationSpeed(1.0f));
         //Bone wobbling
         controllers.add(new AnimationController<>(this, "reaction_controller", 1, event -> PlayState.CONTINUE));
     }
 
     @Override
     public void registerDefaultGoals() {
+        //Stop all goals
+        this.goalSelector.getRunningGoals().forEach(WrappedGoal::stop);
+        this.targetSelector.getRunningGoals().forEach(WrappedGoal::stop);
+
+        //Remove all goals
         this.goalSelector.removeAllGoals(g -> true);
         this.targetSelector.removeAllGoals(g -> true);
 
@@ -92,7 +94,7 @@ public class TethVillager extends BaseTethered {
         return Mob.createLivingAttributes()
                 //Basics
                 .add(Attributes.MAX_HEALTH, 20D)
-                .add(Attributes.MOVEMENT_SPEED, 0.4D)
+                .add(Attributes.MOVEMENT_SPEED, 0.32D)
                 .add(Attributes.FOLLOW_RANGE, 25D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0d)
                 //Attack
@@ -144,6 +146,9 @@ public class TethVillager extends BaseTethered {
     private int stun = 0;
 
     private boolean oldFalling = false;
+
+    private int slideTicks = 0;
+    private Vec3 slideDirection = Vec3.ZERO;
     @Override
     public void aiStep() {
         super.aiStep();
@@ -152,6 +157,9 @@ public class TethVillager extends BaseTethered {
 
             LivingEntity target = this.getTarget();
             if(cooldown > 0) cooldown--;
+            if(cooldown == 0) {
+                stopTriggeredAnimation("jump_controller", "jump_fail");
+            }
             if(atk_cooldown > 0) atk_cooldown--;
 
             if(--stun > 0) {
@@ -162,6 +170,13 @@ public class TethVillager extends BaseTethered {
             boolean isFalling = !this.onGround() && this.getDeltaMovement().y < 0;
             if(isFalling && canLunge(0)) {
                 cooldown = jump_cld;
+            }
+
+            if (slideTicks > 0) {
+                this.navigation.stop();
+
+                this.setDeltaMovement(slideDirection.x * SLIDE_SPEED, this.getDeltaMovement().y, slideDirection.z * SLIDE_SPEED);
+                slideTicks--;
             }
 
             double distance = this.distanceTo(target);
@@ -216,6 +231,15 @@ public class TethVillager extends BaseTethered {
     protected int calculateFallDamage(float pFallDistance, float pDamageMultiplier) {
         if(stun <= 0 && pFallDistance >= 0.8f) {
             triggerAnim("jump_controller", "jump_end");
+            //Determine slide direction: horizontal component of current motion, or look direction if stationary
+            Vec3 motion = this.getDeltaMovement();
+            slideDirection = new Vec3(motion.x, 0, motion.z).normalize();
+            if (slideDirection.lengthSqr() < 0.001) {
+                slideDirection = Vec3.directionFromRotation(this.getRotationVector());
+                slideDirection = new Vec3(slideDirection.x, 0, slideDirection.z).normalize();
+            }
+
+            slideTicks = 15;
         }
         return super.calculateFallDamage(pFallDistance, pDamageMultiplier);
     }

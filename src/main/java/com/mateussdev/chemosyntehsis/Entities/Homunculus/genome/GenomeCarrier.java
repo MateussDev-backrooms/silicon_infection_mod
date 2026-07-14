@@ -1,6 +1,9 @@
 package com.mateussdev.chemosyntehsis.Entities.Homunculus.genome;
 
 import com.mateussdev.chemosyntehsis.Core.ModMutations;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPThreshold;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.DSPType;
+import com.mateussdev.chemosyntehsis.Systems.DSPSystem.IDspReceptor;
 import com.mateussdev.chemosyntehsis.Systems.GenomeSystem.IHomunculus;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.FloatingSiliconiteRandomStrollGoal;
 import com.mateussdev.chemosyntehsis.Entities.generic.AI.HomingMissileGoal;
@@ -32,9 +35,11 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.model.GeoModel;
 
+import java.util.EnumMap;
+import java.util.List;
 import java.util.UUID;
 
-public class GenomeCarrier extends BaseSiliconite {
+public class GenomeCarrier extends BaseSiliconite implements IDspReceptor {
     public GenomeCarrier(EntityType<? extends Monster> p_33002_, Level p_33003_) {
         super(p_33002_, p_33003_);
     }
@@ -120,6 +125,11 @@ public class GenomeCarrier extends BaseSiliconite {
             if(this.getTarget() != null && this.getTarget().distanceTo(this) < 1.3f && this.getTarget() instanceof Mob mob) {
                 applyGenome(mob);
             }
+
+            if(this.getTarget() == null) {
+                this.emitDSP(DSPType.D_MM_MOBDEFICIT, 1000, this);
+                this.discard();
+            }
         }
     }
 
@@ -176,5 +186,15 @@ public class GenomeCarrier extends BaseSiliconite {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.setNoGravity(true);
+    }
+
+    @Override
+    public EnumMap<DSPType, Float> getInternalBuffer() {
+        return null;
+    }
+
+    @Override
+    public List<DSPThreshold> getThresholds() {
+        return null;
     }
 }

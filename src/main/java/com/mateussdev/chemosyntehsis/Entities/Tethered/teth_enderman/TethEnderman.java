@@ -14,10 +14,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -83,6 +80,11 @@ public class TethEnderman extends BaseTethered {
 
     @Override
     public void registerDefaultGoals() {
+        //Stop all goals
+        this.goalSelector.getRunningGoals().forEach(WrappedGoal::stop);
+        this.targetSelector.getRunningGoals().forEach(WrappedGoal::stop);
+
+        //Remove all goals
         this.goalSelector.removeAllGoals(g -> true);
         this.targetSelector.removeAllGoals(g -> true);
 

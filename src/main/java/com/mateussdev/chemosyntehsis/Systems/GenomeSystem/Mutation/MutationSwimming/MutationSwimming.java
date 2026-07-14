@@ -58,7 +58,7 @@ public class MutationSwimming extends Mutation {
     private final GeoRenderer<MutationSwimming> renderer = new MutationSwimming_Renderer(model);
 
     @Override
-    public int tier() { return 2; }
+    public int tier() { return 1; }
 
     //AI revert vars//
     private MoveControl oldMoveControl;
@@ -108,15 +108,8 @@ public class MutationSwimming extends Mutation {
 
     @Override
     public void onInit(Mob mob) {
-        oldMoveControl = ((MobAccessor) mob).getMoveControl();
-        oldLookControl = ((MobAccessor) mob).getLookControl();
-        oldNavigation = ((MobAccessor) mob).getNavigation();
 
         mob.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(SWIMMING_BONUS_MODIFIER);
-
-        ((MobAccessor) mob).setMoveControl(new SmoothSwimmingMoveControl(mob, 85, 10, 1.2F, 0.5F, true));
-        ((MobAccessor) mob).setLookControl(new SmoothSwimmingLookControl(mob, 10));
-        ((MobAccessor) mob).setNavigation(new WaterBoundPathNavigation(mob, mob.level()));
 
         mob.goalSelector.addGoal(-1, new TryFindWaterGoal((PathfinderMob) mob));
 //        mob.goalSelector.addGoal(-1, new SweepingSwimAttackGoal(mob, 1.4f, true));
@@ -127,10 +120,6 @@ public class MutationSwimming extends Mutation {
 
     @Override
     public void onRemove(Mob mob) {
-        ((MobAccessor) mob).setMoveControl(oldMoveControl);
-        ((MobAccessor) mob).setLookControl(oldLookControl);
-        ((MobAccessor) mob).setNavigation(oldNavigation);
-
         mob.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(SWIMMING_BONUS_MODIFIER);
     }
 

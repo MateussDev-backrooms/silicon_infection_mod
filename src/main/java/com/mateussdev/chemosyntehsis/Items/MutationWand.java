@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class MutationWand extends Item {
@@ -99,6 +100,8 @@ public class MutationWand extends Item {
         Gene gene = genMod.getGene();
         if (gene == null) {
             gene = new Gene();
+        } else {
+            gene = gene.copy(new Random());
         }
 
 
@@ -106,10 +109,17 @@ public class MutationWand extends Item {
         boolean alreadyHas = gene.mutations.stream().anyMatch(m -> m.getTypeId().equals(mutationId));
 
         if (alreadyHas) {
-            // Second right-click: remove it
+            Mutation toRemove = gene.mutations.stream()
+                    .filter(m -> m.getTypeId().equals(mutationId))
+                    .findFirst()
+                    .orElse(null);
+
+            if (toRemove != null && toRemove.canMutateMob(mob)) {
+                toRemove.onRemove(mob);
+            }
+
             gene.mutations.removeIf(m -> m.getTypeId().equals(mutationId));
             genMod.applyGene(gene);
-            player.displayClientMessage(Component.literal("Removed '" + selectedPath + "' from " + mob.getName().getString()), true);
         } else {
             // First right-click: add it, if the mob permits
             int uniqueId = new java.util.Random().nextInt(Integer.MAX_VALUE);

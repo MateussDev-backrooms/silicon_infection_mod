@@ -17,14 +17,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UniversalTethering {
@@ -33,6 +31,17 @@ public class UniversalTethering {
             //Defines all tetherable mobs and their tether result
             //the key is the target mob and the value is the tether result
             new HashMap<>();
+
+    public static List<EntityType<? extends Entity>> blacklistedEntities = List.of(
+            EntityType.ARMOR_STAND,
+            EntityType.MINECART,
+            EntityType.CHEST_MINECART,
+            EntityType.COMMAND_BLOCK_MINECART,
+            EntityType.FURNACE_MINECART,
+            EntityType.HOPPER_MINECART,
+            EntityType.SPAWNER_MINECART,
+            EntityType.TNT_MINECART
+    );
 
     static {
         handmadeTetheredMobs.put(EntityType.ZOMBIE, ModEntities.TETH_ZOMBIE.get());
@@ -66,7 +75,10 @@ public class UniversalTethering {
                 //Cannot be from my own mod
                 if(StaticSiliconiteMethods.isMobFromChemosynthesisMod(tetherTarget)) return;
 
-                //Cannot tether stationary mobs
+                //Cannot tether mobs in the blacklist
+                for(EntityType<? extends Entity> type : blacklistedEntities) {
+                    if(tetherTarget.getType() == type) return;
+                }
 
                 SiliconiteParticles.spawnTransformationParticle(serverLevel, tetherTarget.blockPosition());
                 serverLevel.playSound(

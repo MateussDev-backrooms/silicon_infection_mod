@@ -1,130 +1,82 @@
 package com.mateussdev.chemosyntehsis.Entities.chunk_of_flesh;
 
 import com.mateussdev.chemosyntehsis.Blocks.BiomushBlock;
+import com.mateussdev.chemosyntehsis.Mixin.RemoveBlockGoalAccessor;
+import com.mateussdev.chemosyntehsis.Util.StaticSiliconiteMethods;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.RemoveBlockGoal;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.EnumSet;
 
-public class SeekAndEatBiomushGoal extends Goal {
+public class SeekAndEatBiomushGoal extends RemoveBlockGoal {
     private final ChunkOfFlesh mob;
-    private final BiomushBlock targetBlock;
-    private BlockPos targetPos;
-    private int eatingTime = 0;
+    private float eatProgress = 0f;
+    private boolean isEating = false;
 
-
-    private int searchCooldown = 0;
-    private static final int SEARCH_DELAY = 40;
-    private static final int SEEK_RADIUS = 8;
-    private static final int ATTEMPTS = 64;
-
-    public SeekAndEatBiomushGoal(ChunkOfFlesh mob, BiomushBlock targetBlock) {
-        this.mob = mob;
-        this.targetBlock = targetBlock;
-        this.setFlags(EnumSet.of(Goal.Flag.MOVE));
-    }
-
-    @Override
-    public boolean canUse() {
-        if (eatingTime > 0) return false;
-
-        if (searchCooldown > 0) {
-            searchCooldown--;
-            return false;
-        }
-
-        //Sniff out the position
-        targetPos = findRandomBiomush();
-        if (targetPos == null) {
-            searchCooldown = SEARCH_DELAY / 2;
-        }
-
-        return targetPos != null;
+    public SeekAndEatBiomushGoal(Block pBlockToRemove, PathfinderMob pRemoverMob, double pSpeedModifier, int pSearchRange) {
+        super(pBlockToRemove, pRemoverMob, pSpeedModifier, pSearchRange);
+        this.mob = (ChunkOfFlesh) pRemoverMob;
     }
 
     @Override
     public void start() {
-        if (targetPos != null) {
-            mob.getNavigation().moveTo(targetPos.getX(), targetPos.getY(), targetPos.getZ(), 1.0D);
-            eatingTime = 0;
-        }
-    }
-
-    @Override
-    public boolean canContinueToUse() {
-        if (eatingTime > 0) return true;
-        if (targetPos == null) return false;
-
-
-        return mob.level().getBlockState(targetPos).is(targetBlock);
+        super.start();
+        mob.setIsGoingToBiomush(true);
     }
 
     @Override
     public void stop() {
+        super.stop();
         mob.getNavigation().stop();
-        targetPos = null;
-        eatingTime = 0;
         mob.setBurrowAnimation(false);
+        isEating = false;
     }
 
     @Override
     public void tick() {
-        if (targetPos == null) return;
+        super.tick();
+//        if(isEating) {
+//            if(++eatProgress > 60f) {
+//                BlockPos blockpos1 = ((RemoveBlockGoalAccessor)this).callGetPosWithBlock(mob.blockPosition(), mob.level());
+//                playBreakSound(mob.level(), blockpos1);
+//                isEating = false;
+//            }
+//        }
+    }
 
-        BlockPos pos = mob.blockPosition();
+    @Override
+    public void playDestroyProgressSound(LevelAccessor pLevel, BlockPos pPos) {
+        super.playDestroyProgressSound(pLevel, pPos);
+        mob.getNavigation().stop(); // Stop moving
 
-        if (pos.equals(targetPos) || pos.equals(targetPos.above())) {
-            BlockState state = mob.level().getBlockState(pos);
-            if (state.getBlock() instanceof BiomushBlock) {
-                mob.getNavigation().stop(); // Stop moving
+        BlockState state = mob.level().getBlockState(pPos);
 
-                // Start eating if fresh
-                if (!state.getValue(BiomushBlock.IS_CONSUMED)) {
-                    mob.level().setBlock(pos, state.setValue(BiomushBlock.IS_CONSUMED, true), 3);
-                    mob.setBurrowAnimation(true);
-                }
-
-                eatingTime++;
-
-                // Client sync crack progress
-                if(eatingTime % 10 == 0) {
-                    mob.level().destroyBlockProgress(mob.getId(), pos, Mth.floor(eatingTime / 10f));
-                }
-
-                // Finished eating
-                if (eatingTime > 60) {
-                    mob.level().destroyBlock(pos, false);
-                    mob.consumeBiomush();
-                    targetPos = null;
-                }
-            } else {
-                stop();
-            }
-        } else {
-            mob.getNavigation().moveTo(targetPos.getX(), targetPos.getY(), targetPos.getZ(), 1.0D);
-            mob.setBurrowAnimation(false);
+        // Start eating if fresh
+        if (!state.getValue(BiomushBlock.IS_CONSUMED)) {
+            mob.level().setBlock(pPos, state.setValue(BiomushBlock.IS_CONSUMED, true), 3);
+            mob.setBurrowAnimation(true);
+//            StaticSiliconiteMethods.debugLog("eat eat");
+            isEating = true;
         }
     }
 
-    private BlockPos findRandomBiomush() {
-        BlockPos mobPos = mob.blockPosition();
+    @Override
+    public void playBreakSound(Level pLevel, BlockPos pPos) {
+        super.playBreakSound(pLevel, pPos);
+        mob.consumeBiomush();
+//        StaticSiliconiteMethods.debugLog("breab break");
+    }
 
-        for (int i = 0; i < ATTEMPTS; i++) {
-            int x = mobPos.getX() + (2 * mob.getRandom().nextInt(SEEK_RADIUS) - SEEK_RADIUS);
-            int z = mobPos.getZ() + (2 * mob.getRandom().nextInt(SEEK_RADIUS) - SEEK_RADIUS);
-            int y = mobPos.getY() + (mob.getRandom().nextInt(5) - 2);
-
-            BlockPos checkPos = new BlockPos(x, y, z);
-            BlockState state = mob.level().getBlockState(checkPos);
-
-            if (state.getBlock() instanceof BiomushBlock
-                    && !state.getValue(BiomushBlock.IS_CONSUMED)) {
-                return checkPos.immutable();
-            }
-        }
-
-        return null;
+    @Override
+    public double acceptedDistance() {
+        return 1.3f;
     }
 }

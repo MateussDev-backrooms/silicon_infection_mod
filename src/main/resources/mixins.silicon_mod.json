@@ -6,7 +6,8 @@
   "refmap": "mixins.silicon_mod.refmap.json",
   "mixins": [
     "AgeableListModelAccessor",
-    "MobAccessor"
+    "MobAccessor",
+    "RemoveBlockGoalAccessor"
   ],
   "client": [
     "MixinGeoEntityRenderer",

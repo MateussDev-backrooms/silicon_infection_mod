@@ -18,6 +18,8 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -62,6 +64,11 @@ public class TetheredOverlayLayer<T extends LivingEntity, M extends EntityModel<
                        T entity, float limbSwing, float limbSwingAmount, float partialTick, float age, float headYaw, float headPitch) {
         //Don't render if player
         if (entity instanceof Player) return;
+
+        //Don't render if on any blacklisted mob
+        for(EntityType<? extends Entity> type : UniversalTethering.blacklistedEntities) {
+            if(entity.getType() == type) return;
+        }
 
         //only render if the mob is universally tethered
         if (entity instanceof Mob mob) {

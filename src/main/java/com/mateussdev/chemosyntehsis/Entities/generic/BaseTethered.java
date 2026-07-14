@@ -99,6 +99,11 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
     }
 
     public void registerDefaultGoals() {
+        //Stop all goals
+        this.goalSelector.getRunningGoals().forEach(WrappedGoal::stop);
+        this.targetSelector.getRunningGoals().forEach(WrappedGoal::stop);
+
+        //Remove all goals
         this.goalSelector.removeAllGoals(g -> true);
         this.targetSelector.removeAllGoals(g -> true);
 
@@ -328,6 +333,8 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
             slvl.playSound(null, blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.HOSTILE);
 
             if (currentGene != null) {
+                //Reset AI back to default
+                registerDefaultGoals();
 
                 //Run onRemove to reset any other values
                 for (Mutation mutation : currentGene.mutations) {
@@ -336,8 +343,6 @@ public class BaseTethered extends BaseSiliconite implements IGenomeModifiable {
                     }
                 }
 
-                //Reset AI back to default
-                registerDefaultGoals();
             }
 
             this.currentGene = gene;

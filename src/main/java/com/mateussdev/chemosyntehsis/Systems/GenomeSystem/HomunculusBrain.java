@@ -64,10 +64,11 @@ public class HomunculusBrain{
         //Send out genome carriers to specific mobs around the homunculus
         List<Mob> assignedTargets = new ArrayList<>();
         for (Gene gene : chosenGenes) {
-            trackGene(gene, gene.id);
+            Gene trackingSnapshot = gene.copy(new Random());
+            trackGene(trackingSnapshot, gene.id); // key by the ORIGINAL id, so fitness lookups still match
+
             Mob target = findUniqueTarget(assignedTargets, context.getServerLevel(), context.getPosition(), 64.0);
             if (target == null) {
-                //Not enough mobs - release DSP
                 if(context.getHomunculusMob() instanceof IDspReceptor receptor) {
                     receptor.emitDSP(DSPType.D_MM_MOBDEFICIT, 1000, context.getHomunculusMob());
                 }
@@ -77,9 +78,9 @@ public class HomunculusBrain{
 
             GenomeCarrier carrier = new GenomeCarrier(ModEntities.GENOME_CARRIER.get(), context.getServerLevel());
             carrier.setPos(context.getPosition().x, context.getPosition().y + 1, context.getPosition().z);
-            carrier.carriedGene = gene;
+            carrier.carriedGene = gene; // original, untouched by the tracking system
             carrier.hostHomunculus = context.getHomunculusId();
-            carrier.setForcedTarget(target);   // assign specific target
+            carrier.setForcedTarget(target);
             context.getServerLevel().addFreshEntity(carrier);
         }
 
@@ -222,7 +223,8 @@ public class HomunculusBrain{
             }
         }
         if (rand.nextFloat() < 0.2f && !mutated.mutations.isEmpty()) {
-            mutated.mutations.remove(rand.nextInt(mutated.mutations.size()));
+            int _removeIndex = rand.nextInt(mutated.mutations.size());
+            mutated.mutations.remove(_removeIndex);
         }
         return mutated;
     }
